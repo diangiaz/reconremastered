@@ -1,6 +1,6 @@
 from django.db import models
 
-class User(models.Models):
+class User(models.Model):
 	ADMIN = 'Admin'
 	EMPLOYEE = 'Employee'
 	EMPLOYEE_TYPE_CHOICES = (
@@ -29,10 +29,10 @@ class User(models.Models):
 	idnum = models.IntegerField(
 	)
 	userID = models.AutoField(
-		primary_key=true
+		primary_key=True
 	)
 	
-class Device(models.Models):
+class Device(models.Model):
 	ROUTER = 'Router'
 	SWITCH = 'Switch'
 	TERMINAL = 'Terminal'
@@ -54,18 +54,18 @@ class Device(models.Models):
 	xcord = models.PositiveIntegerField(
 	)
 	deviceID = models.AutoField(
-		primary_key=true
+		primary_key=True
 	)
 
-class Group(models.Models):
+class Group(models.Model):
 	groupname = models.CharField(
 		max_length=25
 	)
 	groupID = models.AutoField(
-		primary_key=true
+		primary_key=True
 	)
 
-class Port(models.Models):
+class Port(models.Model):
 	SERIAL = 'Serial'
 	GIGABYTE = 'Gigabyte'
 	FASTETHERNET = 'Fast Ethernet'
@@ -80,7 +80,7 @@ class Port(models.Models):
 		max_length=25
 	)
 	portID = models.AutoField(
-		primary_key=true
+		primary_key=True
 	)
 	type = models.CharField(
 		max_length=20,
@@ -89,10 +89,10 @@ class Port(models.Models):
 	deviceID = models.ForeignKey(
 		'Device',
 		on_delete=models.CASCADE,
-		)
 	)
+	
 
-class GroupToDevice(models.Models):
+class GroupToDevice(models.Model):
 	RESERVE = 'RS'
 	APPROVE = 'AP'
 	ALLOCATION = 'AL'
@@ -122,7 +122,7 @@ class GroupToDevice(models.Models):
 		choices = TYPE_CHOICES,
 	)
 	
-class UserToGroup(models.Models):
+class UserToGroup(models.Model):
 	userID = models.ForeignKey(
 		'User',
 		on_delete=models.CASCADE,
@@ -132,7 +132,7 @@ class UserToGroup(models.Models):
 		on_delete=models.CASCADE,
 	)
 
-class Connections(models.Models):
+class Connections(models.Model):
 	CONSOLE = 'Console'
 	SERIAL = 'Serial'
 	STRAIGHT = 'Straight'
@@ -156,10 +156,10 @@ class Connections(models.Models):
 		choices=CONNECTION_TYPE_CHOICES,
 	)
 	connectionID = models.AutoField(
-		primary_key=true
+		primary_key=True
 	)
 
-class Config(models.Models):
+class Config(models.Model):
 	groupID = models.ForeignKey(
 		'Group',
 		on_delete=models.CASCADE,
@@ -173,20 +173,20 @@ class Config(models.Models):
 		max_length=100,
 	)
 	configID = models.AutoField(
-		primary_key=true
+		primary_key=True
 	)
 
-class SaveTopology(models.Models):
+class SaveTopology(models.Model):
 	groupID = models.IntegerField(
 	)
 	name = models.CharField(
 		max_length = 40
 	)
 	saveID = models.AutoField(
-		primary_key=true
+		primary_key=True
 	)
 
-class SaveConn(models.Models):
+class SaveConn(models.Model):
 	CONSOLE = 'Console'
 	SERIAL = 'Serial'
 	STRAIGHT = 'Straight'
@@ -196,7 +196,7 @@ class SaveConn(models.Models):
 		(STRAIGHT, 'Straight'),
 	)
 	saveID = models.AutoField(
-		primary_key=true
+		primary_key=True
 	)
 	srcdevID = models.IntegerField(
 	)
@@ -211,9 +211,9 @@ class SaveConn(models.Models):
 		choices=CONNECTION_TYPE_CHOICES,
 	)
 
-class SaveDev(models.Models):
+class SaveDev(models.Model):
 	saveID = models.AutoField(
-		primary_key=true
+		primary_key=True
 	)
 	xcord = models.IntegerField(
 	)
