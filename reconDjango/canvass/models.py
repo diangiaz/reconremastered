@@ -86,8 +86,10 @@ class Port(models.Models):
 		max_length=20,
 		choices=PORT_TYPE_CHOICES
 	)
-	deviceID = models.IntegerField(
-		max_length=20
+	deviceID = models.ForeignKey(
+		'Device',
+		on_delete=models.CASCADE,
+		)
 	)
 
 class GroupToDevice(models.Models):
@@ -99,9 +101,13 @@ class GroupToDevice(models.Models):
 		(APPROVE, 'Approve'),
 		(ALLOCATION, 'Allocation'),
 	)
-	groupID = models.IntegerField(
+	groupID = models.ForeignKey(
+		'Group',
+		on_delete=models.CASCADE,
 	)
-	deviceId = models.IntegerField(
+	deviceId = models.ForeignKey(
+		'Device',
+		on_delete=models.CASCADE,
 	)
 	startDateTime = models.DateTimeField(
 		auto_now=False,
@@ -117,9 +123,13 @@ class GroupToDevice(models.Models):
 	)
 	
 class UserToGroup(models.Models):
-	userID = models.IntegerField(
+	userID = models.ForeignKey(
+		'User',
+		on_delete=models.CASCADE,
 	)
-	groupID	= models.IntegerField(
+	groupID	= models.ForeignKey(
+		'Group',
+		on_delete=models.CASCADE,
 	)
 
 class Connections(models.Models):
@@ -145,11 +155,18 @@ class Connections(models.Models):
 		max_length=10,
 		choices=CONNECTION_TYPE_CHOICES,
 	)
+	connectionID = models.AutoField(
+		primary_key=true
+	)
 
 class Config(models.Models):
-	groupID = models.IntegerField(
+	groupID = models.ForeignKey(
+		'Group',
+		on_delete=models.CASCADE,
 	)
-	devID = models.IntegerField(
+	devID = models.ForeignKey(
+		'Device',
+		on_delete=models.CASCADE,
 	)
 	config = models.FileField(
 		upload_to=None,
