@@ -17,6 +17,6 @@ from django.conf.urls import include, url
 from django.contrib import admin
 
 urlpatterns = [
-    url(r'^canvass/', include('canvass.urls')),
     url(r'^admin/', admin.site.urls),
+    url(r'^', include('canvass.urls')),
 ]

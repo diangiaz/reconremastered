@@ -53,7 +53,7 @@ class Device(models.Model):
 	)
 	xcord = models.PositiveIntegerField(
 	)
-	deviceID = models.AutoField(
+	devID = models.AutoField(
 		primary_key=True
 	)
 
@@ -86,7 +86,7 @@ class Port(models.Model):
 		max_length=20,
 		choices=PORT_TYPE_CHOICES
 	)
-	deviceID = models.ForeignKey(
+	devID = models.ForeignKey(
 		'Device',
 		on_delete=models.CASCADE,
 	)
@@ -105,7 +105,7 @@ class GroupToDevice(models.Model):
 		'Group',
 		on_delete=models.CASCADE,
 	)
-	deviceId = models.ForeignKey(
+	devID = models.ForeignKey(
 		'Device',
 		on_delete=models.CASCADE,
 	)
@@ -143,15 +143,15 @@ class Connections(models.Model):
 	)
 	groupID = models.IntegerField(
 	)
-	srcdevID = models.IntegerField(
+	srcDevID = models.IntegerField(
 	)
-	srcdevPort = models.IntegerField(
+	srcDevPort = models.IntegerField(
 	)
-	destdevID = models.IntegerField(
+	destDevID = models.IntegerField(
 	)
-	destdevPort	= models.IntegerField(
+	destDevPort	= models.IntegerField(
 	)
-	cabletype = models.CharField(
+	cableType = models.CharField(
 		max_length=10,
 		choices=CONNECTION_TYPE_CHOICES,
 	)
@@ -198,15 +198,15 @@ class SaveConn(models.Model):
 	saveID = models.AutoField(
 		primary_key=True
 	)
-	srcdevID = models.IntegerField(
+	srcDevID = models.IntegerField(
 	)
-	srcdevPort = models.IntegerField(
+	srcDevPort = models.IntegerField(
 	)
-	destdevID = models.IntegerField(
+	destDevID = models.IntegerField(
 	)
-	destdevPort = models.IntegerField(
+	destDevPort = models.IntegerField(
 	)
-	cabletype = models.CharField(
+	cableType = models.CharField(
 		max_length=10,
 		choices=CONNECTION_TYPE_CHOICES,
 	)
@@ -215,12 +215,31 @@ class SaveDev(models.Model):
 	saveID = models.AutoField(
 		primary_key=True
 	)
-	xcord = models.IntegerField(
+	xCord = models.IntegerField(
 	)
-	ycord = models.IntegerField(
+	yCord = models.IntegerField(
 	)
 	devID = models.IntegerField(
 	)
+
+class Logs(models.Model):
+	logID = models.AutoField(
+		primary_key=True
+	)
+	devID = models.ForeignKey(
+		'Device',
+		on_delete=models.CASCADE,
+	)
+	userID = models.ForeignKey(
+		'User',
+		on_delete=models.CASCADE,
+	)
+	timestamp = models.DateTimeField(
+		auto_now_add=True, blank=True
+	)
+	
+	
+	
 
 
 # Create your models here.
