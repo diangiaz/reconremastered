@@ -1,0 +1,121 @@
+{% load static %}
+</head>
+<body class="nav-md">
+<div class="container body">
+	<div class="main_container">
+
+    <!-- SIDEBAR -->
+  	<div class="col-md-3 left_col">
+  		<div class="left_col scroll-view">
+
+  	<!-- SIDETITLE -->
+  		<div class="navbar nav_title" style="border: 0;">
+  			<a href="index.html" class="site_title"><img style="margin-top: -8px; padding-left: 8px; padding-right: 8px; width: 48px;" src="{% static 'logo-blk.jpg' %}"> <span>CT THESIS</span></a>
+  		</div>
+  	<!-- SIDETITLE -->
+
+  		<div class="clearfix"></div>
+
+  		<!-- SIDEPROFILE -->
+  		<div class="profile clearfix">
+  			<div class="profile_pic">
+  			<img src="{% static 'default_user_sm.jpg' %}" alt="..." class="img-circle profile_img">
+  			</div>
+  			<div class="profile_info">
+  			<span id='curTime'>Welcome,</span>
+  			<h2>John Doe</h2>
+  			</div>
+  		</div>
+  	<!-- SIDEPROFILE -->
+
+  		<br />
+
+  	<!-- SIDENAVI -->
+  		<div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+  			<div class="menu_section">
+  			<ul class="nav side-menu">
+  				<li>
+            <a href="/"><i class="fa fa-home"><!--<span class="badge">6</span>--></i> Home</a>
+  				</li>
+          <li>
+            <a href="/summary/"><i class="fa fa-users"></i> Thesis Group</a>
+          </li>
+          <li>
+            <a href="/schedule/"><i class="fa fa-calendar"></i> Term Schedule</a>
+          </li><!--
+          <li>
+            <a><i class="fa fa-edit"></i> Requirements<span class="fa fa-chevron-down"></span></a>
+            <ul class="nav child_menu">
+              <li><a href="form.html">Defense Status</a></li>
+              <li><a href="form_advanced.html">Document Status</a></li>
+              <li><a href="form_validation.html">Conference Paper Status</a></li>
+            </ul>
+          </li>-->
+          <li>
+            <a href="/review/"><i class="fa fa-check-square-o"></i> Document Review</a>
+          </li>
+  				<li>
+            <a href="/reports/"><i class="fa fa-bar-chart-o"></i> Report Summary</a>
+  				</li>
+          <li>
+            <a href="/downloads/"><i class="fa fa-download"></i> Download Forms</a>
+          </li>
+          <li>
+            <a href="/inbox/"><i class="fa fa-comments"></i> Inbox</a>
+          </li>
+          <li>
+            <a href="/thesispg/"><i class="fa fa-book"></i> Policies and Guidelines</a>
+          </li>
+  			</ul>
+  			</div>
+  		</div>
+  		<!-- /SIDENAVI -->
+
+  		<!-- SIDEFOOTER -->
+  		<div class="sidebar-footer hidden-small">
+  			<a data-toggle="tooltip" data-placement="top" title="Settings">
+  			<span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+  			</a>
+  			<a data-toggle="tooltip" data-placement="top" title="Reset">
+  			<span class="glyphicon glyphicon-th-large" aria-hidden="true"></span>
+  			</a>
+  			<a data-toggle="tooltip" data-placement="top" title="Contact Us">
+  			<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+  			</a>
+  			<a data-toggle="tooltip" data-placement="top" title="Logout" href="/logout/">
+  			<span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+  			</a>
+  		</div>
+  		<!-- /SIDEFOOTER -->
+
+  		</div>
+  	</div>
+    <!-- /SIDEBAR -->
+
+  	<!-- HEADER -->
+  	<div class="top_nav">
+  		<div class="nav_menu">
+  		<nav>
+  			<div class="nav toggle">
+  			<a id="menu_toggle"><i class="fa fa-bars"></i></a>
+  			</div>
+
+  			<ul class="nav navbar-nav navbar-right">
+  				<li class="">
+  					<a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+  					<img src="{% static 'default_user_sm.jpg' %}" alt="">John Doe
+  					</a>
+  					<ul class="dropdown-menu dropdown-usermenu pull-right">
+  					<!--<li><a href="javascript:;"> Profile</a></li>-->
+  					<li><a href="/logout/"><i class="fa fa-sign-out pull-right"></i> Log Out</a></li>
+  					</ul>
+  				</li>
+  			</ul>
+  		</nav>
+  		</div>
+  	</div>
+  <!-- /HEADER -->
+
+  <!-- CONTENT -->
+  	<div class="right_col" role="main">
+  		<div class="row">
