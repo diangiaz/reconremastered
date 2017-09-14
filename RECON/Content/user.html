@@ -1,0 +1,528 @@
+{% load static %}
+
+<!DOCTYPE html>
+<link rel="shortcut icon" type="image/png" href="{% static '/images/recon.ico' %}">
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title> Home | RECON Remastered</title>
+
+    <!-- Bootstrap -->
+    <link href="{% static '/vendors/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="{% static '/vendors/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
+    <!-- NProgress -->
+    <link href="{% static '/vendors/nprogress/nprogress.css' %}" rel="stylesheet">
+    <!-- iCheck -->
+    <link href="{% static '/vendors/iCheck/skins/flat/green.css' %}" rel="stylesheet">
+    <!-- More Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <!-- bootstrap-daterangepicker -->
+    <link href="{% static '/vendors/bootstrap-daterangepicker/daterangepicker.css' %}" rel="stylesheet">
+    <!-- bootstrap-datetimepicker -->
+    <link href="{% static '/vendors/bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css' %}" rel="stylesheet">
+
+    <!-- Custom Theme Style -->
+    <link href="{% static '/build/css/custom.min.css' %}" rel="stylesheet">
+	
+	<script>
+		var staticlink = {% static '' %};
+	</script>
+  </head>
+
+  <body class="nav-md">
+    <div class="container body">
+      <div class="main_container">
+
+        <!-- top navigation -->
+        <div class="top_nav">
+          <div class="nav_menu">
+            <nav>
+              <div class="nav toggle">
+              	<div class="site_logo">
+              		<img src="{% static '/images/logo4-sm.png' %}" class="nav-img-logo2" id="reconLogo2">
+              		<img src="{% static '/images/logo4.png' %}" class="nav-img-logo" id="reconLogo">
+	                <div class="buttonPadding">
+										<span data-toggle="modal" data-target="#saveWork">	
+											<button class="btn btn-default" type="button" data-toggle="tooltip" data-placement="bottom" title="Save Topology"><i class="fa fa-save"></i></button>
+										</span>
+										<span data-toggle="modal" data-target="#loadFile">
+			                <button class="btn btn-default" type="button" data-toggle="tooltip" data-placement="bottom" title="Open File"><i class="fa fa-download"></i></button>
+			              </span>
+										<span data-toggle="modal" data-target="#reserveDevice">
+		                	<button class="btn btn-default" type="button" data-toggle="tooltip" data-placement="bottom" title="Reserve Device"><i class="fa fa-calendar"></i></button>
+		                </span>
+									</div>              		
+              	</div>
+
+              	<ul class="nav-logout" >
+									<li> USER
+	              	<a data-toggle="tooltip" data-placement="top" title="Logout" href="LoginRECON.html">               
+		                <span id="signout" class="fa fa-sign-out"></span>
+		              </a>
+		              </li>
+	              </ul>
+              </div>
+            </nav>
+          </div>
+        </div>
+        <!-- /top navigation -->
+
+        <!-- page content -->
+        <div class="right_col" role="main">
+        	<div class="">
+	      		<div class="clearfix"></div>
+
+		        <div class="row">
+							<div class="col-md-12 col-sm-12 col-xs-12">
+								<div class="x_panel" style="padding-top: 5px;padding-bottom: 5px;">
+									<div class="x_content" id="Content">								
+										<div class="canvas-position">                    
+											<div id="DivWorkspace" style="border: 1px solid #e5e5e5; overflow: auto; background-color: #000;">
+												<canvas id="Workspace" style="background-color: #fff;" ondrop="EvtOnDrop(event)" ondragover="EvtOnDragOver(event)" onclick="EvtOnDraw(event)"></canvas>
+											</div>
+										</div>
+										<div class="tab-position">
+		                  <div class="x_content" style="padding: 0; height: 300px;">
+		                    <div class="col-xs-3" style="padding-left: 0;">
+		                      <!-- required for floating -->
+		                      <!-- Nav tabs -->
+		                      <ul class="nav nav-tabs tabs-left" style="height: 450px; border:0;">
+		                        <li class="active"><a href="#devicesPanel" data-toggle="tab" id="devicesTab">Devices</a>
+		                        </li>
+		                        <li><a href="#routerPanel" data-toggle="tab" id="routerTab">Router 1</a>
+		                        </li>
+		                        <li><a href="#switchPanel" data-toggle="tab" id="switchTab">Switch 1</a>
+		                        </li>
+		                        <li><a href="#terminalPanel" data-toggle="tab" id="terminalTab">Terminal 1</a>
+		                        </li>
+		                      </ul>
+		                    </div>
+
+		                    <div class="col-xs-9" style="padding: 0;">
+		                      <div class="tab-content">
+		                        <div class="tab-pane active" id="devicesPanel">
+															<ul class="device-list"> <!-- style="column-count: 3;" -->
+																<li>
+																	<img class="deviceIcons" id="DeviceRouter" src="{% static '/images/routerIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Router">
+																</li>
+																<li>
+																	<img class="deviceIcons" id="DeviceSwitch" src="{% static '/images/switchIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Switch">
+																</li>
+																<li>
+																	<img class="deviceIcons" id="DeviceTerminal" src="{% static '/images/terminalIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Terminal">
+																</li>
+																<li>
+																	<img class="deviceIcons" id="DeviceRouter" src="{% static '/images/routerIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Router">
+																</li>
+																<li>
+																	<img class="deviceIcons" id="DeviceSwitch" src="{% static '/images/switchIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Switch">
+																</li>
+																<li>
+																	<img class="deviceIcons" id="DeviceTerminal" src="{% static '/images/terminalIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Terminal">
+																</li>
+																<li>
+																	<img class="deviceIcons" id="DeviceRouter" src="{% static '/images/routerIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Router">
+																</li>
+																<li>
+																	<img class="deviceIcons" id="DeviceSwitch" src="{% static '/images/switchIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Switch">
+																</li>
+																<li>
+																	<img class="deviceIcons" id="DeviceTerminal" src="{% static '/images/terminalIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Terminal">
+																</li>																
+															</ul>
+															<ul class="cable-list" style="padding-left:0">
+																<li><img class="deviceIcons" id="CableLan" src="{% static '/images/lan.png' %}" draggable="false" onclick="EvtOnClick(this)" data-toggle="tooltip" data-placement="bottom" title="LAN"></li>
+																<li><img class="deviceIcons" id="CableWan" src="{% static '/images/wan.png' %}" draggable="false" onclick="EvtOnClick(this)" data-toggle="tooltip" data-placement="bottom" title="WAN"></li>
+																<li><img class="deviceIcons" id="CableConsole" src="{% static '/images/console.png' %}" draggable="false" onclick="EvtOnClick(this)" data-toggle="tooltip" data-placement="bottom" title="Console"></li>
+																<li><img class="deviceIcons" id="CableConsole" src="{% static '/images/delete.png' %}" draggable="false" onclick="remove();" data-toggle="tooltip" data-placement="bottom" title="Delete device"></li>
+															</ul>
+		                        </div>
+		                        <div class="tab-pane" id="routerPanel">
+		                        	<textarea class="config" id="routerConfig" readonly>R1#show running-config
+																Building configuration...
+																Current configuration : 723 bytes
+																!
+																version 12.4
+																no service pad
+																service timestamps debug datetime msec
+																service timestamps log datetime msec
+																no service password-encryption
+																!
+																hostname Router
+																!
+																boot-start-marker
+																boot-end-marker
+																!
+																logging message-counter syslog
+																!
+																no aaa new-model
+																!
+																no ipv6 cef
+																ip source-route
+																ip cef
+																!
+																!
+																!
+																!
+																multilink bundle-name authenticated
+																!
+																!
+																archive
+																log config
+																hidekeys
+																!
+																!
+																!
+																!
+																!
+																interface GigabitEthernet0/0
+																no ip address
+																shutdown
+																duplex auto
+																speed auto
+																!
+																interface GigabitEthernet0/1
+																no ip address
+																shutdown
+																duplex auto
+																speed auto
+																!
+																interface GigabitEthernet0/2
+																no ip address
+																shutdown
+																duplex auto
+																speed auto
+																!
+																ip forward-protocol nd
+																!
+																no ip http server
+																!
+																!
+																!
+																!
+																!
+																control-plane
+																!
+																!
+																line con 0
+																line aux 0
+																line vty 0 3
+																login
+																!
+																exception data-corruption buffer truncate
+																scheduler allocate 20000 1000
+																end</textarea>
+	                        	  <div class="form-group command-group">
+	                        	  	<div class="col-sm-12 input-group">
+				                        	<input type="text" class="form-control" placeholder="Input command here" required="required" style="padding:5px;" id="routerCmd">
+					                        <span class="input-group-btn">
+					                        	<button type="button" class="btn btn-info">Add</button>
+					                        </span>
+				                        </div>
+				                      </div>
+		                        </div>
+		                        <div class="tab-pane" id="switchPanel">
+		                        	<textarea class="config" id="switchConfig" readonly>SW1#show running-config
+																Building configuration...
+																...
+																end</textarea>
+	                        	  <div class="form-group command-group">
+	                        	  	<div class="col-sm-12 input-group">
+				                        	<input type="text" class="form-control" placeholder="Input command here" required="required" style="padding:5px;" id="switchCmd">
+					                        <span class="input-group-btn">
+					                        	<button type="button" class="btn btn-info">Add</button>
+					                        </span>
+				                        </div>
+				                      </div>
+		                        </div>
+		                        <div class="tab-pane" id="terminalPanel">
+		                        	<textarea class="config" id="terminalConfig" readonly>PC1#show running-config
+																Building configuration...
+																...
+																end</textarea>
+	                        	  <div class="form-group command-group">
+	                        	  	<div class="col-sm-12 input-group">
+				                        	<input type="text" class="form-control" placeholder="Input command here" required="required" style="padding:5px;" id="terminalCmd">
+					                        <span class="input-group-btn">
+					                        	<button type="button" class="btn btn-info">Add</button>
+					                        </span>
+				                        </div>
+				                      </div>
+		                        </div>
+		                      </div>
+		                    </div>                   
+		                  </div>
+
+																			
+										</div>
+
+										<div id="menu-ports"> 
+											<ul class="custom-menu">
+											   <li data-action="first">First thing</li>
+											</ul>
+										</div>	
+
+									</div>
+								</div>
+							</div>
+		        </div>
+        	</div>
+        </div>
+        <!-- /page content -->
+      </div>
+    </div>
+
+    <!-- CONFIRM DELETE -->
+    <div id="dialogoverlay">
+			<div id="dialogbox">
+			  <div class="modal-content">
+					<div id="dialogboxhead"></div>
+					<div id="dialogboxbody"></div>
+					<div id="dialogboxfoot"></div>
+			  </div>
+			</div>
+		</div>
+		<!-- CONFIRM DELETE -->
+
+    <!--start SAVE -->
+    <div id="saveWork" class="modal fade" role="dialog" aria-hidden="true" style="padding-top: 100px">
+      <div class="modal-dialog">
+        <div class="modal-content">
+        	<div class="modal-header" style="height: 50px;">
+        		<h3 style="display: inline;"><i class="fa fa-edit"></i> Save As</h3>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
+            </button>            
+          </div>
+          <div class="modal-body">
+            <div class="form-horizontal form-label-left">
+            	<div class="form-group">
+	              <label class="control-label col-md-3" for="filename">File name: 
+	              </label>
+	              <div class="col-md-7">
+	              	<input type="text" id="filename" class="form-control">
+	              </div>
+            	</div>
+            </div>
+          </div>              
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end SAVE -->
+
+    <!--start LOAD -->
+    <div id="loadFile" class="modal fade" role="dialog" aria-hidden="true" style="padding-top: 100px">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header" style="height: 50px;">
+            <h3 style="display: inline;"><i class="fa fa-download"></i> Open</h3>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
+            </button>  
+          </div>
+          <div class="modal-body">
+            <div class="form-horizontal form-label-left">
+            	<div class="form-group">
+	              <label class="control-label col-md-3" for="filename">File name: 
+	              </label>
+	              <div class="col-md-7">
+	              	<select class="select2_single form-control" tabindex="-1">
+                    <option></option>
+                    <option value="AK">File 1</option>
+                    <option value="HI">File 2</option>
+                    <option value="CA">File 3</option>
+                    <option value="NV">File 4</option>
+                    <option value="OR">File 5</option>
+                  </select>
+	              </div>
+            	</div>
+            </div>
+          </div>              
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Open</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end LOAD -->
+
+    <!--start RESERVE -->
+    <div id="reserveDevice" class="modal fade" role="dialog" aria-hidden="true" style="padding-top: 90px">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 style="display: inline;"><i class="fa fa-calendar"></i> Reservation Form</h3>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
+            </button>  
+          </div>
+          <div class="modal-body">
+            <div class="form-horizontal form-label-left">
+              <h2>Available devices:</h2>
+              <table class="table-width table table-striped jambo_table">
+                <thead>
+                  <tr>
+                    <th style="width: 33%">Router</th>
+                    <th style="width: 33%">Switch</th>
+                    <th style="width: 33%">Terminal</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="a-center ">
+                    	<div class="checkbox">
+                        <label style="padding-left: 0">
+                          <input type="checkbox" class="flat"> Router1
+                        </label>
+                      </div>
+                    </td>
+                    <td>
+                    	<div class="checkbox">
+                        <label style="padding-left: 0">
+                          <input type="checkbox" class="flat"> Switch1
+                        </label>
+                      </div>
+                    </td>
+                    <td>
+                    	<div class="checkbox">
+                        <label style="padding-left: 0">
+                          <input type="checkbox" class="flat"> Terminal1
+                        </label>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="a-center ">
+                    	<div class="checkbox">
+                        <label style="padding-left: 0">
+                          <input type="checkbox" class="flat"> Router2
+                        </label>
+                      </div>
+                    </td>
+                    <td>
+                    	<div class="checkbox">
+                        <label style="padding-left: 0">
+                          <input type="checkbox" class="flat"> Switch2
+                        </label>
+                      </div>
+                    </td>
+                    <td>
+                    	<div class="checkbox">
+                        <label style="padding-left: 0">
+                          <input type="checkbox" class="flat"> Terminal2
+                        </label>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="a-center ">
+                    	<div class="checkbox">
+                        <label style="padding-left: 0">
+                          <input type="checkbox" class="flat" disabled="disabled"> Router3
+                        </label>
+                      </div>
+                    </td>
+                    <td>
+                    	<div class="checkbox">
+                        <label style="padding-left: 0">
+                          <input type="checkbox" class="flat" disabled="disabled"> Switch3
+                        </label>
+                      </div>
+                    </td>
+                    <td>
+                    	<div class="checkbox">
+                        <label style="padding-left: 0">
+                          <input type="checkbox" class="flat" disabled="disabled"> Terminal3
+                        </label>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="form-group">
+                <div class="col-md-6 col-sm-6 col-xs-12" style="padding-right: 0">
+              		<label class="control-label col-md-3" style="width: 17%" for="datetimepicker6">Date</label>
+                  <div class='input-group date' id='datetimepicker6'>
+                    <span class="input-group-addon">
+                      <span class="fa fa-calendar-o"></span>
+                    </span>
+                    <input type='text' class="form-control" />
+                    <!-- <span class="input-group-addon">to</span> -->
+                  </div>
+                </div>   
+
+                <div class="col-md-6 col-sm-6 col-xs-12" style="padding-left: 0">
+                	<label class="control-label col-md-3" style="width: 12%" for="datetimepicker7">to</label>
+                  <div class='input-group date' id='datetimepicker7'>
+                    <input type='text' class="form-control" />
+                    <span class="input-group-addon">
+                      <span class="fa fa-calendar-o"></span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>              
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Reserve</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end RESERVE -->
+
+    <!-- jQuery -->
+    <script src="{% static '/vendors/jquery/dist/jquery.min.js' %}"></script>
+    <!-- Bootstrap -->
+    <script src="{% static '/vendors/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+    <!-- FastClick -->
+    <script src="{% static '/vendors/fastclick/lib/fastclick.js' %}"></script>
+    <!-- NProgress -->
+    <script src="{% static '/vendors/nprogress/nprogress.js' %}"></script>
+    <!-- validator -->
+    <script src="{% static '/vendors/validator/validator.js' %}"></script>
+    <!-- iCheck -->
+    <script src="{% static '/vendors/iCheck/icheck.min.js' %}"></script>
+    <!-- bootstrap-daterangepicker -->
+    <script src="{% static '/vendors/moment/min/moment.min.js' %}"></script>
+    <script src="{% static '/vendors/bootstrap-daterangepicker/daterangepicker.js' %}"></script>
+    <!-- bootstrap-datetimepicker -->    
+    <script src="{% static '/vendors/bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js' %}"></script>
+    
+    <!-- Custom Theme Scripts -->
+    <script src="{% static '/build/js/custom.min.js' %}"></script>
+
+     <!-- Initialize datetimepicker -->
+    <script>  
+     $('#datetimepicker6').datetimepicker({
+      format: 'MM/DD/YYYY',
+      useCurrent: true
+    });
+        
+    $('#datetimepicker7').datetimepicker({
+      format: 'MM/DD/YYYY',
+      useCurrent: false
+    });
+    
+    $("#datetimepicker6").on("dp.change", function(e) {
+        $('#datetimepicker7').data("DateTimePicker").minDate(e.date);
+    });
+    
+    $("#datetimepicker7").on("dp.change", function(e) {
+        $('#datetimepicker6').data("DateTimePicker").maxDate(e.date);
+    });
+    </script>
+
+    <!-- RECON REMASTERED Script -->
+    <script src="{% static '/production/js/recon.js' %}"></script>
+  </body>
+</html>
