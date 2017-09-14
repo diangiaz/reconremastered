@@ -37,7 +37,7 @@ def create_user_profile(sender, instance, created, **kwargs):
 		
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
-	instance.profiiles.save()	
+	instance.profile.save()	
 
 	
 class Device(models.Model):
@@ -132,7 +132,7 @@ class GroupToDevice(models.Model):
 	
 class UserToGroup(models.Model):
 	userID = models.ForeignKey(
-		'User',
+		'Profile',
 		on_delete=models.CASCADE,
 	)
 	groupID	= models.ForeignKey(
@@ -239,7 +239,7 @@ class Logs(models.Model):
 		on_delete=models.CASCADE,
 	)
 	userID = models.ForeignKey(
-		'User',
+		'Profile',
 		on_delete=models.CASCADE,
 	)
 	timestamp = models.DateTimeField(
@@ -249,5 +249,3 @@ class Logs(models.Model):
 	
 	
 
-
-# Create your models here.
