@@ -1,7 +1,7 @@
 {% load static %}
 
 <!DOCTYPE html>
-<link rel="shortcut icon" type="image/png" href="{% static '/images/recon.ico' %}">
+<link rel="shortcut icon" type="image/png" href="{% static '/production/images/recon.ico' %}">
 <html lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -45,8 +45,8 @@
             <nav>
               <div class="nav toggle">
               	<div class="site_logo">
-              		<img src="{% static '/images/logo4-sm.png' %}" class="nav-img-logo2" id="reconLogo2">
-              		<img src="{% static '/images/logo4.png' %}" class="nav-img-logo" id="reconLogo">
+              		<img src="{% static '/production/images/logo4-sm.png' %}" class="nav-img-logo2" id="reconLogo2">
+              		<img src="{% static '/production/images/logo4.png' %}" class="nav-img-logo" id="reconLogo">
 	                <div class="buttonPadding">
 										<span data-toggle="modal" data-target="#saveWork">	
 											<button class="btn btn-default" type="button" data-toggle="tooltip" data-placement="bottom" title="Save Topology"><i class="fa fa-save"></i></button>
@@ -109,38 +109,38 @@
 		                        <div class="tab-pane active" id="devicesPanel">
 															<ul class="device-list"> <!-- style="column-count: 3;" -->
 																<li>
-																	<img class="deviceIcons" id="DeviceRouter" src="{% static '/images/routerIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Router">
+																	<img class="deviceIcons" id="DeviceRouter" src="{% static '/production/images/routerIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Router">
 																</li>
 																<li>
-																	<img class="deviceIcons" id="DeviceSwitch" src="{% static '/images/switchIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Switch">
+																	<img class="deviceIcons" id="DeviceSwitch" src="{% static '/production/images/switchIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Switch">
 																</li>
 																<li>
-																	<img class="deviceIcons" id="DeviceTerminal" src="{% static '/images/terminalIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Terminal">
+																	<img class="deviceIcons" id="DeviceTerminal" src="{% static '/production/images/terminalIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Terminal">
 																</li>
 																<li>
-																	<img class="deviceIcons" id="DeviceRouter" src="{% static '/images/routerIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Router">
+																	<img class="deviceIcons" id="DeviceRouter" src="{% static '/production/images/routerIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Router">
 																</li>
 																<li>
-																	<img class="deviceIcons" id="DeviceSwitch" src="{% static '/images/switchIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Switch">
+																	<img class="deviceIcons" id="DeviceSwitch" src="{% static '/production/images/switchIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Switch">
 																</li>
 																<li>
-																	<img class="deviceIcons" id="DeviceTerminal" src="{% static '/images/terminalIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Terminal">
+																	<img class="deviceIcons" id="DeviceTerminal" src="{% static '/production/images/terminalIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Terminal">
 																</li>
 																<li>
-																	<img class="deviceIcons" id="DeviceRouter" src="{% static '/images/routerIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Router">
+																	<img class="deviceIcons" id="DeviceRouter" src="{% static '/production/images/routerIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Router">
 																</li>
 																<li>
-																	<img class="deviceIcons" id="DeviceSwitch" src="{% static '/images/switchIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Switch">
+																	<img class="deviceIcons" id="DeviceSwitch" src="{% static '/production/images/switchIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Switch">
 																</li>
 																<li>
-																	<img class="deviceIcons" id="DeviceTerminal" src="{% static '/images/terminalIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Terminal">
+																	<img class="deviceIcons" id="DeviceTerminal" src="{% static '/production/images/terminalIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Terminal">
 																</li>																
 															</ul>
 															<ul class="cable-list" style="padding-left:0">
-																<li><img class="deviceIcons" id="CableLan" src="{% static '/images/lan.png' %}" draggable="false" onclick="EvtOnClick(this)" data-toggle="tooltip" data-placement="bottom" title="LAN"></li>
-																<li><img class="deviceIcons" id="CableWan" src="{% static '/images/wan.png' %}" draggable="false" onclick="EvtOnClick(this)" data-toggle="tooltip" data-placement="bottom" title="WAN"></li>
-																<li><img class="deviceIcons" id="CableConsole" src="{% static '/images/console.png' %}" draggable="false" onclick="EvtOnClick(this)" data-toggle="tooltip" data-placement="bottom" title="Console"></li>
-																<li><img class="deviceIcons" id="CableConsole" src="{% static '/images/delete.png' %}" draggable="false" onclick="remove();" data-toggle="tooltip" data-placement="bottom" title="Delete device"></li>
+																<li><img class="deviceIcons" id="CableLan" src="{% static '/production/images/lan.png' %}" draggable="false" onclick="EvtOnClick(this)" data-toggle="tooltip" data-placement="bottom" title="LAN"></li>
+																<li><img class="deviceIcons" id="CableWan" src="{% static '/production/images/wan.png' %}" draggable="false" onclick="EvtOnClick(this)" data-toggle="tooltip" data-placement="bottom" title="WAN"></li>
+																<li><img class="deviceIcons" id="CableConsole" src="{% static '/production/images/console.png' %}" draggable="false" onclick="EvtOnClick(this)" data-toggle="tooltip" data-placement="bottom" title="Console"></li>
+																<li><img class="deviceIcons" id="CableConsole" src="{% static '/production/images/delete.png' %}" draggable="false" onclick="remove();" data-toggle="tooltip" data-placement="bottom" title="Delete device"></li>
 															</ul>
 		                        </div>
 		                        <div class="tab-pane" id="routerPanel">

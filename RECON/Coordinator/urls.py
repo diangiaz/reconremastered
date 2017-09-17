@@ -8,4 +8,4 @@ urlpatterns = [
 	url(r'^user$', views.userPage, name='userPage'),
 	url(r'^admin$', views.adminPage, name='adminPage'),
 	url(r'^$', views.defaultPage, name='defaultPage'),
-]
+]	

@@ -18,5 +18,6 @@ def userPage(request):
 def adminPage(request):
 	return render(request, 'admin.html', {'variable':''})
 	
+@login_required(login_url="/login")
 def defaultPage(request):
-	return render(request, 'login.html', {'variable':''})
+	return render(request, 'user.html', {'variable':''})
