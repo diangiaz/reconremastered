@@ -20,4 +20,4 @@ def adminPage(request):
 	
 @login_required(login_url="/login")
 def defaultPage(request):
-	return render(request, 'user.html', {'variable':''})
+	return render(request, 'admin.html', {'variable':''})
