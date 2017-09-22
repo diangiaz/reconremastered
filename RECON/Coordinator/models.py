@@ -1,21 +1,16 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
-# from django.contrib.auth.models import User
+from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 
-
-
-class User(AbstractUser):
+class UserProfile(models.Model):
+	user = models.OneToOneField(User, on_delete=models.CASCADE)
 	ADMIN = 'Admin'
 	EMPLOYEE = 'Employee'
 	EMPLOYEE_TYPE_CHOICES = (
 		(ADMIN, 'Admin'),
 		(EMPLOYEE, 'Employee'),
-	)
-	name = models.CharField(
-		max_length=50
 	)
 	branch = models.CharField(
 		max_length=50
@@ -24,58 +19,20 @@ class User(AbstractUser):
 		max_length=10,
 		choices=EMPLOYEE_TYPE_CHOICES,
 	)
-	idnum = models.IntegerField(
-	)
 	userID = models.AutoField(
 		primary_key=True
 	)
 	
+	def __str__(self):
+		return "%s's profile" % self.user
 
+def create_user_profile(sender, instance, created, **kwargs):
+	if created:
+		profile, created = UserProfile.objects.get_or_create(user=instance)
 
-
-# class Profile(models.Model):
-	# ADMIN = 'Admin'
-	# EMPLOYEE = 'Employee'
-	# EMPLOYEE_TYPE_CHOICES = (
-		# (ADMIN, 'Admin'),
-		# (EMPLOYEE, 'Employee'),
-	# )
-	# user = models.OneToOneField(User, on_delete=models.CASCADE)
-	# name = models.CharField(
-		# max_length=50
-	# )
-	# email = models.EmailField(
-		# max_length=50
-	# )
-	# branch = models.CharField(
-		# max_length=50
-	# )
-	# usertype = models.CharField(
-		# max_length=10,
-		# choices=EMPLOYEE_TYPE_CHOICES,
-	# )
-	# idnum = models.IntegerField(
-	# )
-	# userID = models.AutoField(
-		# primary_key=True
-	# )
-	
-# @receiver(post_save, sender=User)
-# def create_user_profile(sender, instance, created, **kwargs):
-	# if created:
-		# Profile.objects.create(user=instance)
 		
-# @receiver(post_save, sender=User)
-# def update_user_profile(sender, instance, created, **kwargs):
-	# if created:
-		# Profile.objects.create(user=instance)
-	# instance.profile.save()
+post_save.connect(create_user_profile, sender=User)	
 	
-	
-# @receiver(post_save, sender=User)
-# def save_user_profile(sender, instance, **kwargs):
-	# instance.profile.save()	
-
 	
 class Device(models.Model):
 	ROUTER = 'Router'
@@ -169,7 +126,7 @@ class GroupToDevice(models.Model):
 	
 class UserToGroup(models.Model):
 	userID = models.ForeignKey(
-		'User',
+		'UserProfile',
 		on_delete=models.CASCADE,
 	)
 	groupID	= models.ForeignKey(
@@ -276,7 +233,7 @@ class Logs(models.Model):
 		on_delete=models.CASCADE,
 	)
 	userID = models.ForeignKey(
-		'User',
+		'UserProfile',
 		on_delete=models.CASCADE,
 	)
 	timestamp = models.DateTimeField(

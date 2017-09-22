@@ -31,8 +31,6 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 
-AUTH_USER_MODEL = 'Coordinator.User'
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -133,3 +131,4 @@ STATICFILES_FINDERS = (
 )
 
 LOGIN_REDIRECT_URL = '/admin/'
+
