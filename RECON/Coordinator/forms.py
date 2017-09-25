@@ -1,7 +1,7 @@
 import re
 from django import forms
-from .models import User
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
@@ -11,3 +11,10 @@ class LoginForm(AuthenticationForm):
     password = forms.CharField(label="Password", max_length=30, 
                                widget=forms.PasswordInput(attrs={'class': 'form-control', 'name': 'password', 'placeholder': 'Password'}))
 
+
+class SignUpForm(UserCreationForm):
+	user_id = forms.CharField(label="User ID")
+	
+	class Meta:
+		model = User
+		fields = ('username', 'user_id', 'password1', 'password2', )

@@ -4,7 +4,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 
-class UserProfile(models.Model):
+class Profile(models.Model):
 	user = models.OneToOneField(User, on_delete=models.CASCADE)
 	ADMIN = 'Admin'
 	EMPLOYEE = 'Employee'
@@ -12,23 +12,39 @@ class UserProfile(models.Model):
 		(ADMIN, 'Admin'),
 		(EMPLOYEE, 'Employee'),
 	)
+	BRANCH1 = 'Branch 1'
+	BRANCH2 = 'Branch 2'
+	BRANCH3 = 'Branch 3'
+	BRANCH_LOCATION_CHOICES = (
+		(BRANCH1, 'Branch 1'),
+		(BRANCH2, 'Branch 2'),
+		(BRANCH3, 'Branch 3'),
+	)	
 	branch = models.CharField(
-		max_length=50
+		max_length=50,
+		choices=BRANCH_LOCATION_CHOICES,
 	)
 	usertype = models.CharField(
 		max_length=10,
 		choices=EMPLOYEE_TYPE_CHOICES,
 	)
-	userID = models.AutoField(
-		primary_key=True
+	userID = models.CharField(
+		max_length=10,
 	)
 	
 	def __str__(self):
 		return "%s's profile" % self.user
 
+@receiver(post_save, sender=User)
+def update_user_profile(sender, instance, created, **kwargs):
+	if created:
+		Profile.objects.create(user=instance)
+	instance.profile.save()
+
+
 def create_user_profile(sender, instance, created, **kwargs):
 	if created:
-		profile, created = UserProfile.objects.get_or_create(user=instance)
+		profile, created = Profile.objects.get_or_create(user=instance)
 
 		
 post_save.connect(create_user_profile, sender=User)	
@@ -45,7 +61,8 @@ class Device(models.Model):
 		(TERMINAL, 'Terminal'),
 		(SERVER, 'Server'),
 	)
-	type = models.IntegerField(
+	type = models.CharField(
+		max_length=25,
 		choices=DEVICE_TYPE_CHOICES
 	)
 	name = models.CharField(
@@ -126,7 +143,7 @@ class GroupToDevice(models.Model):
 	
 class UserToGroup(models.Model):
 	userID = models.ForeignKey(
-		'UserProfile',
+		'Profile',
 		on_delete=models.CASCADE,
 	)
 	groupID	= models.ForeignKey(
@@ -134,7 +151,7 @@ class UserToGroup(models.Model):
 		on_delete=models.CASCADE,
 	)
 
-class Connections(models.Model):
+class Connection(models.Model):
 	CONSOLE = 'Console'
 	SERIAL = 'Serial'
 	STRAIGHT = 'Straight'
@@ -224,7 +241,7 @@ class SaveDev(models.Model):
 	devID = models.IntegerField(
 	)
 
-class Logs(models.Model):
+class Log(models.Model):
 	logID = models.AutoField(
 		primary_key=True
 	)
@@ -233,7 +250,7 @@ class Logs(models.Model):
 		on_delete=models.CASCADE,
 	)
 	userID = models.ForeignKey(
-		'UserProfile',
+		'Profile',
 		on_delete=models.CASCADE,
 	)
 	timestamp = models.DateTimeField(
