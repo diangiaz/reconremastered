@@ -363,76 +363,57 @@
                   <div class="x_content">
                     <br />
                     <div class="col-md-8 col-sm-8 col-md-offset-2 col-xs-12">
-					<form 
+					<form action="admin/signup/" method="post">
                       <div class="form-horizontal form-label-left">
-                        <div class="form-group">
-                          <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-                            <input id="employeeID" type="number" class="form-control has-feedback-left" placeholder="Employee ID *" required="required">
-                            <span class="fa fa-hashtag form-control-feedback left" aria-hidden="true"></span>
-                          </div> 
-                          <div class="col-md-6 col-sm-6 col-xs-12 item form-group has-feedback">
-                            <input id="firstName" type="text" class="form-control has-feedback" placeholder="Full Name *" required="required" data-validate-words="2">
-                            <span class="fa fa-user form-control-feedback right" aria-hidden="true"></span>
-                          </div>                                                   
-                        </div>
+					  
+					  
+                        <!-- <div class="form-group"> -->
+                          <!-- <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback"> -->
+                            <!-- <input id="employeeID" type="number" class="form-control has-feedback-left" placeholder="Employee ID *" required="required"> -->
+                            <!-- <span class="fa fa-hashtag form-control-feedback left" aria-hidden="true"></span> -->
+                          <!-- </div>  -->
+                          <!-- <div class="col-md-6 col-sm-6 col-xs-12 item form-group has-feedback"> -->
+                            <!-- <input id="firstName" type="text" class="form-control has-feedback" placeholder="Full Name *" required="required" data-validate-words="2"> -->
+                            <!-- <span class="fa fa-user form-control-feedback right" aria-hidden="true"></span> -->
+                          <!-- </div>                                                    -->
+                        <!-- </div> -->
 
-                        <div class="form-group">
-                          <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-                            <input type="text" class="form-control has-feedback-left" id="username" placeholder="Username *" required="required">
-                            <span class="fa fa-at form-control-feedback left" aria-hidden="true"></span>
-                          </div>
-                          <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-                            <input type="email" class="form-control has-feedback" id="userEmail" placeholder="Email *" required="required" data-validate-linked="email">
-                            <span class="fa fa-envelope form-control-feedback right" aria-hidden="true"></span>
-                          </div>
-                        </div>
+                        <!-- <div class="form-group"> -->
+                          <!-- <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback"> -->
+                            <!-- <input type="text" class="form-control has-feedback-left" id="username" placeholder="Username *" required="required"> -->
+                            <!-- <span class="fa fa-at form-control-feedback left" aria-hidden="true"></span> -->
+                          <!-- </div> -->
+                          <!-- <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback"> -->
+                            <!-- <input type="email" class="form-control has-feedback" id="userEmail" placeholder="Email *" required="required" data-validate-linked="email"> -->
+                            <!-- <span class="fa fa-envelope form-control-feedback right" aria-hidden="true"></span> -->
+                          <!-- </div> -->
+                        <!-- </div> -->
 
-                        <div class="form-group">
-                          <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-                            <input type="password" class="form-control has-feedback-left" id="password" name="password" data-validate-length="6,8" placeholder="Password *" required="required">
-                            <span class="fa fa-lock form-control-feedback left" aria-hidden="true"></span>
-                          </div>
+                        <!-- <div class="form-group"> -->
+                          <!-- <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback"> -->
+                            <!-- <input type="password" class="form-control has-feedback-left" id="password" name="password" data-validate-length="6,8" placeholder="Password *" required="required"> -->
+                            <!-- <span class="fa fa-lock form-control-feedback left" aria-hidden="true"></span> -->
+                          <!-- </div> -->
 
-                          <div class="col-md-6 col-sm-6 col-xs-12 item form-group has-feedback">
-                            <input type="password" class="form-control" id="password2" name="password2" data-validate-linked="password" placeholder="Repeat Password *" required="required">
-                            <span class="fa fa-lock form-control-feedback right" aria-hidden="true"></span>
-                          </div>
-                        </div>
-
-                        <div class="form-group">
-                          <div class="col-md-6 col-sm-6 col-xs-12">
-                            <select id="employeeLocation" class="form-control" required>
-                            <option value="">User Group: *</option>
-                            <option value="man">Group 1</option>
-                            <option value="user1">Group 2</option>
-                            <option value="user2">Group 3</option>
-                            </select>
-                          </div>
-                          <div class="col-md-6 col-sm-6 col-xs-12">
-                            <select id="employeeLocation" class="form-control" required>
-                            <option value="">Branch Location: *</option>
-                            <option value="man">Location 1</option>
-                            <option value="user1">Location 2</option>
-                            <option value="user2">Location 3</option>
-                            </select>
-                          </div>                      
-                        </div>                        
-
+                          <!-- <div class="col-md-6 col-sm-6 col-xs-12 item form-group has-feedback"> -->
+                            <!-- <input type="password" class="form-control" id="password2" name="password2" data-validate-linked="password" placeholder="Repeat Password *" required="required"> -->
+                            <!-- <span class="fa fa-lock form-control-feedback right" aria-hidden="true"></span> -->
+                          <!-- </div> -->
+                        <!-- </div> -->
+                                       
 						{% csrf_token %}
-						{% for field in form %}
-							<p>
-								{{ field.label_tag }}
-								{{ field }}
-								{% if field.help_text %}
-									<small style = "color: grey">{{ field.help_text }}</small>
-								{% endif %}
-								{% for error in field.errors %}
-									<p style="color: red">{{ errorr }} </p>
-								{% endfor %}	
-							</p>
+						{% for field in signupForm %}
+						<p>
+							{{ field.label_tag }}<br>
+							{{ field }}
+							{% if field.help_text %}
+							<small style="color: grey">{{ field.help_text }}</small>
+							{% endif %}
+							{% for error in field.errors %}
+							<p style="color: red">{{ error }}</p>
+							{% endfor %}
+						</p>
 						{% endfor %}
-						
-						
 						
                         <div class="ln_solid"></div>
                         <div class="form-group">
@@ -442,6 +423,7 @@
                           </div>
                         </div>
                       </div>
+					  </form>  
                     </div>
                   </div>
                 </div>

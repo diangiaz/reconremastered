@@ -13,8 +13,10 @@ class LoginForm(AuthenticationForm):
 
 
 class SignUpForm(UserCreationForm):
-	user_id = forms.CharField(label="User ID")
+	usertype = forms.CharField(max_length=10)
+	userID = forms.CharField(label="User ID")
 	
 	class Meta:
 		model = User
-		fields = ('username', 'user_id', 'password1', 'password2', )
+		fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2', 'userID', 'usertype')
+		
