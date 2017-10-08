@@ -30,6 +30,7 @@ ALLOWED_HOSTS = ['*']
 
 # Application definition
 
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -118,10 +119,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = '/External/'
 
 STATICFILES_DIRS = (
-	os.path.join('Coordinator', '..', 'External'),
+	os.path.join('Activity', '..', 'External'),
 )
 
 STATICFILES_FINDERS = (
@@ -129,4 +130,5 @@ STATICFILES_FINDERS = (
 	'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
 
-LOGIN_REDIRECT_URL = 'defaultPage'
+LOGIN_REDIRECT_URL = '/admin/'
+

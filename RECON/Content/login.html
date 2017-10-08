@@ -1,7 +1,7 @@
 {% load static %}
 
 <!DOCTYPE html>
-<link rel="shortcut icon" type="image/png" href="{% static '/images/recon.ico' %}">
+<link rel="shortcut icon" type="image/png" href="{% static '/production/images/recon.ico' %}">
 <html lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -17,11 +17,11 @@
     <!-- Font Awesome -->
     <link href="{% static '/vendors/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
     <!-- NProgress -->
-    <link href="{% static '/vendors/nprogress/nprogress.css' %}" rel="stylesheet">''
+    <link href="{% static '/vendors/nprogress/nprogress.css' %}" rel="stylesheet">
     <!-- Animate.css -->
     <link href="{% static '/vendors/animate.css/animate.min.css' %}" rel="stylesheet">
     <!-- iCheck -->
-    <link href="{% static 'vendors/iCheck/skins/flat/green.css' %}" rel="stylesheet">
+    <link href="{% static '/vendors/iCheck/skins/flat/green.css' %}" rel="stylesheet">
 
     <!-- Custom Theme Style -->
     <link href="{% static '/build/css/custom.min.css' %}" rel="stylesheet">
@@ -34,7 +34,7 @@
         <div class="animate form login_form">
           <section class="login_content">
             <div class="col-md-8 col-md-offset-2">
-              <img src="{% static 'images/logo1.png' %}" class="img-responsive" alt="...">
+              <img src="{% static '/production/images/logo1.png' %}" class="img-responsive" alt="...">
               <br />
             </div>
             <form id="demo-form2" class="form-horizontal form-label-left" method="post">
@@ -80,8 +80,8 @@
     <!-- <script src="{% static "/vendors/parsleyjs/dist/parsley.min.js" %}"></script>     -->
 
     <!-- jQuery autocomplete -->
-    <script src="{% static "/vendors/devbridge-autocomplete/dist/jquery.autocomplete.min.js" %}"></script>
+    <script src="{% static '/vendors/devbridge-autocomplete/dist/jquery.autocomplete.min.js' %}"></script>
     <!-- Custom Theme Scripts -->
-    <script src="{% static "/build/js/custom.min.js" %}"></script>
+    <script src="{% static '/build/js/custom.min.js' %}"></script>
   </body>
 </html>

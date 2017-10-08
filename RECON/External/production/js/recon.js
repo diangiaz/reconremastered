@@ -5,9 +5,9 @@
 	var Output = document.getElementById("Output");
 	var CanvasHeight = document.getElementById("DivWorkspace");
 
-	var DevRouter = { id:"DeviceRouter", name:"Router", image:"" + staticlink + "images/Router.png", height:38, width:64, count: 0};
-	var DevSwitch = { id:"DeviceSwitch", name:"Switch", image:"" + staticlink + "images/Switch.png", height:38, width:64, count: 0};
-	var DevTerminal = { id:"DeviceTerminal", name:"Terminal", image:"" + staticlink + "images/Terminal.png", height:54, width:62, count: 0};
+	var DevRouter = { id:"DeviceRouter", name:"Router", image:"" + staticlink + "production/images/Router.png", height:38, width:64, count: 0};
+	var DevSwitch = { id:"DeviceSwitch", name:"Switch", image:"" + staticlink + "production/images/Switch.png", height:38, width:64, count: 0};
+	var DevTerminal = { id:"DeviceTerminal", name:"Terminal", image:"" + staticlink + "production/images/Terminal.png", height:54, width:62, count: 0};
 
 	var Devices = [];
 	var DeviceTypes = [];
@@ -16,9 +16,9 @@
 	DeviceTypes.push(DevSwitch);
 	DeviceTypes.push(DevTerminal);
 	
-	var CabLan = { id:"CableLan", name:"LAN", image:"" + staticlink + "images/lan.png", height:54, width:62, count: 0};
-	var CabWan = { id:"CableWan", name:"WAN", image:"" + staticlink + "images/wan.gif", height:54, width:62, count: 0};
-	var CabConsole = { id:"CableConsole", name:"CONSOLE", image:"" + staticlink + "images/console.png", height:54, width:62, count: 0};
+	var CabLan = { id:"CableLan", name:"LAN", image:"" + staticlink + "production/images/lan.png", height:54, width:62, count: 0};
+	var CabWan = { id:"CableWan", name:"WAN", image:"" + staticlink + "production/images/wan.gif", height:54, width:62, count: 0};
+	var CabConsole = { id:"CableConsole", name:"CONSOLE", image:"" + staticlink + "production/images/console.png", height:54, width:62, count: 0};
 	
 	var Cables = []; 
 	var CableTypes = [];

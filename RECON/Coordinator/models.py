@@ -1,44 +1,44 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+
+EMPLOYEE_TYPE_CHOICES = (
+		('admin', 'Admin'),
+		('employee', 'Employee'),
+	)
 class Profile(models.Model):
-	ADMIN = 'Admin'
-	EMPLOYEE = 'Employee'
-	EMPLOYEE_TYPE_CHOICES = (
-		(ADMIN, 'Admin'),
-		(EMPLOYEE, 'Employee'),
-	)
 	user = models.OneToOneField(User, on_delete=models.CASCADE)
-	name = models.CharField(
-		max_length=50
-	)
-	email = models.EmailField(
-		max_length=50
-	)
-	branch = models.CharField(
-		max_length=50
-	)
 	usertype = models.CharField(
 		max_length=10,
 		choices=EMPLOYEE_TYPE_CHOICES,
 	)
-	idnum = models.IntegerField(
-	)
-	userID = models.AutoField(
-		primary_key=True
+	userID = models.CharField(
+		max_length=10,
 	)
 	
+	def __str__(self):
+		return "%s's profile" % self.user
+
 @receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
+def update_user_profile(sender, instance, created, **kwargs):
 	if created:
 		Profile.objects.create(user=instance)
-		
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-	instance.profile.save()	
+	instance.profile.save()
 
+
+def create_user_profile(sender, instance, created, **kwargs):
+	if created:
+		profile, created = Profile.objects.get_or_create(user=instance)
+
+		
+post_save.connect(create_user_profile, sender=User)	
+	
+	
+class Group(models.Model):
+	name = models.CharField(max_length=50)
+	
 	
 class Device(models.Model):
 	ROUTER = 'Router'
@@ -51,7 +51,8 @@ class Device(models.Model):
 		(TERMINAL, 'Terminal'),
 		(SERVER, 'Server'),
 	)
-	type = models.IntegerField(
+	type = models.CharField(
+		max_length=25,
 		choices=DEVICE_TYPE_CHOICES
 	)
 	name = models.CharField(
@@ -60,17 +61,6 @@ class Device(models.Model):
 	ycord = models.PositiveIntegerField(
 	)
 	xcord = models.PositiveIntegerField(
-	)
-	devID = models.AutoField(
-		primary_key=True
-	)
-
-class Group(models.Model):
-	groupname = models.CharField(
-		max_length=25
-	)
-	groupID = models.AutoField(
-		primary_key=True
 	)
 
 class Port(models.Model):
@@ -87,15 +77,12 @@ class Port(models.Model):
 	name = models.CharField(
 		max_length=25
 	)
-	portID = models.AutoField(
-		primary_key=True
-	)
 	type = models.CharField(
 		max_length=20,
 		choices=PORT_TYPE_CHOICES
 	)
-	devID = models.ForeignKey(
-		'Device',
+	device = models.ForeignKey(
+		Device,
 		on_delete=models.CASCADE,
 	)
 	
@@ -109,12 +96,12 @@ class GroupToDevice(models.Model):
 		(APPROVE, 'Approve'),
 		(ALLOCATION, 'Allocation'),
 	)
-	groupID = models.ForeignKey(
-		'Group',
+	group = models.ForeignKey(
+		Group,
 		on_delete=models.CASCADE,
 	)
-	devID = models.ForeignKey(
-		'Device',
+	device = models.ForeignKey(
+		Device,
 		on_delete=models.CASCADE,
 	)
 	startDateTime = models.DateTimeField(
@@ -131,16 +118,16 @@ class GroupToDevice(models.Model):
 	)
 	
 class UserToGroup(models.Model):
-	userID = models.ForeignKey(
-		'Profile',
+	user = models.ForeignKey(
+		User,
 		on_delete=models.CASCADE,
 	)
-	groupID	= models.ForeignKey(
-		'Group',
+	group = models.ForeignKey(
+		Group,
 		on_delete=models.CASCADE,
 	)
 
-class Connections(models.Model):
+class Connection(models.Model):
 	CONSOLE = 'Console'
 	SERIAL = 'Serial'
 	STRAIGHT = 'Straight'
@@ -149,7 +136,9 @@ class Connections(models.Model):
 		(SERIAL, 'Serial'),
 		(STRAIGHT, 'Straight'),
 	)
-	groupID = models.IntegerField(
+	Group = models.ForeignKey(
+		Group,
+		on_delete = models.CASCADE,
 	)
 	srcDevID = models.IntegerField(
 	)
@@ -163,35 +152,28 @@ class Connections(models.Model):
 		max_length=10,
 		choices=CONNECTION_TYPE_CHOICES,
 	)
-	connectionID = models.AutoField(
-		primary_key=True
-	)
 
 class Config(models.Model):
-	groupID = models.ForeignKey(
-		'Group',
+	group = models.ForeignKey(
+		Group,
 		on_delete=models.CASCADE,
 	)
-	devID = models.ForeignKey(
-		'Device',
+	device = models.ForeignKey(
+		Device,
 		on_delete=models.CASCADE,
 	)
 	config = models.FileField(
 		upload_to=None,
 		max_length=100,
 	)
-	configID = models.AutoField(
-		primary_key=True
-	)
 
 class SaveTopology(models.Model):
-	groupID = models.IntegerField(
+	group = models.ForeignKey(
+		Group,
+		on_delete=models.CASCADE,
 	)
 	name = models.CharField(
 		max_length = 40
-	)
-	saveID = models.AutoField(
-		primary_key=True
 	)
 
 class SaveConn(models.Model):
@@ -202,9 +184,6 @@ class SaveConn(models.Model):
 		(CONSOLE, 'Console'),
 		(SERIAL, 'Serial'),
 		(STRAIGHT, 'Straight'),
-	)
-	saveID = models.AutoField(
-		primary_key=True
 	)
 	srcDevID = models.IntegerField(
 	)
@@ -220,9 +199,6 @@ class SaveConn(models.Model):
 	)
 
 class SaveDev(models.Model):
-	saveID = models.AutoField(
-		primary_key=True
-	)
 	xCord = models.IntegerField(
 	)
 	yCord = models.IntegerField(
@@ -230,16 +206,13 @@ class SaveDev(models.Model):
 	devID = models.IntegerField(
 	)
 
-class Logs(models.Model):
-	logID = models.AutoField(
-		primary_key=True
-	)
-	devID = models.ForeignKey(
-		'Device',
+class Log(models.Model):
+	device = models.ForeignKey(
+		Device,
 		on_delete=models.CASCADE,
 	)
-	userID = models.ForeignKey(
-		'Profile',
+	user = models.ForeignKey(
+		User,
 		on_delete=models.CASCADE,
 	)
 	timestamp = models.DateTimeField(
