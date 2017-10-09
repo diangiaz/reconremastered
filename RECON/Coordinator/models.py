@@ -12,9 +12,9 @@ class Profile(models.Model):
 	user = models.OneToOneField(User, on_delete=models.CASCADE)
 	usertype = models.CharField(
 		max_length=10,
-		choices=EMPLOYEE_TYPE_CHOICES,
 	)
 	userID = models.CharField(
+		unique=True,
 		max_length=10,
 	)
 	
@@ -37,7 +37,11 @@ post_save.connect(create_user_profile, sender=User)
 	
 	
 class Group(models.Model):
-	name = models.CharField(max_length=50)
+	name = models.CharField(
+		unique=True, max_length=50,)
+		
+	def __str__(self):
+		return self.name
 	
 	
 class Device(models.Model):
@@ -56,7 +60,8 @@ class Device(models.Model):
 		choices=DEVICE_TYPE_CHOICES
 	)
 	name = models.CharField(
-		max_length=25
+		unique=True,
+		max_length=25,
 	)
 	ycord = models.PositiveIntegerField(
 	)
@@ -75,7 +80,8 @@ class Port(models.Model):
 		(CONSOLE, 'Console'),
 	)
 	name = models.CharField(
-		max_length=25
+		unique=True,
+		max_length=25,
 	)
 	type = models.CharField(
 		max_length=20,
