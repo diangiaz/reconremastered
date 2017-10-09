@@ -67,16 +67,16 @@ def createGroup(request):
 	return HttpResponseRedirect("/admin/")
 	
 @login_required(login_url="/login")	
-def testPage(request):	
+def editUser(request):	
 	JSONer = {}
 	JSONer['output'] = "Error: Invalid Input"
 
 	parsed = urlparse.urlparse(request.get_full_path())
-	userid = int(urlparse.parse_qs(parsed.query)['usr'][0])
+	userid = int(urlparse.parse_qs(parsed.query)['id'][0])
 
 	user = list(User.objects.all().filter(id=userid))[0]
-	print(user.username)
-	return HttpResponseRedirect("/")
+	print(user.id)
+	return HttpResponseRedirect("/admin/")
 	# userfound = list(User.objects.all().filter(username=request.user.username))[0]
 	
 	

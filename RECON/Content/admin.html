@@ -614,9 +614,12 @@
       </div>
     </div>
     <!-- end APPROVE -->
-{% for user in users %}
+    {% for user in users %} 
     <!--start EDIT MODAL -->
     <div id="editModal-{{user.id}}" class="modal fade" role="dialog" aria-hidden="true">
+     
+     <form action="/admin/edituser?id={{ user.id }}" method="post">
+      {% csrf_token %}
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="form-horizontal form-label-left input_mask">
@@ -630,34 +633,34 @@
                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="id-num">ID Number
                 </label>
                 <div class="col-md-8 col-sm-6 col-xs-12">
-                  <input type="number" id="id-num" class="form-control"> 
+                  <input type="number" id="id-num" class="form-control" value="{{ user.id }}"> 
                 </div>
               </div>
               <div class="form-group">
                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">First Name
                 </label>
                 <div class="col-md-8 col-sm-6 col-xs-12">
-                  <input type="text" id="first-name" name="first-name" class="form-control">
+                  <input type="text" id="first-name" name="first-name" class="form-control" value="{{ user.first_name }}">
                 </div>
               </div>
               <div class="form-group">
                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Last Name
                 </label>
                 <div class="col-md-8 col-sm-6 col-xs-12">
-                  <input type="text" id="last-name" name="last-name" class="form-control">
+                  <input type="text" id="last-name" name="last-name" class="form-control" value="{{ user.last_name }}">
                 </div>
               </div>
               <div class="form-group">
                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="user-name">Username
                 </label>
                 <div class="col-md-8 col-sm-6 col-xs-12">
-                  <input type="text" id="user-name" name="user-name" class="form-control">
+                  <input type="text" id="user-name" name="user-name" class="form-control" value="{{ user.username }}">
                 </div>
               </div>
               <div class="form-group">
                 <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Email</label>
                 <div class="col-md-8 col-sm-6 col-xs-12">
-                  <input id="email" class="form-control" type="text" name="email">
+                  <input id="email" class="form-control" type="text" name="email" value="{{ user.email }}">
                 </div>
               </div>
               <div class="form-group">
@@ -718,12 +721,15 @@
             </div>
             <div class="modal-footer">
              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-              <a href="/test?usr={{ user.id }}"><button type="submit" class="btn btn-primary">Save changes</button></a>
+              <button type="submit" class="btn btn-primary">Save changes</button>
             </div>
           </div>
         </div>
+       </form>
       </div>
     </div>
+    
+
     <!-- end EDIT MODAL -->
 
     <!--start ALLOCATE MODAL -->
