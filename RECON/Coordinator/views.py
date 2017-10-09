@@ -9,10 +9,9 @@ from .forms import SignUpForm, CreateGroupForm
 from .models import Group
 # Create your views here.
 
+import json
+import urllib.parse as urlparse
 
-
-
-		
 @login_required(login_url="/login")
 def userPage(request):
 	currentUser = request.user
@@ -67,7 +66,18 @@ def createGroup(request):
 			post.save()
 	return HttpResponseRedirect("/admin/")
 	
-	
+@login_required(login_url="/login")	
+def testPage(request):	
+	JSONer = {}
+	JSONer['output'] = "Error: Invalid Input"
+
+	parsed = urlparse.urlparse(request.get_full_path())
+	userid = int(urlparse.parse_qs(parsed.query)['usr'][0])
+
+	user = list(User.objects.all().filter(id=userid))[0]
+	print(user.username)
+	return HttpResponseRedirect("/")
+	# userfound = list(User.objects.all().filter(username=request.user.username))[0]
 	
 	
 	

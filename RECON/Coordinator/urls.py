@@ -8,6 +8,7 @@ urlpatterns = [
 	url(r'^logout/$', authViews.logout, {'template_name': 'logout.html', 'next_page': views.adminPage}, name='logout'),
 	url(r'^user/$', views.userPage, name='userPage'),
 	url(r'^admin/$', views.adminPage, name='adminPage'),
+	url(r'^test/$', views.testPage, name='testPage'),
 	url(r'^admin/createuser$', views.createUser, name='createuser'),
 	url(r'^admin/creategroup$', views.createGroup, name='createuser'),
 	url(r'^$', views.adminPage, name='defaultPage'),
