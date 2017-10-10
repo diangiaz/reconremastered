@@ -16,6 +16,7 @@ class Profile(models.Model):
 	userID = models.CharField(
 		unique=True,
 		max_length=10,
+		default = 0,
 	)
 	
 	def __str__(self):
@@ -28,6 +29,7 @@ def update_user_profile(sender, instance, created, **kwargs):
 	instance.profile.save()
 
 
+@receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
 	if created:
 		profile, created = Profile.objects.get_or_create(user=instance)

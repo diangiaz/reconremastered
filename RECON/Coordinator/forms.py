@@ -4,7 +4,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
-from .models import EMPLOYEE_TYPE_CHOICES, Group
+from .models import EMPLOYEE_TYPE_CHOICES, Group, Profile
 
 class LoginForm(AuthenticationForm):
     username = forms.CharField(label="Username", max_length=30, 
@@ -28,3 +28,13 @@ class CreateGroupForm(forms.ModelForm):
 	class Meta:
 		model = Group
 		fields = ('name',)
+
+class EditGroupForm(forms.ModelForm):
+	usertype = forms.ChoiceField(
+		choices=EMPLOYEE_TYPE_CHOICES,
+	)
+	userID = forms.CharField(label="User ID")
+	
+	class Meta:
+		model = User
+		fields = ('first_name', 'last_name','username', 'email', 'userID')

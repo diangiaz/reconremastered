@@ -618,7 +618,7 @@
     <!--start EDIT MODAL -->
     <div id="editModal-{{user.id}}" class="modal fade" role="dialog" aria-hidden="true">
      
-     <form action="/admin/edituser?id={{ user.id }}" method="post">
+     <form action="/editModal/" method="post">
       {% csrf_token %}
       <div class="modal-dialog">
         <div class="modal-content">
@@ -628,12 +628,14 @@
               </button>
               <h3 class="modal-title" id="myModalLabel">Edit {{ user.username }}</h3>
             </div>
+
+                  <input type="hidden" name="pkid" id="pkid" class="form-control" value="{{ user.id }}"> 
             <div class="modal-body">
               <div class="form-group">
                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="id-num">ID Number
                 </label>
                 <div class="col-md-8 col-sm-6 col-xs-12">
-                  <input type="number" id="id-num" class="form-control" value="{{ user.id }}"> 
+                  <input type="number" name="id-num" id="id-num" class="form-control" value="{{ user.Profile.userID }}"> 
                 </div>
               </div>
               <div class="form-group">
