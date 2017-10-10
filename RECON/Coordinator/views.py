@@ -52,8 +52,8 @@ def createUser(request):
 		if form.is_valid():
 			form.save()
 			user = User.objects.filter(username = form.cleaned_data.get('username'))[0]
-			user.usertype = form.cleaned_data.get('usertype')
-			user.userID = form.cleaned_data.get('userID')
+			user.profile.usertype = form.cleaned_data.get('usertype')
+			user.profile.userID = form.cleaned_data.get('userID')
 			# user.Profile.save()
 			user.save()
 	return HttpResponseRedirect("/admin/")
@@ -98,7 +98,7 @@ def editModal(request):
 				userID = User.objects.filter(id=pkid)[0]
 				print(userID)
 				print(userID.first_name)
-				userID.Profile.userID = IDnum
+				userID.profile.userID = IDnum
 				userID.first_name = firstname
 				userID.last_name = lastname
 				userID.username = username

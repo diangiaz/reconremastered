@@ -23,20 +23,13 @@ class Profile(models.Model):
 		return "%s's profile" % self.user
 
 @receiver(post_save, sender=User)
-def update_user_profile(sender, instance, created, **kwargs):
-	if created:
-		Profile.objects.create(user=instance)
-	instance.profile.save()
-
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
 
 @receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
-	if created:
-		profile, created = Profile.objects.get_or_create(user=instance)
-
-		
-post_save.connect(create_user_profile, sender=User)	
-	
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()
 	
 class Group(models.Model):
 	name = models.CharField(
