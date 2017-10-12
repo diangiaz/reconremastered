@@ -292,4 +292,7 @@ body .site_logo {
 	text-align:right;
 }
 
+.form-control {
+	border-radius: 4px;
+}
 /*T R B L*/

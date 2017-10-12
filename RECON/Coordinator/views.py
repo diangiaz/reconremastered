@@ -36,8 +36,11 @@ def adminPage(request):
 	newgroupForm = CreateGroupForm()
 	editgroupForm = EditGroupForm()
 	users = User.objects.all()	
+	groups = Group.objects.all()
+	
 	
 	context = {
+	'groups':groups,
 	'users':users,
 	'current_user': currentUser,
 	'newgroupForm': newgroupForm,
