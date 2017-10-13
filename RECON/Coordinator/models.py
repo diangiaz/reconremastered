@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
@@ -8,33 +8,6 @@ EMPLOYEE_TYPE_CHOICES = (
 		('admin', 'Admin'),
 		('employee', 'Employee'),
 	)
-class Profile(models.Model):
-	user = models.OneToOneField(User, on_delete=models.CASCADE)
-	usertype = models.CharField(
-		max_length=10,
-	)
-	userID = models.CharField(
-		unique=True,
-		max_length=10,
-	)
-	
-	def __str__(self):
-		return "%s's profile" % self.user
-
-@receiver(post_save, sender=User)
-def update_user_profile(sender, instance, created, **kwargs):
-	if created:
-		Profile.objects.create(user=instance)
-	instance.profile.save()
-
-
-def create_user_profile(sender, instance, created, **kwargs):
-	if created:
-		profile, created = Profile.objects.get_or_create(user=instance)
-
-		
-post_save.connect(create_user_profile, sender=User)	
-	
 	
 class Group(models.Model):
 	name = models.CharField(
@@ -42,6 +15,35 @@ class Group(models.Model):
 		
 	def __str__(self):
 		return self.name
+
+class Profile(models.Model):
+	user = models.OneToOneField(User, on_delete=models.CASCADE)
+	usertype = models.CharField(
+		max_length=10,
+	)
+	employeeID = models.CharField(
+		max_length=10,
+	)
+	group = models.ForeignKey(
+		Group,
+		on_delete = models.CASCADE,	
+		default = 1,
+	)
+	
+	def __str__(self):
+		return "%s's profile" % self.user
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()
+		
+post_save.connect(create_user_profile, sender=User)	
+	
 	
 	
 class Device(models.Model):
@@ -67,6 +69,8 @@ class Device(models.Model):
 	)
 	xcord = models.PositiveIntegerField(
 	)
+	def __str__(self):
+		return self.name
 
 class Port(models.Model):
 	SERIAL = 'Serial'
