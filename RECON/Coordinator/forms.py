@@ -16,13 +16,17 @@ class LoginForm(AuthenticationForm):
 class SignUpForm(UserCreationForm):
 	usertype = forms.ChoiceField(
 		choices=EMPLOYEE_TYPE_CHOICES,
+		label="User Type",
 	)
-	userID = forms.CharField(label="User ID")
+	employeeID = forms.CharField(label="Employee ID")
+	group = forms.ModelChoiceField(
+		queryset = Group.objects.all(),
+		empty_label = None,
+	)
 	
 	class Meta:
 		model = User
-		fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2', 'userID', 'usertype')
-		
+		fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2', 'employeeID', 'usertype', 'group',)
 class CreateGroupForm(forms.ModelForm):
 
 	class Meta:

@@ -22,16 +22,14 @@ class Profile(models.Model):
 	usertype = models.CharField(
 		max_length=10,
 	)
-	userID = models.CharField(
-		unique=True,
+	employeeID = models.CharField(
 		max_length=10,
-		default = 0,
 	)
 	group = models.ForeignKey(
-				Group,
-				on_delete = models.CASCADE,
-				default = 1,
-		)
+		Group,
+		on_delete = models.CASCADE,	
+		default = 1,
+	)
 	
 	def __str__(self):
 		return "%s's profile" % self.user

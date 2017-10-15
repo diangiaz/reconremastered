@@ -132,7 +132,7 @@
                               <td>
                               <ul class="list-unstyled">
                               {% for user in users %}
-                                {% ifequal user.profile.group.name groups.name %}
+                                {% ifequal user.profile.group.id groups.id %}
                                 <li><a href="#editAcct-{{user.id}}" data-toggle="modal">{{user.username}}</a></li>
                                 
                                 {% endifequal %}
@@ -186,6 +186,7 @@
                             </tr>
                          
                           {% endfor %}
+
                             
 
                           </tbody>
@@ -650,7 +651,7 @@
                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="id-num">ID Number
                 </label>
                 <div class="col-md-8 col-sm-6 col-xs-12">
-                  <input type="number" name="id-num" id="id-num" class="form-control" value="{{ user.profile.userID }}"> 
+                  <input type="number" name="id-num" id="id-num" class="form-control" value="{{ user.profile.employeeID }}"> 
                 </div>
               </div>
               <div class="form-group">
@@ -710,6 +711,7 @@
     <!--start EDIT GROUP -->
     <div id="editGrp-{{groups.id}}" class="modal fade" role="dialog" aria-hidden="true">
      <form action="/editGrp/" method="post">
+     {% csrf_token %}
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="form-horizontal form-label-left input_mask">
@@ -720,6 +722,7 @@
             </div>
             <div class="modal-body">
               <h4>Current Members</h4>
+                <input type="hidden" name="groupid" id="groupid" class="form-control" value="{{ groups.id }}"> 
                 <div class="pricing_features" style="padding: 10px 15px 0 15px">
                   <ul class="list-unstyled" style="column-count: 3; margin-bottom: 0">
                   	{% for user in users %}
@@ -734,11 +737,11 @@
               <div class="form-group">
                 <label class="control-label col-md-3 col-sm-3 col-xs-12">Add Members:</label>
                 <div class="col-md-8 col-sm-6 col-xs-12">
-                  <select id="employeeLocation" class="select2_single form-control" tabindex="-1">
+                  <select name="employeeName" id="employeeLocation" class="select2_single form-control" tabindex="-1">
                   <option></option>
                   {% for user in users %}
-                    {% ifnotequal user.profile.group.name groups.name %}
-                  <option value="man">{{user.username}}</option>
+                    {% ifnotequal user.profile.group.id groups.id %}
+                  <option value="{{user.id}}">{{user.username}}</option>
                      {% endifnotequal %}
                   {% endfor %}
                   </select>
@@ -752,6 +755,7 @@
             </div>
           </div>
         </div>
+        </form>
       </div>
     </div>
      
