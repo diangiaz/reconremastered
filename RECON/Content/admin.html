@@ -103,7 +103,7 @@
                           <thead>
                             <tr>
                               <th rowspan="2" style="text-align: center; width:10%; font-weight: 700">Group</th>
-                              <th rowspan="2" style="text-align: center; width:15%; font-weight: 700">Member</th>
+                              <th rowspan="2" style="text-align: center; width:10%; font-weight: 700">Member</th>
                               <th colspan="3" rowspan="1" style="text-align: center;width:60%; font-weight: 700">Devices</th>
                               <th rowspan="2" style="width:10%"></th>
                             </tr>
@@ -141,9 +141,9 @@
                             </td>
                               <td>
                                 <ul class="allocatedDev-list">
-                                  <li>                                 
+                                  <li style="padding-left: 0">                                 
                                     <a>
-                                      <img src="{% static 'production/images/routerAvatar.png' %}" class="avatar" alt="Avatar">
+                                      <img src="{% static 'production/images/routerAvatar.png' %}" class="avatar" alt="Avatar" style="margin-right: 6px">
                                       <strong>Monday - Wednesday</strong>
                                       <br />
                                       <small>September 3-6</small>
@@ -153,9 +153,9 @@
                               </td>
                               <td>
                                 <ul class="allocatedDev-list">
-                                  <li>                                 
+                                  <li style="padding-left: 0">                                 
                                     <a>
-                                      <img src="{% static 'production/images/switchAvatar.png' %}" class="avatar" alt="Avatar">
+                                      <img src="{% static 'production/images/switchAvatar.png' %}" class="avatar" alt="Avatar" style="margin-right: 6px">
                                       <strong>Monday - Wednesday</strong>
                                       <br />
                                       <small>September 3-6</small>
@@ -165,9 +165,9 @@
                               </td>
                               <td>
                                 <ul class="allocatedDev-list">
-                                  <li>                                 
+                                  <li style="padding-left: 0">                                 
                                     <a>
-                                      <img src="{% static 'production/images/terminalAvatar.png' %}" class="avatar" alt="Avatar">
+                                      <img src="{% static 'production/images/terminalAvatar.png' %}" class="avatar" alt="Avatar" style="margin-right: 6px">
                                       <strong>Monday - Wednesday</strong>
                                       <br />
                                       <small>September 3-6</small>
@@ -680,59 +680,15 @@
                   <input id="email" class="form-control" type="text" name="email" value="{{ user.email }}">
                 </div>
               </div>
-              <div class="form-group">
-                <label class="control-label col-md-3 col-sm-3 col-xs-12" >Group</label>
-                <div class="col-md-8 col-sm-6 col-xs-12">                  
-                  <table class="table-width table table-striped jambo_table" style="margin: 0; width: 100%">
-                    <tbody>
-                      <tr>
-                        <td class="a-center ">
-                          <div class="checkbox">
-                            <label style="padding-left: 0">
-                              <input type="checkbox" class="flat"> Group 1
-                            </label>
-                          </div>
-                        </td>
-                        <td>
-                          <div class="checkbox">
-                            <label style="padding-left: 0">
-                              <input type="checkbox" class="flat"> Group 2
-                            </label>
-                          </div>
-                        </td>
-                        <td>
-                          <div class="checkbox">
-                            <label style="padding-left: 0">
-                              <input type="checkbox" class="flat"> Group 3
-                            </label>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td class="a-center ">
-                          <div class="checkbox">
-                            <label style="padding-left: 0">
-                              <input type="checkbox" class="flat"> Group 4
-                            </label>
-                          </div>
-                        </td>
-                        <td>
-                          <div class="checkbox">
-                            <label style="padding-left: 0">
-                              <input type="checkbox" class="flat"> Group 5
-                            </label>
-                          </div>
-                        </td>
-                        <td>
-                          <div class="checkbox">
-                            <label style="padding-left: 0">
-                              <input type="checkbox" class="flat"> Group 6
-                            </label>
-                          </div>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+               <div class="form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12">Group</label>
+                <div class="col-md-8 col-sm-6 col-xs-12">
+                  <select id="employeeLocation" class="select2_single form-control" tabindex="-1">
+                  <option></option>
+                  <option value="man">Group 1</option>
+                  <option value="user1">Group 2</option>
+                  <option value="user2">Group 3</option>
+                  </select>
                 </div>
               </div>
             </div>
@@ -803,7 +759,7 @@
     <!-- end EDIT GROUP -->	
 
     <!--start ALLOCATE MODAL -->
-    <div id="allocateModal-{{user.id}}" class="modal fade" role="dialog" aria-hidden="true">
+    <div id="allocateModal" class="modal fade" role="dialog" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="form-horizontal form-label-left">
@@ -845,17 +801,7 @@
                       </div>
                     </td>
                   </tr>
-                  <tr>
-                    <td class="a-center ">
-                      <input type="checkbox" id="serverBox" value="srvr" onclick="enableSRQty(this)">
-                    </td>
-                    <td>Server</td>
-                    <td>
-                      <div class="col-md-4">
-                        <input type="text" id="serverQty" placeholder="0" disabled class="form-control" data-inputmask="'mask': '9'">
-                      </div>
-                    </td>
-                  </tr>
+                 
                   <tr>
                     <td class="a-center ">
                       <input type="checkbox" id="terminalBox" value="host" onclick="enableTQty(this)">
