@@ -364,89 +364,119 @@
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
             </button>  
           </div>
-          <div class="modal-body">
+          <div class="modal-body" style="padding-bottom: 0">
             <div class="form-horizontal form-label-left">
-              <h2>Available devices:</h2>
-              <table class="table-width table table-striped jambo_table">
-                <thead>
-                  <tr>
-                    <th style="width: 33%">Router</th>
-                    <th style="width: 33%">Switch</th>
-                    <th style="width: 33%">Terminal</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td class="a-center ">
-                    	<div class="checkbox">
-                        <label style="padding-left: 0">
-                          <input type="checkbox" class="flat"> Router1
-                        </label>
-                      </div>
-                    </td>
-                    <td>
-                    	<div class="checkbox">
-                        <label style="padding-left: 0">
-                          <input type="checkbox" class="flat"> Switch1
-                        </label>
-                      </div>
-                    </td>
-                    <td>
-                    	<div class="checkbox">
-                        <label style="padding-left: 0">
-                          <input type="checkbox" class="flat"> Terminal1
-                        </label>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="a-center ">
-                    	<div class="checkbox">
-                        <label style="padding-left: 0">
-                          <input type="checkbox" class="flat"> Router2
-                        </label>
-                      </div>
-                    </td>
-                    <td>
-                    	<div class="checkbox">
-                        <label style="padding-left: 0">
-                          <input type="checkbox" class="flat"> Switch2
-                        </label>
-                      </div>
-                    </td>
-                    <td>
-                    	<div class="checkbox">
-                        <label style="padding-left: 0">
-                          <input type="checkbox" class="flat"> Terminal2
-                        </label>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="a-center ">
-                    	<div class="checkbox">
-                        <label style="padding-left: 0">
-                          <input type="checkbox" class="flat" disabled="disabled"> Router3
-                        </label>
-                      </div>
-                    </td>
-                    <td>
-                    	<div class="checkbox">
-                        <label style="padding-left: 0">
-                          <input type="checkbox" class="flat" disabled="disabled"> Switch3
-                        </label>
-                      </div>
-                    </td>
-                    <td>
-                    	<div class="checkbox">
-                        <label style="padding-left: 0">
-                          <input type="checkbox" class="flat" disabled="disabled"> Terminal3
-                        </label>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <div class="x_content" style="margin-top:0;padding-bottom:10px">
+              	<h2>Available devices:</h2>
+	              <table class="table-width table table-striped jambo_table" style="width: 53%;float: left">
+	                <thead>
+	                  <tr>
+	                    <th style="width: 33%">Router</th>
+	                    <th style="width: 33%">Switch</th>
+	                    <th style="width: 33%">Terminal</th>
+	                  </tr>
+	                </thead>
+	                <tbody>
+	                  <tr>
+	                    <td class="a-center ">
+	                    	<div class="radio">
+	                        <label style="padding-left: 0">
+	                          <input type="radio" class="flat" name="deviceList"> Router1
+	                        </label>
+	                      </div>
+	                    </td>
+	                    <td>
+	                    	<div class="radio">
+	                        <label style="padding-left: 0">
+	                          <input type="radio" class="flat" name="deviceList"> Switch1
+	                        </label>
+	                      </div>
+	                    </td>
+	                    <td>
+	                    	<div class="radio">
+	                        <label style="padding-left: 0">
+	                          <input type="radio" class="flat" name="deviceList"> Terminal1
+	                        </label>
+	                      </div>
+	                    </td>
+	                  </tr>
+	                  <tr>
+	                    <td class="a-center ">
+	                    	<div class="radio">
+	                        <label style="padding-left: 0">
+	                          <input type="radio" class="flat" name="deviceList"> Router2
+	                        </label>
+	                      </div>
+	                    </td>
+	                    <td>
+	                    	<div class="radio">
+	                        <label style="padding-left: 0">
+	                          <input type="radio" class="flat" name="deviceList"> Switch2
+	                        </label>
+	                      </div>
+	                    </td>
+	                    <td>
+	                    	<div class="radio">
+	                        <label style="padding-left: 0">
+	                          <input type="radio" class="flat" name="deviceList"> Terminal2
+	                        </label>
+	                      </div>
+	                    </td>
+	                  </tr>
+	                  <tr>
+	                    <td class="a-center ">
+	                    	<div class="radio">
+	                        <label style="padding-left: 0">
+	                          <input type="radio" class="flat" name="deviceList"> Router3
+	                        </label>
+	                      </div>
+	                    </td>
+	                    <td>
+	                    	<div class="radio">
+	                        <label style="padding-left: 0">
+	                          <input type="radio" class="flat" name="deviceList"> Switch3
+	                        </label>
+	                      </div>
+	                    </td>
+	                    <td>
+	                    	<div class="radio">
+	                        <label style="padding-left: 0">
+	                          <input type="radio" class="flat" name="deviceList"> Terminal3
+	                        </label>
+	                      </div>
+	                    </td>
+	                  </tr>
+	                </tbody>
+	              </table>
+	              <div style="width:45%;height:160px;float:right;overflow:auto;">
+		              <table class="table table-hover" >
+		                <thead>
+		                  <tr>
+		                    <th colspan="3" style="width: 33%">Dates Reserved</th>
+		                  </tr>
+		                </thead>
+		                <tbody>
+		                  <tr>
+		                    <td>Date 1</td>	                    
+		                    <td>Date 4</td>
+		                  </tr>
+		                  <tr>
+		                    <td>Date 2</td>
+		                    <td>Date 5</td>
+		                  </tr>
+		                  <tr>
+		                    <td>Date 3</td>
+		                    <td>Date 6</td>
+		                  </tr>
+		                  <tr>
+		                    <td>Date 4</td>
+		                    <td>Date 7</td>
+		                  </tr>
+		                </tbody>
+		              </table>	              	
+	              </div>
+              </div>
+
               <div class="form-group">
                 <div class="col-md-6 col-sm-6 col-xs-12" style="padding-right: 0">
               		<label class="control-label col-md-3" style="width: 17%" for="datetimepicker6">Date</label>
