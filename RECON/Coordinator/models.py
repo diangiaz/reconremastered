@@ -69,6 +69,9 @@ class Device(models.Model):
 	xcord = models.PositiveIntegerField(
 	)
 
+	def __str__(self):
+		return self.name
+
 class Port(models.Model):
 	SERIAL = 'Serial'
 	GIGABYTE = 'Gigabyte'
