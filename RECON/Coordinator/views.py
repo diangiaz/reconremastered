@@ -101,24 +101,24 @@ def createGroup(request):
 			post.save()
 	return HttpResponseRedirect("/admin/")
 	
-@login_required(login_url="/login")	
-def editModal(request):		
-	if request.method == 'POST':
-		pkid = request.POST.get('pkid')
-		firstname = request.POST.get('first-name')
-		lastname = request.POST.get('last-name')
-		username = request.POST.get('user-name')
-		email = request.POST.get('email')
-		IDnum = request.POST.get('id-num')
-		if User.objects.filter(id=pkid).count() > 0:
-			userID = User.objects.filter(id=pkid)[0]
-			userID.profile.employeeID = IDnum
-			userID.first_name = firstname
-			userID.last_name = lastname
-			userID.username = username
-			userID.email = email
-			userID.save()
-	return HttpResponseRedirect("/admin/")
+# @login_required(login_url="/login")	
+# def editModal(request):		
+# 	if request.method == 'POST':
+# 		pkid = request.POST.get('pkid')
+# 		firstname = request.POST.get('first-name')
+# 		lastname = request.POST.get('last-name')
+# 		username = request.POST.get('user-name')
+# 		email = request.POST.get('email')
+# 		IDnum = request.POST.get('id-num')
+# 		if User.objects.filter(id=pkid).count() > 0:
+# 			userID = User.objects.filter(id=pkid)[0]
+# 			userID.profile.employeeID = IDnum
+# 			userID.first_name = firstname
+# 			userID.last_name = lastname
+# 			userID.username = username
+# 			userID.email = email
+# 			userID.save()	
+# 	return HttpResponseRedirect("/admin/")
 
 @login_required(login_url="/login")	
 def editGrp(request):		
@@ -155,5 +155,78 @@ def reserveDevice(request):
 			print(userID.username)
 			userID.save(force_update=True)
 	return HttpResponseRedirect("/admin/")
+
+ # @login_required(login_url="/login")
+ # def editModal(request):		
+	# 	JSONer = {}
+	# 	JSONer['pkid'] = request.POST.get('pkid')
+	# 	JSONer['first-name'] = request.POST.get('first-name')
+	# 	JSONer['last-name'] = request.POST.get('last-name')
+	# 	JSONer['user-name'] = request.POST.get('user-name')
+	# 	JSONer['email'] = request.POST.get('email')
+	# 	JSONer['id-num'] = request.POST.get('id-num')
+	# 	if User.objects.filter(id=JSONer['pkid']).count() > 0:
+	# 		userID = User.objects.filter(id=JSONer['pkid'])[0]
+	# 		userID.profile.employeeID = JSONer['id-num']
+	# 		userID.first_name = JSONer['first-name']
+	# 		userID.last_name = JSONer['last-name']
+	# 		userID.username = JSONer['user-name']
+	# 		userID.email = JSONer['email']
+	# 		userID.save()
+	# return HttpResponseRedirect("/admin/")
+
+@login_required(login_url="/login")
+def editModal(request):
+
+	JSONer = {}
+	parsedData = urlparse.urlparse(request.get_full_path())
+	pkid = (urlparse.parse_qs(parsedData.query)['pkid'][0])
+	idnum = (urlparse.parse_qs(parsedData.query)['id-num'][0])
+	firstname = (urlparse.parse_qs(parsedData.query)['first-name'][0])
+	lastname = (urlparse.parse_qs(parsedData.query)['last-name'][0])
+	username = (urlparse.parse_qs(parsedData.query)['username'][0])
+	email = (urlparse.parse_qs(parsedData.query)['email'][0])
+	newid = (urlparse.parse_qs(parsedData.query)['newid'][0])
+
+	# 	# JSONer['pkid'] = request.POST.get('pkid')
+		# JSONer['first-name'] = request.POST.get('first-name')
+		# JSONer['last-name'] = request.POST.get('last-name')
+		# JSONer['user-name'] = request.POST.get('user-name')
+		# JSONer['email'] = request.POST.get('email')
+		# JSONer['id-num'] = request.POST.get('id-num')
+	if User.objects.filter(id=pkid).count() > 0:
+	 	userID = User.objects.filter(id=pkid)[0]
+	 	print(newid)
+	 	userID.profile.employeeID = newid
+	 	userID.first_name = firstname
+	 	userID.last_name = lastname
+	 	userID.username = username
+	 	userID.email = email
+	 	userID.save()
 	
+	return HttpResponseRedirect(json.dumps(JSONer))
 	
+# def get_value(request): AJAX EXAMPLE
+#     global pktNSrc1
+#     global pktDifX1
+#     global pktNSrc2
+#     global pktDifX2
+#     global pktNSrc3
+#     global pktDifX3
+#     #global pktDifY
+#     #global pktDifZ
+
+#     #print(datetime.datetime.now())
+#     JSONer = {}
+#     JSONer['datetime1'] = str(datetime.datetime.now().strftime("%B %d, %Y, %I:%M:%S %p"))
+#     JSONer['pktNSrc1'] = pktNSrc1
+#     JSONer['pktDifX1'] = pktDifX1
+#     JSONer['datetime2'] = str(datetime.datetime.now().strftime("%B %d, %Y, %I:%M:%S %p"))
+#     JSONer['pktNSrc2'] = pktNSrc2
+#     JSONer['pktDifX2'] = pktDifX2
+#     JSONer['datetime3'] = str(datetime.datetime.now().strftime("%B %d, %Y, %I:%M:%S %p"))
+#     JSONer['pktNSrc3'] = pktNSrc3
+#     JSONer['pktDifX3'] = pktDifX3
+#     #JSONer['pktDifY'] = pktDifY
+#     #JSONer['pktDifZ'] = pktDifZ
+#     return HttpResponse(json.dumps(JSONer))	

@@ -634,7 +634,7 @@
     <!--start EDIT MODAL -->
     <div id="editAcct-{{user.id}}" class="modal fade" role="dialog" aria-hidden="true">
      
-     <form action="/editModal/" method="post">
+     
       {% csrf_token %}
       <div class="modal-dialog">
         <div class="modal-content">
@@ -651,34 +651,34 @@
                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="id-num">ID Number
                 </label>
                 <div class="col-md-8 col-sm-6 col-xs-12">
-                  <input type="number" name="id-num" id="id-num" class="form-control" value="{{ user.profile.employeeID }}"> 
+                  <input type="number" name="id-num" id="id-num-{{ user.id }}" class="form-control" value="{{ user.profile.employeeID }}"> 
                 </div>
               </div>
               <div class="form-group">
                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">First Name
                 </label>
                 <div class="col-md-8 col-sm-6 col-xs-12">
-                  <input type="text" id="first-name" name="first-name" class="form-control" value="{{ user.first_name }}">
+                  <input type="text" id="first-name" name="first-name-{{ user.id }}" class="form-control" value="{{ user.first_name }}">
                 </div>
               </div>
               <div class="form-group">
                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Last Name
                 </label>
                 <div class="col-md-8 col-sm-6 col-xs-12">
-                  <input type="text" id="last-name" name="last-name" class="form-control" value="{{ user.last_name }}">
+                  <input type="text" id="last-name" name="last-name-{{ user.id }}" class="form-control" value="{{ user.last_name }}">
                 </div>
               </div>
               <div class="form-group">
                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="user-name">Username
                 </label>
                 <div class="col-md-8 col-sm-6 col-xs-12">
-                  <input type="text" id="user-name" name="user-name" class="form-control" value="{{ user.username }}">
+                  <input type="text" id="user-name" name="user-name-{{ user.id }}" class="form-control" value="{{ user.username }}">
                 </div>
               </div>
               <div class="form-group">
                 <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Email</label>
                 <div class="col-md-8 col-sm-6 col-xs-12">
-                  <input id="email" class="form-control" type="text" name="email" value="{{ user.email }}">
+                  <input id="email-{{ user.id }}" class="form-control" type="text" name="email" value="{{ user.email }}">
                 </div>
               </div>
                <div class="form-group">
@@ -695,11 +695,11 @@
             </div>
             <div class="modal-footer">
              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-primary">Save changes</button>
+              <button type="submit" data-dismiss="modal" onClick="reloader({{ user.id }}, {{user.profile.employeeID}}, '{{user.first_name}}', '{{user.last_name}}', '{{user.username}}', '{{user.email}}')" class="btn btn-primary">Save changes</button>
             </div>
           </div>
         </div>
-       </form>
+       
       </div>
     </div>
     {% endfor %}
@@ -930,6 +930,26 @@
           terQty.value = 0;
         }
       }
+    </script>
+
+    <script>
+        
+
+        function reloader(id,employeeid,firstname,lastname,username,email){
+          var newid = document.getElementById('id-num-' + id).value;
+            $.ajax({url: 'http://127.0.0.1:8000/editModal/?pkid='+ id + "&id-num=" + employeeid + "&first-name=" + firstname + "&last-name=" + lastname + "&username=" + username + "&email=" + email + '&newid=' + newid, 
+                success: function(result){
+                  
+                    // var res = JSON.parse(result);
+                    // document.getElementById('pkid').innerHTML = res['pkid'];
+                    // document.getElementById('first-name').innerHTML = res['first-name'];
+                    // document.getElementById('last-name').innerHTML = res['last-name'];
+                    // document.getElementById('user-name').innerHTML = res['user-name'];
+                    // document.getElementById('email').innerHTML = res['email'];
+                    // document.getElementById('id-num').innerHTML = res['id-num'];   
+                }
+            });
+        }
     </script>
 
     <!-- jQuery -->
