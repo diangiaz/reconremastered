@@ -121,22 +121,6 @@ def createGroup(request):
 # 	return HttpResponseRedirect("/admin/")
 
 @login_required(login_url="/login")	
-def editGrp(request):		
-	if request.method == 'POST':
-		pkid = request.POST.get('employeeName')
-		groupid = request.POST.get('groupid')
-		print(groupid)
-		print(pkid)
-		if User.objects.filter(id=pkid).count() > 0 and Group.objects.filter(id=groupid).count() > 0:
-			userID = User.objects.filter(id=pkid)[0]
-			print(userID.profile.group.id)
-			userID.profile.group_id = groupid
-			print(userID.profile.group_id)
-			print(userID.username)
-			userID.save(force_update=True)
-	return HttpResponseRedirect("/admin/")
-
-@login_required(login_url="/login")	
 def reserveDevice(request):		
 	if request.method == 'POST':
 		startdate = request.POST.get('start-date')
@@ -205,6 +189,22 @@ def editModal(request):
 	 	userID.save()
 	
 	return HttpResponseRedirect(json.dumps(JSONer))
+
+@login_required(login_url="/login")	
+def editGrp(request):		
+	JSONer = {}
+	parsedData = urlparse.urlparse(request.get_full_path())
+	pkid = (urlparse.parse_qs(parsedData.query)['pkid'][0])
+	print(pkid)
+	groupid = (urlparse.parse_qs(parsedData.query)['groupid'][0])
+	if User.objects.filter(id=pkid).count() > 0 and Group.objects.filter(id=groupid).count() > 0:
+		print(pkid)
+		print(groupid)
+		userID = User.objects.filter(id=pkid)[0]
+		userID.profile.group_id = groupid
+		print(userID.username)
+		userID.save(force_update=True)
+	return HttpResponseRedirect(json.dumps(JSONer))	
 	
 # def get_value(request): AJAX EXAMPLE
 #     global pktNSrc1

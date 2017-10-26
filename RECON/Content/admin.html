@@ -695,7 +695,7 @@
             </div>
             <div class="modal-footer">
              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-              <button type="submit" data-dismiss="modal" onClick="reloader({{ user.id }}, {{user.profile.employeeID}}, '{{user.first_name}}', '{{user.last_name}}', '{{user.username}}', '{{user.email}}')" class="btn btn-primary">Save changes</button>
+              <button type="submit" data-dismiss="modal" onClick="editAcctAjax({{ user.id }}, {{user.profile.employeeID}}, '{{user.first_name}}', '{{user.last_name}}', '{{user.username}}', '{{user.email}}')" class="btn btn-primary">Save changes</button>
             </div>
           </div>
         </div>
@@ -710,7 +710,6 @@
      
     <!--start EDIT GROUP -->
     <div id="editGrp-{{groups.id}}" class="modal fade" role="dialog" aria-hidden="true">
-     <form action="/editGrp/" method="post">
      {% csrf_token %}
       <div class="modal-dialog">
         <div class="modal-content">
@@ -722,7 +721,7 @@
             </div>
             <div class="modal-body">
               <h4>Current Members</h4>
-                <input type="hidden" name="groupid" id="groupid" class="form-control" value="{{ groups.id }}"> 
+                <input type="hidden" name="groupid" id="groupid-{{groups.id}}" class="form-control" value="{{ groups.id }}"> 
                 <div class="pricing_features" style="padding: 10px 15px 0 15px">
                   <ul class="list-unstyled" style="column-count: 3; margin-bottom: 0">
                   	{% for user in users %}
@@ -737,25 +736,26 @@
               <div class="form-group">
                 <label class="control-label col-md-3 col-sm-3 col-xs-12">Add Members:</label>
                 <div class="col-md-8 col-sm-6 col-xs-12">
-                  <select name="employeeName" id="employeeLocation" class="select2_single form-control" tabindex="-1">
-                  <option></option>
+                  <select name="employeeName" id="employeeLocation-{{groups.id}}" class="select2_single form-control" tabindex="-1">
+                  
                   {% for user in users %}
                     {% ifnotequal user.profile.group.id groups.id %}
-                  <option value="{{user.id}}">{{user.username}}</option>
+                  <option id="userGroup-{{ user.id }}" value="{{user.id}}">{{user.username}}</option>
+                  
                      {% endifnotequal %}
                   {% endfor %}
                   </select>
+
                 </div>
               </div>
 
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-primary">Save changes</button>
+              <button type="submit" data-dismiss="modal" onClick="editGrpAjax('employeeLocation-{{groups.id}}', {{groups.id}})" class="btn btn-primary">Save changes</button>
             </div>
           </div>
         </div>
-        </form>
       </div>
     </div>
      
@@ -935,7 +935,7 @@
     <script>
         
 
-        function reloader(id,employeeid,firstname,lastname,username,email){
+        function editAcctAjax(id,employeeid,firstname,lastname,username,email){
           var newid = document.getElementById('id-num-' + id).value;
             $.ajax({url: 'http://127.0.0.1:8000/editModal/?pkid='+ id + "&id-num=" + employeeid + "&first-name=" + firstname + "&last-name=" + lastname + "&username=" + username + "&email=" + email + '&newid=' + newid, 
                 success: function(result){
@@ -947,6 +947,21 @@
                     // document.getElementById('user-name').innerHTML = res['user-name'];
                     // document.getElementById('email').innerHTML = res['email'];
                     // document.getElementById('id-num').innerHTML = res['id-num'];   
+                }
+            });
+        }
+    </script>
+
+    <script>
+        function editGrpAjax(id,groupid){
+          var newid = document.getElementById(id).options[document.getElementById(id).selectedIndex].value;
+          var newgroupid = document.getElementById('groupid-' + groupid).value;
+          console.log(newid)
+          console.log(groupid)
+            $.ajax({url: 'http://127.0.0.1:8000/editGrp/?pkid='+ newid + "&groupid=" + newgroupid, 
+                success: function(result){
+                  
+                  // insert success message here
                 }
             });
         }
