@@ -8,7 +8,10 @@ urlpatterns = [
 	url(r'^logout/$', authViews.logout, {'template_name': 'logout.html', 'next_page': views.adminPage}, name='logout'),
 	url(r'^user/$', views.userPage, name='userPage'),
 	url(r'^admin/$', views.adminPage, name='adminPage'),
+	url(r'^admin/validate_username/$', views.validate_username, name='validate_username'),
 	url(r'^admin/createuser$', views.createUser, name='createuser'),
 	url(r'^admin/creategroup$', views.createGroup, name='createuser'),
+	url(r'^getouts$', views.getSerialOutput, name='serialout'),
+	url(r'^routerSend$', views.sendSerial1, name='sendserial1'),
 	url(r'^$', views.adminPage, name='defaultPage'),
 ]	

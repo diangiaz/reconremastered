@@ -26,16 +26,6 @@ class SignUpForm(UserCreationForm):
 	class Meta:
 		model = User
 		fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2', 'employeeID', 'usertype', 'group',)
-		
-# class UserGroupForm(forms.ModelForm):
-	# group = forms.ModelChoiceField(
-		# queryset = Group.objects.all(),
-		# empty_label = None
-	# )
-	
-	# class Meta:
-		# model = Profile
-		# fields = ('group',)
 	
 class CreateGroupForm(forms.ModelForm):
 

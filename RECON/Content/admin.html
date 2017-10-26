@@ -1,13 +1,8 @@
 {% load static %}
-{% block javascript %}
-		<script>
-			$("#id_username").change(function() {
-				console.log( $(this).val() );
-			});
-		</script>
-{% endblock %}
+
+
 <!DOCTYPE html>
-<link rel="shortcut icon" type="image/png" href="{% static '/images/recon.ico' %}">
+<link rel="shortcut icon" type="image/png" href="{% static 'production/images/recon.ico' %}">
 <html lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -281,8 +276,12 @@
                 <div class="x_panel" style="padding:10px 17px;">
                   <div class="x_title">
                     <h2>Employee Information</h2>
+					
+					
 					<form method="post" action="/admin/createuser">
-                    <div class="clearfix"></div>
+                    
+					
+					<div class="clearfix"></div>
                   </div>
                   <div class="x_content">
                     <br />
@@ -554,7 +553,6 @@
                         <!-- </div> -->
                       <!-- </div> -->
 					  
-					  {% csrf_token %}
 						{{ newgroupForm.as_p }}
 					  
 					  
@@ -568,6 +566,7 @@
             </div>
             <!-- end APPROVE -->
 			</form>
+			
           </div>
         </div>
         <!-- /page content -->
@@ -985,6 +984,7 @@
         $('#datetimepicker6').data("DateTimePicker").maxDate(e.date);
     });
     </script>
+	
 
     <!-- Calendar -->
     <!-- <script src="js/jquery-1.11.1.min.js"></script> -->
@@ -994,6 +994,15 @@
     <script src="{% static 'production/js/site.js' %}"></script>
 	<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
 	
+	{% block javascript %}
+		<script>
+			$("#id_name").change(function () {
+				alert("Hello World");
+				console.log( $(this).val() );
+			
+			});
+		</script>
+	{% endblock %}
 	
   </body>
 </html>

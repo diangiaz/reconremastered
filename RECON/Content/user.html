@@ -144,87 +144,14 @@
 															</ul>
 		                        </div>
 		                        <div class="tab-pane" id="routerPanel">
-		                        	<textarea class="config" id="routerConfig" readonly>R1#show running-config
-																Building configuration...
-																Current configuration : 723 bytes
-																!
-																version 12.4
-																no service pad
-																service timestamps debug datetime msec
-																service timestamps log datetime msec
-																no service password-encryption
-																!
-																hostname Router
-																!
-																boot-start-marker
-																boot-end-marker
-																!
-																logging message-counter syslog
-																!
-																no aaa new-model
-																!
-																no ipv6 cef
-																ip source-route
-																ip cef
-																!
-																!
-																!
-																!
-																multilink bundle-name authenticated
-																!
-																!
-																archive
-																log config
-																hidekeys
-																!
-																!
-																!
-																!
-																!
-																interface GigabitEthernet0/0
-																no ip address
-																shutdown
-																duplex auto
-																speed auto
-																!
-																interface GigabitEthernet0/1
-																no ip address
-																shutdown
-																duplex auto
-																speed auto
-																!
-																interface GigabitEthernet0/2
-																no ip address
-																shutdown
-																duplex auto
-																speed auto
-																!
-																ip forward-protocol nd
-																!
-																no ip http server
-																!
-																!
-																!
-																!
-																!
-																control-plane
-																!
-																!
-																line con 0
-																line aux 0
-																line vty 0 3
-																login
-																!
-																exception data-corruption buffer truncate
-																scheduler allocate 20000 1000
-																end</textarea>
+		                        	<textarea class="config" id="routerConfig" readonly> {{ routerConfig }} </textarea>
 	                        	  <div class="form-group command-group">
 	                        	  	<div class="col-sm-12 input-group">
-				                        	<input type="text" class="form-control" placeholder="Input command here" required="required" style="padding:5px;" id="routerCmd">
+				                        	<input type="text" class="form-control" placeholder="Input command here" required="required" style="padding:5px;" id="routerInput">
 					                        <span class="input-group-btn">
-					                        	<button type="button" class="btn btn-info">Add</button>
+					                        	<button type="submit" class="btn btn-info" onclick = "routerSend()">Add</button>
 					                        </span>
-				                        </div>
+				                    </div>
 				                      </div>
 		                        </div>
 		                        <div class="tab-pane" id="switchPanel">
@@ -479,6 +406,31 @@
       </div>
     </div>
     <!-- end RESERVE -->
+	
+	<script>
+        setInterval(function(){reloader();},1000);
+
+        function reloader(){
+            $.ajax({url: 'http://127.0.0.1:8000/getouts', 
+                success: function(result){
+                    var res = JSON.parse(result);
+                    document.getElementById('routerConfig').innerHTML = res['routerConfig'];              
+                }
+            });
+        }
+    </script>
+	
+	
+	
+	<script>
+		function routerSend(){
+				var command = document.getElementById("routerInput").value;
+				$.ajax({url: 'http://127.0.0.1:8000/routerSend?routerInput=' + command,
+					});
+			}
+	</script>
+	
+	
 
     <!-- jQuery -->
     <script src="{% static '/vendors/jquery/dist/jquery.min.js' %}"></script>
