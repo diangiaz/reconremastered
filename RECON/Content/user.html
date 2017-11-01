@@ -357,7 +357,6 @@
     {% for groups in groups %}
     <!--start RESERVE -->
     <div id="reserveDevice-{{current_user.profile.group.id}}" class="modal fade" role="dialog" aria-hidden="true" style="padding-top: 90px">
-     <form action="/reserveDevice/" method="post">
       {% csrf_token %}
       <div class="modal-dialog">
         <div class="modal-content">
@@ -384,7 +383,7 @@
 		                    <td class="a-center ">
 		                    	<div class="radio">
 		                        <label style="padding-left: 0">
-		                          <input type="radio" id="displayTable" class="flat" name="deviceList" value="{{devices.id}}"> {{devices.name}}
+		                          <input type="radio" id="deviceList-{{devices.id}}" class="flat" name="deviceList" value="{{devices.id}}"> {{devices.name}}
 		                        </label>
 		                      </div>
 		                    </td>
@@ -422,12 +421,12 @@
             </div>
           </div>              
           <div class="modal-footer">
-            <button type="submit" class="btn btn-primary">Reserve</button>
+            <button type="submit" onClick="reserveDeviceAjax({{current_user.id}},{{current_user.profile.group.id}})"  class="btn btn-primary">Reserve</button>
             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
           </div>
         </div>
       </div>
-     </form>
+     
     </div>
     <!-- end RESERVE -->
     {% endfor %}
@@ -455,12 +454,12 @@
      <!-- Initialize datetimepicker -->
     <script>  
      $('#datetimepicker6').datetimepicker({
-      format: 'MM/DD/YYYY',
+      format: 'YYYY-MM-DD',
       useCurrent: true
     });
         
     $('#datetimepicker7').datetimepicker({
-      format: 'MM/DD/YYYY',
+      format: 'YYYY-MM-DD',
       useCurrent: false
     });
     
@@ -475,5 +474,34 @@
 
     <!-- RECON REMASTERED Script -->
     <script src="{% static '/production/js/recon.js' %}"></script>
+
+    <script>
+        function reserveDeviceAjax(userid,groupid){
+          	var startDate = document.getElementById('start-date').value;
+          	var endDate = document.getElementById('end-date').value;
+          	var deviceid;
+          	var radios = document.getElementsByName('deviceList');
+           	for (var i = 0, length = radios.length; i < length; i++) {
+    			if (radios[i].checked) {
+    				deviceid = radios[i].value;
+    				
+    				
+        			break;
+   				}
+			}
+          	console.log(startDate)
+          	console.log(endDate)
+          	console.log(userid)
+          	console.log(groupid)
+          	console.log(deviceid)
+            $.ajax({url: 'http://127.0.0.1:8000/user/reserveDevice?pkid='+ userid + "&groupid=" + groupid + "&deviceList=" + deviceid + "&start-date=" + startDate + "&end-date=" + endDate,
+                error: function(result){
+                  window.location.reload();
+                  // insert success message here
+                }
+            });
+        }
+    </script>
+
   </body>
 </html>

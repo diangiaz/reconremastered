@@ -13,5 +13,6 @@ urlpatterns = [
 	url(r'^admin/creategroup$', views.createGroup, name='createuser'),
 	url(r'^editModal/$', views.editModal, name='editModal'),
 	url(r'^editGrp/$', views.editGrp, name='editGrp'),
+	url(r'^user/reserveDevice$', views.reserveDevice, name='reserveDevice'),
 	url(r'^$', views.adminPage, name='defaultPage'),
 ]	

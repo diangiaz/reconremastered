@@ -114,11 +114,11 @@ class GroupToDevice(models.Model):
 		Device,
 		on_delete=models.CASCADE,
 	)
-	startDateTime = models.DateTimeField(
+	startDateTime = models.DateField(
 		auto_now=False,
 		auto_now_add=False,
 		)
-	endDateTime = models.DateTimeField(
+	endDateTime = models.DateField(
 		auto_now=False,
 		auto_now_add=False,
 	)
@@ -126,6 +126,7 @@ class GroupToDevice(models.Model):
 		max_length = 2,
 		choices = TYPE_CHOICES,
 	)
+
 	
 class UserToGroup(models.Model):
 	user = models.ForeignKey(

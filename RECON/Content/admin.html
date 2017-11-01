@@ -956,11 +956,11 @@
         function editGrpAjax(id,groupid){
           var newid = document.getElementById(id).options[document.getElementById(id).selectedIndex].value;
           var newgroupid = document.getElementById('groupid-' + groupid).value;
-          console.log(newid)
-          console.log(groupid)
+          console.log(newid);
+          console.log(groupid);
             $.ajax({url: 'http://127.0.0.1:8000/editGrp/?pkid='+ newid + "&groupid=" + newgroupid, 
-                success: function(result){
-                  
+                error: function(result){
+                  window.location.reload();
                   // insert success message here
                 }
             });
