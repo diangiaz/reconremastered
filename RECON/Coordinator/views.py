@@ -16,11 +16,22 @@ import urllib.parse as urlparse
 # Create your views here.
 
 readState = False
-serialPort = serial.Serial("COM3", 9600)
+serialPort = serial.Serial("COM4", 9600)
 strBuilder1 = ""
 varCurr = ""
 varPrev = ""
 		
+		
+		
+def Sender1():
+	global serialPort
+	
+	while True:
+		serialPort.flushInput()
+		text = input("") + "\n"
+		serialPort.write(text.encode('utf-8'))
+		bytes_to_read = serialPort.inWaiting()
+		sleep(.2)
 
 def serialReceiver1():
 	global readState
@@ -46,6 +57,9 @@ def serialReceiver1():
 			
 sRead1 = Thread(target=serialReceiver1)
 sRead1.start()
+
+sSend1 = Thread(target=Sender1)
+sSend1.start()
 
 def getSerialOutput(request):
 	global strBuilder1

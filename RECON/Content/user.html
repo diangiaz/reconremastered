@@ -143,7 +143,10 @@
 																<li><img class="deviceIcons" id="CableConsole" src="{% static '/production/images/delete.png' %}" draggable="false" onclick="remove();" data-toggle="tooltip" data-placement="bottom" title="Delete device"></li>
 															</ul>
 		                        </div>
+								
+								
 		                        <div class="tab-pane" id="routerPanel">
+									<!-- <form> -->
 		                        	<textarea class="config" id="routerConfig" readonly> {{ routerConfig }} </textarea>
 	                        	  <div class="form-group command-group">
 	                        	  	<div class="col-sm-12 input-group">
@@ -153,7 +156,10 @@
 					                        </span>
 				                    </div>
 				                      </div>
+									<!-- </form> -->
 		                        </div>
+								
+								
 		                        <div class="tab-pane" id="switchPanel">
 		                        	<textarea class="config" id="switchConfig" readonly>SW1#show running-config
 																Building configuration...

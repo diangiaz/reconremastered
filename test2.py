@@ -5,43 +5,40 @@ from threading import Thread
 readState = False
 serialPort = Serial("COM4", 9600)
 strBuilder = ""
-varCurr = ""
-varPrev = ""
 
-def Receiver():
+# def Receiver():
+	# global readState
+	# global serialPort
+	# global strBuilder
+	
+	# while True:
+	
+		# if readState == False:
+			# readState = True
+			# strBuilder = ""
+	
+		# elif readState == True:
+			# text = serialPort.readline()
+			# strBuilder += text.decode()
+			# print(text.decode())
+			
+class Receiver(Thread):
 	global readState
 	global serialPort
 	global strBuilder
-	global varCurr
-	global varPrev
-	
-	while True:
-		varPrev = varCurr
-		serialRead = serialPort.read()
-		varCurr = serialRead.decode()
-	
-		if readState == False:
-			readState = True
-			strBuilder = ""
-	
-		elif readState == True:
+			
+	def __init__(self, serialPort): 
+		Thread.__init__(self) 
+		self.serialPort = serialPort 
+	def run(self):
+		global serialPort
+		text = "" 
+		while (text != "exitThread\n"): 
 			text = serialPort.readline()
 			strBuilder += text.decode()
-			print(text.decode())
-			# print (strBuilder)
-			
-		# def __init__(self, serialPort): 
-			# Thread.__init__(self) 
-			# self.serialPort = serialPort 
-		# def run(self):
-			# global serialPort
-			# text = "" 
-			# while (text != "exitThread\n"): 
-				# text = serialPort.readline()
-				# strBuilder += text.decode()
-				# print (text.decode())
-			
-			# self.serialPort.close() 
+			print (text.decode())
+		
+		self.serialPort.close() 
 			
 def Sender():
 	global serialPort
