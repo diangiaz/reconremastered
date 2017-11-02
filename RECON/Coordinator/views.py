@@ -62,9 +62,11 @@ def userPage(request):
 	users = User.objects.all()	
 	groups = Group.objects.all()
 	devices = Device.objects.all()
+	grouptodevice =GroupToDevice.objects.all()
 	
 	context = {
 	'current_user': currentUser,
+	'grouptodevice':grouptodevice,
 	'devices':devices,
 	'groups':groups,
 	'users':users,
@@ -106,28 +108,15 @@ def reserveDevice(request):
 	deviceid = (urlparse.parse_qs(parsedData.query)['deviceList'][0])
 	devicename = Device.objects.filter(id=deviceid)[0]
 	devicename = devicename.name
+	daterange1 = GroupToDevice.objects.filter(date__range=[startdate, enddate])
 
-		
+	
 	if User.objects.filter(id=pkid).count() > 0 and Group.objects.filter(id=groupid).count() > 0:
-		
+			
 		newgroupID = Group.objects.get(id=groupid)
 		newdeviceID = Device.objects.get(id=deviceid)
 		a = GroupToDevice(group=newgroupID,device=newdeviceID,startDateTime=startdate,endDateTime=enddate,type='RS')
 		a.save()
-		# GroupToDevice.group.id = groupid
-		# GroupToDevice.device.id = deviceid
-		# GroupToDevice.startDateTime = startdate
-		# GroupToDevice.endDateTime = enddate 			
-		# GroupToDevice.type = 'RS'
-		# GroupToDevice.save(force_update=True)
-		# print(GroupToDevice.id)
-		# print(GroupToDevice.group.id)
-		# print(GroupToDevice.device.name)
-		# print(GroupToDevice.startDateTime)
-		# print(GroupToDevice.endDateTime)
-		# print(GroupToDevice.type)
-
-
 			
 		
 	return HttpResponseRedirect(json.dumps(JSONer))

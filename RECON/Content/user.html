@@ -387,7 +387,16 @@
 		                        </label>
 		                      </div>
 		                    </td>
-		                    <td> dates </td>
+		                    <td>
+		                    {% for grouptodevice in grouptodevice %}
+		                    	{% ifequal grouptodevice.device.id devices.id %}
+		                    		{{grouptodevice.startDateTime}} - {{grouptodevice.endDateTime}} <br>
+		                    		 
+		                    			
+		                    	{% endifequal %}
+
+		                    {% endfor %}
+		                    </td>
 		                  </tr>
 		                 {% endfor %}
 		                </tbody>
@@ -454,11 +463,13 @@
      <!-- Initialize datetimepicker -->
     <script>  
      $('#datetimepicker6').datetimepicker({
+
       format: 'YYYY-MM-DD',
       useCurrent: true
     });
         
     $('#datetimepicker7').datetimepicker({
+      
       format: 'YYYY-MM-DD',
       useCurrent: false
     });
@@ -489,6 +500,7 @@
         			break;
    				}
 			}
+			
           	console.log(startDate)
           	console.log(endDate)
           	console.log(userid)
