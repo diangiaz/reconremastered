@@ -33,30 +33,48 @@ def Sender1():
 		bytes_to_read = serialPort.inWaiting()
 		sleep(.2)
 
-def serialReceiver1():
-	global readState
-	global serialPort
-	global strBuilder1
-	global varCurr
-	global varPrev
+# def serialReceiver1():
+	# global readState
+	# global serialPort
+	# global strBuilder1
+	# global varCurr
+	# global varPrev
 	
-	while True:
-		varPrev = varCurr
-		serialRead = serialPort.read()
-		varCurr = serialRead.decode()
+	# while True:
+		# varPrev = varCurr
+		# serialRead = serialPort.read()
+		# varCurr = serialRead.decode()
 	
-		if readState == False:
-			readState = True
-			strBuilder = ""
+		# if readState == False:
+			# readState = True
+			# strBuilder = ""
 	
-		elif readState == True:
-			text = serialPort.readline()
-			strBuilder1 += text.decode() + "\n"
-			print("serial output: " + text.decode())
+		# elif readState == True:
+			# text = serialPort.readline()
+			# strBuilder1 += text.decode() + "\n"
+			# print("serial output: " + text.decode())
 
 			
-sRead1 = Thread(target=serialReceiver1)
-sRead1.start()
+# sRead1 = Thread(target=serialReceiver1)
+# sRead1.start()
+
+class Receiver1(Thread):
+		def __init__(self, serialPort): 
+			Thread.__init__(self) 
+			self.serialPort = serialPort 
+		def run(self):
+			global serialPort
+			global strBuilder1
+			text = "" 
+			while (text != "exitReceiverThread\n"): 
+				text = serialPort.readline()
+				strBuilder1 += text.decode() + "\n"
+				print("serial output: " + text.decode())
+			
+			self.serialPort.close()
+			
+receive = Receiver1(serialPort) 
+receive.start()
 
 sSend1 = Thread(target=Sender1)
 sSend1.start()
@@ -127,7 +145,6 @@ def createUser(request):
 	email = (urlparse.parse_qs(parsedData.query)['email'][0])
 	password = (urlparse.parse_qs(parsedData.query)['password'][0])
 	employeeID = (urlparse.parse_qs(parsedData.query)['employeeID'][0])
-	userType = (urlparse.parse_qs(parsedData.query)['userType'][0])
 	groupName = (urlparse.parse_qs(parsedData.query)['groupName'][0])
 	
 	newGroup = Group.objects.filter(name=groupName)[0]
@@ -138,18 +155,37 @@ def createUser(request):
 	newUser.last_name = lastName
 	newUser.email = email
 	newUser.password = password
-	newUser.Profile.usertype = userType
-	newUser.Profile.employeeID = employeeID
-	newUser.Profile.group = newGroup
+	newUser.save()
+	
+	Profile.objects.create(user=newUser)
+	print("profile Created")
+	newUser.refresh_from_db()
+	
+	newUser.profile.usertype = "employee"
+	newUser.profile.employeeID = employeeID
+	newUser.profile.group = newGroup
+	newUser.profile.save()
 	newUser.save()
 	
 	
+	print("user created")
+	# print(newUser.username)
+	# print(newUser.first_name)
+	# print(newUser.last_name)
+	# print(newUser.email)
+	# print(newUser.password)
+	print("Type: " + newUser.Profile.usertype)
+	print("ID: " + newUser.Profile.employeeID)
+	print("Group: " + newUser.Profile.group)
 	
 	
 	
 	
 	
-	return HttpResponseRedirect(json.dumps(JSONer))
+	
+	
+	
+	return HttpResponse(json.dumps(JSONer))
 
 	# if request.method == 'POST':
 		# form = SignUpForm(request.POST)
@@ -182,7 +218,7 @@ def createGroup(request):
 	grp.name = name
 	grp.save()
 	
-	return HttpResponseRedirect(json.dumps(JSONer))
+	return HttpResponse(json.dumps(JSONer))
 
 
 # def createGroup(request):

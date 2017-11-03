@@ -8,40 +8,39 @@ strBuilder = ""
 varCurr = ""
 varPrev = ""
 
-def Receiver():
-	global readState
-	global serialPort
-	global strBuilder
-	global varCurr
-	global varPrev
+# def Receiver():
+	# global readState
+	# global serialPort
+	# global strBuilder
+	# global varCurr
+	# global varPrev
 	
-	while True:
-		varPrev = varCurr
-		serialRead = serialPort.read()
-		varCurr = serialRead.decode()
+	# while True:
+		# varPrev = varCurr
+		# serialRead = serialPort.read()
+		# varCurr = serialRead.decode()
 	
-		if readState == False:
-			readState = True
-			strBuilder = ""
+		# if readState == False:
+			# readState = True
+			# strBuilder = ""
 	
-		elif readState == True:
-			text = serialPort.readline()
-			strBuilder += text.decode()
-			print(text.decode())
-			# print (strBuilder)
+		# elif readState == True:
+			# text = serialPort.readline()
+			# strBuilder += text.decode()
+			# print(text.decode())
 			
-		# def __init__(self, serialPort): 
-			# Thread.__init__(self) 
-			# self.serialPort = serialPort 
-		# def run(self):
-			# global serialPort
-			# text = "" 
-			# while (text != "exitThread\n"): 
-				# text = serialPort.readline()
-				# strBuilder += text.decode()
-				# print (text.decode())
+class Receiver(Thread):
+		def __init__(self, serialPort): 
+			Thread.__init__(self) 
+			self.serialPort = serialPort 
+		def run(self):
+			global serialPort
+			text = "" 
+			while (text != "exitThread\n"): 
+				text = serialPort.readline()
+				print (text.decode())
 			
-			# self.serialPort.close() 
+			self.serialPort.close() 
 			
 def Sender():
 	global serialPort
@@ -72,8 +71,13 @@ def Sender():
         
 
 # send = Sender(serialPort) 
-# receive = Receiver(serialPort) 
-sRead = Thread(target=Receiver)
+# send.start()
+
+receive = Receiver(serialPort) 
+receive.start()
+
+# sRead = Thread(target=Receiver)
+# sRead.start()
+
 sSend = Thread(target=Sender)
-sRead.start()
 sSend.start()

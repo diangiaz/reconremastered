@@ -290,7 +290,7 @@
                           </div>
 
                           <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-                            <input type="createEmail" class="form-control has-feedback" id="userEmail" placeholder="Email *" required="required" data-validate-linked="email">
+                            <input id="createEmail" type="mail" class="form-control has-feedback"  placeholder="Email *" required="required" data-validate-linked="email">
                             <span class="fa fa-envelope form-control-feedback right" aria-hidden="true"></span>
                           </div>                                                  
                         </div>
@@ -325,23 +325,16 @@
 							
                             </select>
                           </div> 
-						  
-						  <div class="col-md-6 col-sm-6 col-xs-12">
-                            <select id="createUserType" class="form-control" required>
-                            <option value="man">Employee</option>
-                            <option value="user1">Admin</option>
-                            </select>
-                          </div> 
                         </div>
 
                         <div class="form-group">
                           <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-                            <input type="createPassword" class="form-control has-feedback-left" id="password" name="password" data-validate-length="6,8" placeholder="Password *" required="required">
+                            <input type="password" class="form-control has-feedback-left" id="createPassword" name="password" data-validate-length="6,8" placeholder="Password *" required="required">
                             <span class="fa fa-lock form-control-feedback left" aria-hidden="true"></span>
                           </div>
 
                           <div class="col-md-6 col-sm-6 col-xs-12 item form-group has-feedback">
-                            <input type="createPassword2" class="form-control" id="password2" name="password2" data-validate-linked="password" placeholder="Repeat Password *" required="required">
+                            <input type="password" class="form-control" id="createPassword2" name="password2" data-validate-linked="password" placeholder="Repeat Password *" required="required">
                             <span class="fa fa-lock form-control-feedback right" aria-hidden="true"></span>
                           </div>
                         </div>      
@@ -378,7 +371,7 @@
                         <div class="form-group">
                           <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-4">
                             <button class="btn btn-primary">Cancel</button>
-                            <button type="submit" class="btn btn-success" name="createUser">Submit</button>
+                            <button onclick="createUser()" type="submit" class="btn btn-success" name="createUser">Submit</button>
                           </div>
                         </div>
                       </div>
@@ -937,17 +930,32 @@
 				
 			}
 			
-		function createuser(){
+		function createUser(){
 			var firstName = document.getElementById("createFirstName").value;
 			var lastName = document.getElementById("createLastName").value;
 			var userName = document.getElementById("createUserName").value;
 			var employeeID = document.getElementById("createEmployeeID").value;
+			var password = document.getElementById("createPassword").value;
 			var email = document.getElementById("createEmail").value;
-			var userGroup = document.getElementById("createUserGroup").value;
-			var userType = document.getElementById("createUserType").value;
+			var groupName = document.getElementById("createUserGroup").value;
 			
-			$.ajax({url: 'http://127.0.0.1:8000/createUser?firstName=' + firstName + "&lastName=" + lastName + "&userName=" + userName + "&employeeID=" + employeeID + "&email=" + email + "&userGroup=" + userGroup + "&userType=" + userType,
+			$.ajax({url: "http://127.0.0.1:8000/createUser?firstName=" + firstName + "&lastName=" + lastName + "&userName=" + userName + "&employeeID=" + employeeID + "&email=" + email + "&groupName=" + groupName + "&password=" + password,
 				});
+				
+			console.log("user created")
+			console.log(firstName)
+			console.log(lastName)
+			console.log(groupName)
+			
+			document.getElementById("createFirstName").value = "";
+			document.getElementById("createLastName").value = "";
+			document.getElementById("createUserName").value = "";
+			document.getElementById("createEmployeeID").value = "";
+			document.getElementById("createEmail").value = "";
+			document.getElementById("createUserGroup").value = "";
+			document.getElementById("createPassword").value = "";
+			document.getElementById("createPassword2").value = "";
+			
 			
 		}
 	</script>

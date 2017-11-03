@@ -146,7 +146,8 @@
 								
 								
 		                        <div class="tab-pane" id="routerPanel">
-									<form onsubmit="routerSend()">
+									<!-- <form id="routerSubmit" method="post"> -->
+									<!-- {% csrf_token %} -->
 		                        	<textarea class="config" id="routerConfig" readonly> {{ routerConfig }} </textarea>
 	                        	  <div class="form-group command-group">
 	                        	  	<div class="col-sm-12 input-group">
@@ -156,7 +157,7 @@
 					                        </span>
 				                    </div>
 				                      </div>
-									</form>
+									<!-- </form> -->
 		                        </div>
 								
 								
@@ -429,15 +430,24 @@
     </script>
 	
 	<script>
+		<!-- $('#routerSubmit').on('submit', function(event){ -->
+			<!-- event.preventDefault(); -->
+			<!-- console.log("tried to submit router") -->
+			<!-- routerSend() -->
+		<!-- }); -->
+		
 		function routerSend(){
-				var textarea = document.getElementById('routerConfig');
-				textarea.scrollTop = textarea.scrollHeight;
-				
-				var command = document.getElementById("routerInput").value;
-				$.ajax({url: 'http://127.0.0.1:8000/routerSend?routerInput=' + command,
-					});
-				document.getElementById("routerInput").value = "";
-			}
+			var textarea = document.getElementById('routerConfig');
+			textarea.scrollTop = textarea.scrollHeight;
+			
+			var command = document.getElementById("routerInput").value;
+			$.ajax({url: 'http://127.0.0.1:8000/routerSend?routerInput=' + command,
+			});
+			document.getElementById("routerInput").value = "";
+			
+			textarea.scrollTop = textarea.scrollHeight;
+		}
+		
 	</script>
 	
 	
