@@ -41,6 +41,7 @@ def adminPage(request):
 	
 	users = User.objects.all()	
 	groups = Group.objects.all()
+	grouptodevice = GroupToDevice.objects.all()
 	
 	
 	context = {
@@ -49,6 +50,7 @@ def adminPage(request):
 	'current_user': currentUser,
 	'newgroupForm': newgroupForm,
 	'signupForm' : signupForm,
+	'grouptodevice' : grouptodevice
 	}
 	return render(request, 'admin.html', context)
 
@@ -93,7 +95,40 @@ def createUser(request):
 			print(Profile.objects.all().filter(employeeID__iexact=form.cleaned_data.get('employeeID')).count() == 0)
 	return HttpResponseRedirect("/admin/")
 	
+@login_required(login_url="/login")	
+def approvedRes(request):		
+	JSONer = {}
+	parsedData = urlparse.urlparse(request.get_full_path())
+	print("check")
+	print((urlparse.parse_qs(parsedData.query)['grouptodeviceid'][0]))
+	pkid = (urlparse.parse_qs(parsedData.query)['grouptodeviceid'][0])
+	print(pkid)
+	
+	if GroupToDevice.objects.filter(id=pkid).count() > 0:
+		print(pkid)
+	
+		grouptodeviceID = GroupToDevice.objects.filter(id=pkid)[0]
+		grouptodeviceID.type = "AP"
+		
+		grouptodeviceID.save(force_update=True)
+	return HttpResponse(json.dumps(JSONer))	
 
+def declinedRes(request):		
+	JSONer = {}
+	parsedData = urlparse.urlparse(request.get_full_path())
+	print("check")
+	print((urlparse.parse_qs(parsedData.query)['grouptodeviceid'][0]))
+	pkid = (urlparse.parse_qs(parsedData.query)['grouptodeviceid'][0])
+	print(pkid)
+	
+	if GroupToDevice.objects.filter(id=pkid).count() > 0:
+		print(pkid)
+	
+		grouptodeviceID = GroupToDevice.objects.filter(id=pkid)[0]
+		grouptodeviceID.type = "DC"
+		
+		grouptodeviceID.save(force_update=True)
+	return HttpResponse(json.dumps(JSONer))	
 
 	
 @login_required(login_url="/login")	
@@ -106,9 +141,7 @@ def reserveDevice(request):
 	startdate = (urlparse.parse_qs(parsedData.query)['start-date'][0])
 	enddate = (urlparse.parse_qs(parsedData.query)['end-date'][0])
 	deviceid = (urlparse.parse_qs(parsedData.query)['deviceList'][0])
-	devicename = Device.objects.filter(id=deviceid)[0]
-	devicename = devicename.name
-	daterange1 = GroupToDevice.objects.filter(date__range=[startdate, enddate])
+	#daterange1 = GroupToDevice.objects.filter(date__range=[startdate, enddate])
 
 	
 	if User.objects.filter(id=pkid).count() > 0 and Group.objects.filter(id=groupid).count() > 0:
@@ -125,6 +158,7 @@ def reserveDevice(request):
 def editModal(request):
 
 	JSONer = {}
+	
 	parsedData = urlparse.urlparse(request.get_full_path())
 	pkid = (urlparse.parse_qs(parsedData.query)['pkid'][0])
 	idnum = (urlparse.parse_qs(parsedData.query)['id-num'][0])
@@ -145,7 +179,7 @@ def editModal(request):
 	 	userID.email = email
 	 	userID.save()
 	
-	return HttpResponseRedirect(json.dumps(JSONer))
+	return HttpResponse(json.dumps(JSONer))
 
 @login_required(login_url="/login")	
 def editGrp(request):		
@@ -161,7 +195,7 @@ def editGrp(request):
 		userID.profile.group_id = groupid
 		print(userID.username)
 		userID.save(force_update=True)
-	return HttpResponseRedirect(json.dumps(JSONer))	
+	return HttpResponse(json.dumps(JSONer))	
 	
 @login_required(login_url="/login")	
 def createGroup(request):
@@ -172,10 +206,3 @@ def createGroup(request):
 			post.save()
 	return HttpResponseRedirect("/admin/")
 
-@login_required(login_url="/login")	
-def getSerialOutput1(request):
-	global strBuilder1
-	
-	JSONer = {}
-	JSONer['datatable'] = strBuilder1
-	return HttpResponse(json.dumps(JSONer))

@@ -101,10 +101,12 @@ class GroupToDevice(models.Model):
 	RESERVE = 'RS'
 	APPROVE = 'AP'
 	ALLOCATION = 'AL'
+	DECLINED = 'DC'
 	TYPE_CHOICES = (
 		(RESERVE, 'Reserve'),
 		(APPROVE, 'Approve'),
 		(ALLOCATION, 'Allocation'),
+		(DECLINED, 'Declined'),
 	)
 	group = models.ForeignKey(
 		Group,

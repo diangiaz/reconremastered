@@ -66,7 +66,7 @@
                     <!-- <span data-toggle="modal" data-target="#auditLogs"> -->
                       <button class="btn btn-default" id="navButton" type="button" onclick="toggleVisibility('divAudit')"><i class="fa fa-list"></i></button>
                     </span>
-                    <span data-toggle="modal" data-target="#approveRes">
+                    <span data-toggle="modal" data-target="#approveRes-{{user.id}}">
                       <button class="btn btn-default" id="navButton" type="button" data-toggle="tooltip" data-placement="bottom" title="Pending Reservations"><i class="fa fa-exclamation-circle"></i></button>
                     </span>
                   </div>                  
@@ -121,7 +121,7 @@
                               
                               <td>
                                 
-                                <a><strong>{{ groups.name }}</strong></a>
+                                <a href="#editGrp-{{groups.id}}" data-toggle="modal"><strong>{{ groups.name }}</strong></a>
                                 
                                 <br />
                           
@@ -180,7 +180,7 @@
                                 <a type="submit" href="#allocateModal" data-toggle="modal" class="btn btn-primary btn-xs"><i class="fa fa-cogs"></i> Allocate </a> -->
                                <!--  <a type="submit" href="#editModal-{{user.id}}" data-toggle="modal" class="btn btn-info btn-xs"><i class="fa fa-pencil"></i> Edit </a>
                                 <a type="submit" href="#allocateModal-{{user.id}}" data-toggle="modal" class="btn btn-primary btn-xs"><i class="fa fa-cogs"></i> Allocate </a> -->
-																 <a type="submit" href="#editGrp-{{groups.id}}" data-toggle="modal" class="btn btn-info btn-xs"><i class="fa fa-pencil"></i> Edit </a>
+																 
                                 <a type="submit" href="#allocateModal" data-toggle="modal" class="btn btn-primary btn-xs"><i class="fa fa-cogs"></i> Allocate </a>                              
                               </td>
                             </tr>
@@ -572,53 +572,44 @@
     </div>
 
     <!--start APPROVE -->
-    <div id="approveRes" class="modal fade" role="dialog" aria-hidden="true" style="padding-top: 100px">
+    
+    <div id="approveRes-{{user.id}}" class="modal fade" role="dialog" aria-hidden="true" style="padding-top: 100px">
+     {% csrf_token %}
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
             </button>
+
             <h3 style="display: inline;"><i class="fa fa-exclamation-circle"></i> Pending Reservations</h3>
           </div>
           <div class="modal-body">
             <div class="form-horizontal form-label-left">
               <table class="table-width table table-striped table-bordered jambo_table" style="width: 100%">
                 <thead>
+                
                   <tr>
-                    <th style="font-weight: 700;width: 25%">User</th>
+                    <th style="font-weight: 700;width: 25%">Group</th>
                     <th style="font-weight: 700;width: 30%">Device</th>
                     <th style="font-weight: 700;width: 30%">Date</th>
                     <th style="width: 14%"></th>
                   </tr>
                 </thead>
                 <tbody>
+                {% for grouptodevice in grouptodevice %}
+                  {% ifequal grouptodevice.type 'RS' %}
                   <tr>
-                    <td style="vertical-align: unset;">User 1</td>
-                    <td style="vertical-align: unset;">[Device]</td>
-                    <td style="vertical-align: unset;">[Date]</td>
+                    <input type="hidden" name="grouptodeviceid" id="grouptodeviceid" class="form-control" value="{{ grouptodevice.id }}"> 
+                    <td value ="{{grouptodevice.group.name}}" style="vertical-align: unset;">{{ grouptodevice.group.name }}</td>
+                    <td value ="{{grouptodevice.device.name}}" style="vertical-align: unset;">{{ grouptodevice.device.name }}</td>
+                    <td style="vertical-align: unset;">{{ grouptodevice.startDateTime }} - {{ grouptodevice.endDateTime }}</td>
                     <td style="vertical-align: unset;">
-                      <a type="button" class="btn btn-info btn-xs" data-toggle="tooltip" data-placement="bottom" title="Approve"><i class="fa fa-check"></i></a>
-                      <a type="button" class="btn btn-danger btn-xs" data-toggle="tooltip" data-placement="bottom" title="Reject" style="padding: 1px 6px"><i class="fa fa-close"></i></a>
+                      <a type="button" data-dismiss="modal" onClick="approvedAjax({{grouptodevice.id}})" class="btn btn-info btn-xs" data-toggle="tooltip" data-placement="bottom" title="Approve"><i class="fa fa-check"></i></a>
+                      <a type="button" data-dismiss="modal" onClick="declinedAjax({{grouptodevice.id}})" class="btn btn-danger btn-xs" data-toggle="tooltip" data-placement="bottom" title="Reject" style="padding: 1px 6px"><i class="fa fa-close"></i></a>
                     </td>
                   </tr>
-                  <tr>
-                    <td style="vertical-align: unset;">User 2</td>
-                    <td style="vertical-align: unset;">[Device]</td>
-                    <td style="vertical-align: unset;">[Date]</td>
-                    <td style="vertical-align: unset;">
-                      <a type="button" class="btn btn-info btn-xs" data-toggle="tooltip" data-placement="bottom" title="Approve"><i class="fa fa-check"></i></a>
-                      <a type="button" class="btn btn-danger btn-xs" data-toggle="tooltip" data-placement="bottom" title="Reject" style="padding: 1px 7px"><i class="fa fa-close"></i></a>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td style="vertical-align: unset;">User 3</td>
-                    <td style="vertical-align: unset;">[Device]</td>
-                    <td style="vertical-align: unset;">[Date]</td>
-                    <td style="vertical-align: unset;">
-                      <a type="button" class="btn btn-info btn-xs" data-toggle="tooltip" data-placement="bottom" title="Approve"><i class="fa fa-check"></i></a>
-                      <a type="button" class="btn btn-danger btn-xs" data-toggle="tooltip" data-placement="bottom" title="Reject" style="padding: 1px 7px"><i class="fa fa-close"></i></a>
-                    </td>
-                  </tr>
+                  {% endifequal %}
+                {% endfor %}
                 </tbody>
               </table>
             </div>
@@ -629,6 +620,7 @@
         </div>
       </div>
     </div>
+
     <!-- end APPROVE -->
     {% for user in users %} 
     <!--start EDIT MODAL -->
@@ -679,17 +671,6 @@
                 <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Email</label>
                 <div class="col-md-8 col-sm-6 col-xs-12">
                   <input id="email-{{ user.id }}" class="form-control" type="text" name="email" value="{{ user.email }}">
-                </div>
-              </div>
-               <div class="form-group">
-                <label class="control-label col-md-3 col-sm-3 col-xs-12">Group</label>
-                <div class="col-md-8 col-sm-6 col-xs-12">
-                  <select id="employeeLocation" class="select2_single form-control" tabindex="-1">
-                  <option></option>
-                  <option value="man">Group 1</option>
-                  <option value="user1">Group 2</option>
-                  <option value="user2">Group 3</option>
-                  </select>
                 </div>
               </div>
             </div>
@@ -933,27 +914,46 @@
     </script>
 
     <script>
-        
-
         function editAcctAjax(id){
           var employeeid = document.getElementById('id-num-' + id).value;
           var firstname = document.getElementById('first-name-' + id).value;
           var lastname = document.getElementById('last-name-' + id).value;
           var username = document.getElementById('user-name-' + id).value;
           var email = document.getElementById('email-' + id).value;
-            $.ajax({url: '../editModal/?pkid='+ id + '&id-num=' + employeeid + '&first-name=' + firstname + '&last-name=' + lastname + '&username=' + username + '&email=' + email, 
+          alert('/editModal/?pkid='+ id + '&id-num=' + employeeid + '&first-name=' + firstname + '&last-name=' + lastname + '&username=' + username + '&email=' + email);
+            $.ajax({url: '/editModal/?pkid='+ id + '&id-num=' + employeeid + '&first-name=' + firstname + '&last-name=' + lastname + '&username=' + username + '&email=' + email, 
                 success: function(result){
-                  
-                    // var res = JSON.parse(result);
-                    // document.getElementById('pkid').innerHTML = res['pkid'];
-                    // document.getElementById('first-name').innerHTML = res['first-name'];
-                    // document.getElementById('last-name').innerHTML = res['last-name'];
-                    // document.getElementById('user-name').innerHTML = res['user-name'];
-                    // document.getElementById('email').innerHTML = res['email'];
-                    // document.getElementById('id-num').innerHTML = res['id-num'];   
+                  window.location.reload();
+
                 }
             });
         }
+    </script>
+
+    <script>
+       function approvedAjax(id){
+        var pkid = document.getElementById('grouptodeviceid').value;
+        console.log(pkid);
+        $.ajax({url: 'http://127.0.0.1:8000/approvedRes/?grouptodeviceid='+ pkid,
+                error: function(result){
+                alert("hey")
+                  // insert success message here
+                }
+            });
+       }
+    </script>
+
+    <script>
+       function declinedAjax(id){
+        var pkid = document.getElementById('grouptodeviceid').value;
+        console.log(pkid);
+        $.ajax({url: 'http://127.0.0.1:8000/declinedRes/?grouptodeviceid='+ pkid,
+                error: function(result){
+                alert("hey")
+                  // insert success message here
+                }
+            });
+       }
     </script>
 
     <script>
@@ -962,8 +962,8 @@
           var newgroupid = document.getElementById('groupid-' + groupid).value;
           console.log(newid);
           console.log(groupid);
-            $.ajax({url: 'http://127.0.0.1:8000/editGrp/?pkid='+ newid + "&groupid=" + newgroupid, 
-                error: function(result){
+            $.ajax({url: '/editGrp/?pkid='+ newid + "&groupid=" + newgroupid, 
+                success: function(result){
                   window.location.reload();
                   // insert success message here
                 }

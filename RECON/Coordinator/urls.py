@@ -14,5 +14,7 @@ urlpatterns = [
 	url(r'^editModal/$', views.editModal, name='editModal'),
 	url(r'^editGrp/$', views.editGrp, name='editGrp'),
 	url(r'^user/reserveDevice$', views.reserveDevice, name='reserveDevice'),
+	url(r'^approvedRes/$', views.approvedRes, name='approvedRes'),
+	url(r'^declinedRes/$', views.declinedRes, name='declinedRes'),
 	url(r'^$', views.adminPage, name='defaultPage'),
 ]	
