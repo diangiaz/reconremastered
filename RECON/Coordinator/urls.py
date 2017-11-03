@@ -9,9 +9,9 @@ urlpatterns = [
 	url(r'^user/$', views.userPage, name='userPage'),
 	url(r'^admin/$', views.adminPage, name='adminPage'),
 	url(r'^admin/validate_username/$', views.validate_username, name='validate_username'),
-	url(r'^admin/createuser$', views.createUser, name='createuser'),
-	url(r'^admin/creategroup$', views.createGroup, name='createuser'),
-	url(r'^getouts$', views.getSerialOutput, name='serialout'),
+	url(r'^createUser$', views.createUser, name='createuser'),
+	url(r'^createGroup$', views.createGroup, name='creategroup'),
+	url(r'^getouts1$', views.getSerialOutput1, name='serialout1'),
 	url(r'^routerSend$', views.sendSerial1, name='sendserial1'),
 	url(r'^$', views.adminPage, name='defaultPage'),
 ]	

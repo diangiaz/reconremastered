@@ -146,17 +146,17 @@
 								
 								
 		                        <div class="tab-pane" id="routerPanel">
-									<!-- <form> -->
+									<form onsubmit="routerSend()">
 		                        	<textarea class="config" id="routerConfig" readonly> {{ routerConfig }} </textarea>
 	                        	  <div class="form-group command-group">
 	                        	  	<div class="col-sm-12 input-group">
-				                        	<input type="text" class="form-control" placeholder="Input command here" required="required" style="padding:5px;" id="routerInput">
+				                        	<input type="text" class="form-control" placeholder="Input command here" style="padding:5px;" id="routerInput">
 					                        <span class="input-group-btn">
-					                        	<button type="submit" class="btn btn-info" onclick = "routerSend()">Add</button>
+					                        	<button class="btn btn-info" onclick="routerSend()">Add</button>
 					                        </span>
 				                    </div>
 				                      </div>
-									<!-- </form> -->
+									</form>
 		                        </div>
 								
 								
@@ -417,22 +417,26 @@
         setInterval(function(){reloader();},1000);
 
         function reloader(){
-            $.ajax({url: 'http://127.0.0.1:8000/getouts', 
+            $.ajax({url: 'http://127.0.0.1:8000/getouts1', 
                 success: function(result){
                     var res = JSON.parse(result);
                     document.getElementById('routerConfig').innerHTML = res['routerConfig'];              
                 }
             });
+			var textarea = document.getElementById('routerConfig');
+			textarea.scrollTop = textarea.scrollHeight;
         }
     </script>
 	
-	
-	
 	<script>
 		function routerSend(){
+				var textarea = document.getElementById('routerConfig');
+				textarea.scrollTop = textarea.scrollHeight;
+				
 				var command = document.getElementById("routerInput").value;
 				$.ajax({url: 'http://127.0.0.1:8000/routerSend?routerInput=' + command,
 					});
+				document.getElementById("routerInput").value = "";
 			}
 	</script>
 	

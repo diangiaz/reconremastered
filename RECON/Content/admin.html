@@ -275,11 +275,7 @@
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel" style="padding:10px 17px;">
                   <div class="x_title">
-                    <h2>Employee Information</h2>
-					
-					
-					<form method="post" action="/admin/createuser">
-                    
+                    <h2>Employee Information</h2>                    
 					
 					<div class="clearfix"></div>
                   </div>
@@ -287,84 +283,95 @@
                     <br />
                     <div class="col-md-8 col-sm-8 col-md-offset-2 col-xs-12">
                       <div class="form-horizontal form-label-left">
-                        <!-- <div class="form-group">
+                        <div class="form-group">
                           <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-                            <input id="employeeID" type="number" class="form-control has-feedback-left" placeholder="Employee ID *" required="required">
+                            <input id="createEmployeeID" type="number" class="form-control has-feedback-left" placeholder="Employee ID *" required="required">
                             <span class="fa fa-hashtag form-control-feedback left" aria-hidden="true"></span>
                           </div>
 
                           <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-                            <input type="email" class="form-control has-feedback" id="userEmail" placeholder="Email *" required="required" data-validate-linked="email">
+                            <input type="createEmail" class="form-control has-feedback" id="userEmail" placeholder="Email *" required="required" data-validate-linked="email">
                             <span class="fa fa-envelope form-control-feedback right" aria-hidden="true"></span>
                           </div>                                                  
                         </div>
 
                         <div class="form-group">                        
                           <div class="col-md-6 col-sm-6 col-xs-12 item form-group has-feedback">
-                            <input id="firstName" type="text" class="form-control has-feedback-left" placeholder="First Name *" required="required">
+                            <input id="createFirstName" type="text" class="form-control has-feedback-left" placeholder="First Name *" required="required">
                             <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
                           </div>
 
                           <div class="col-md-6 col-sm-6 col-xs-12 item form-group has-feedback">
-                            <input id="firstName" type="text" class="form-control has-feedback" placeholder="Last Name *" required="required">
+                            <input id="createLastName" type="text" class="form-control has-feedback" placeholder="Last Name *" required="required">
                             <span class="fa fa-user form-control-feedback right" aria-hidden="true"></span>
                           </div>  
                         </div>
 
                         <div class="form-group">
                           <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-                            <input type="text" class="form-control has-feedback-left" id="username" placeholder="Username *" required="required">
+                            <input id="createUserName" type="text" class="form-control has-feedback-left" placeholder="Username *" required="required">
                             <span class="fa fa-at form-control-feedback left" aria-hidden="true"></span>
                           </div>
 
                           <div class="col-md-6 col-sm-6 col-xs-12">
-                            <select id="employeeLocation" class="form-control" required>
-                            <option value="">User Group: *</option>
-                            <option value="man">Group 1</option>
-                            <option value="user1">Group 2</option>
-                            <option value="user2">Group 3</option>
+                            <select id="createUserGroup" class="form-control" required>
+							
+							{% for group in groups %}
+							
+                            <option value="{{group.name}}">{{group.name}}</option>
+							
+							{% endfor %}
+							
+							
+                            </select>
+                          </div> 
+						  
+						  <div class="col-md-6 col-sm-6 col-xs-12">
+                            <select id="createUserType" class="form-control" required>
+                            <option value="man">Employee</option>
+                            <option value="user1">Admin</option>
                             </select>
                           </div> 
                         </div>
 
                         <div class="form-group">
                           <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-                            <input type="password" class="form-control has-feedback-left" id="password" name="password" data-validate-length="6,8" placeholder="Password *" required="required">
+                            <input type="createPassword" class="form-control has-feedback-left" id="password" name="password" data-validate-length="6,8" placeholder="Password *" required="required">
                             <span class="fa fa-lock form-control-feedback left" aria-hidden="true"></span>
                           </div>
 
                           <div class="col-md-6 col-sm-6 col-xs-12 item form-group has-feedback">
-                            <input type="password" class="form-control" id="password2" name="password2" data-validate-linked="password" placeholder="Repeat Password *" required="required">
+                            <input type="createPassword2" class="form-control" id="password2" name="password2" data-validate-linked="password" placeholder="Repeat Password *" required="required">
                             <span class="fa fa-lock form-control-feedback right" aria-hidden="true"></span>
                           </div>
-                        </div>                -->       
+                        </div>      
 
-                        {% csrf_token %}
-                        {% for field in signupForm %}
-                        <p>
-                          {{ field.label_tag }}<br>
-                          {{ field }}
-                          {% if field.help_text %}
-                          <small style="color: grey">{{ field.help_text }}</small>
-                          {% endif %}
-                          {% for error in field.errors %}
-                          <p style="color: red">{{ error }}</p>
-                          {% endfor %}
-                        </p>
-                        {% endfor %}
+                        <!-- {% csrf_token %} -->
+                        <!-- {% for field in signupForm %} -->
+                        <!-- <p> -->
+                          <!-- {{ field.label_tag }}<br> -->
+                          <!-- {{ field }} -->
+                          <!-- {% if field.help_text %} -->
+                          <!-- <small style="color: grey">{{ field.help_text }}</small> -->
+                          <!-- {% endif %} -->
+                          <!-- {% for error in field.errors %} -->
+                          <!-- <p style="color: red">{{ error }}</p> -->
+                          <!-- {% endfor %} -->
+                        <!-- </p> -->
+                        <!-- {% endfor %} -->
 						
-						{% for field in groupForm %}
-                        <p>
-                          {{ field.label_tag }}<br>
-                          {{ field }}
-                          {% if field.help_text %}
-                          <small style="color: grey">{{ field.help_text }}</small>
-                          {% endif %}
-                          {% for error in field.errors %}
-                          <p style="color: red">{{ error }}</p>
-                          {% endfor %}
-                        </p>
-                        {% endfor %}
+						<!-- {% for field in groupForm %} -->
+                        <!-- <p> -->
+                          <!-- {{ field.label_tag }}<br> -->
+                          <!-- {{ field }} -->
+                          <!-- {% if field.help_text %} -->
+                          <!-- <small style="color: grey">{{ field.help_text }}</small> -->
+                          <!-- {% endif %} -->
+                          <!-- {% for error in field.errors %} -->
+                          <!-- <p style="color: red">{{ error }}</p> -->
+                          <!-- {% endfor %} -->
+                        <!-- </p> -->
+                        <!-- {% endfor %} -->
 						
 
                         <div class="ln_solid"></div>
@@ -376,7 +383,6 @@
                         </div>
                       </div>
                     </div>
-					</form>
                   </div>
                 </div>
               </div>
@@ -535,7 +541,7 @@
             </div>
 
             <div id="createGroup" class="modal fade" role="dialog" aria-hidden="true" style="padding-top: 100px">
-			<form action="/admin/creategroup" method="post">
+			
               <div class="modal-dialog">
                 <div class="modal-content">
                   <div class="form-horizontal form-label-left input_mask">
@@ -545,27 +551,24 @@
                       <h3 class="modal-title" id="myModalLabel">Create Group</h3>
                     </div>
                     <div class="modal-body">
-                      <!-- <div class="form-group"> -->
-                        <!-- <label class="control-label col-md-3 col-sm-3 col-xs-12" for="group-name">Group Name -->
-                        <!-- </label> -->
-                        <!-- <div class="col-md-6 col-sm-6 col-xs-12"> -->
-                          <!-- <input type="text" id="group-name" name="group-name" class="form-control"> -->
-                        <!-- </div> -->
-                      <!-- </div> -->
-					  
-						{{ newgroupForm.as_p }}
+                      <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="group-name">Group Name
+                        </label>
+                       <div class="col-md-6 col-sm-6 col-xs-12"> 
+                         <input type="text" id="group-name" name="group-name" class="form-control">
+                       </div>
+                      </div>
 					  
 					  
                     <div class="modal-footer">
                       <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                      <button type="submit" class="btn btn-primary" name="createGroup">Add</button>
+                      <button onClick="createGroup()" class="btn btn-primary" name="createGroup">Add</button>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
             <!-- end APPROVE -->
-			</form>
 			
           </div>
         </div>
@@ -923,6 +926,33 @@
         }
       }
     </script>
+
+	<!-- ajax -->
+	<script>
+		function createGroup(){
+			var groupName = document.getElementById("group-name").value;
+			$.ajax({url: 'http://127.0.0.1:8000/createGroup?groupName=' + groupName,
+				});
+			document.getElementById("group-name").value = "";
+				
+			}
+			
+		function createuser(){
+			var firstName = document.getElementById("createFirstName").value;
+			var lastName = document.getElementById("createLastName").value;
+			var userName = document.getElementById("createUserName").value;
+			var employeeID = document.getElementById("createEmployeeID").value;
+			var email = document.getElementById("createEmail").value;
+			var userGroup = document.getElementById("createUserGroup").value;
+			var userType = document.getElementById("createUserType").value;
+			
+			$.ajax({url: 'http://127.0.0.1:8000/createUser?firstName=' + firstName + "&lastName=" + lastName + "&userName=" + userName + "&employeeID=" + employeeID + "&email=" + email + "&userGroup=" + userGroup + "&userType=" + userType,
+				});
+			
+		}
+	</script>
+	
+	
 
     <!-- jQuery -->
     <script src="{% static '/vendors/jquery/dist/jquery.min.js' %}"></script>

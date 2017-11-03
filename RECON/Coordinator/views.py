@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
 from . import forms
-from .forms import SignUpForm, CreateGroupForm
+from .forms import SignUpForm
 from .models import Group, Profile
 from time import sleep
 from threading import Thread
@@ -61,7 +61,7 @@ sRead1.start()
 sSend1 = Thread(target=Sender1)
 sSend1.start()
 
-def getSerialOutput(request):
+def getSerialOutput1(request):
 	global strBuilder1
 	
 	JSONer = {}
@@ -105,47 +105,93 @@ def adminPage(request):
 		return HttpResponseRedirect("/user/")
 	
 	signupForm = SignUpForm()
-	newgroupForm = CreateGroupForm()
 	users = User.objects.all()	
+	groups = Group.objects.all()
 	
 	
 	context = {
 	'users':users,
+	'groups':groups,
 	'current_user': currentUser,
-	'newgroupForm': newgroupForm,
 	'signupForm' : signupForm,
 	}
 	return render(request, 'admin.html', context)
 	
 @login_required(login_url="/login")	
 def createUser(request):
-	if request.method == 'POST':
-		form = SignUpForm(request.POST)
+	JSONer = {}
+	parsedData = urlparse.urlparse(request.get_full_path())
+	userName = (urlparse.parse_qs(parsedData.query)['userName'][0])
+	firstName = (urlparse.parse_qs(parsedData.query)['firstName'][0])
+	lastName = (urlparse.parse_qs(parsedData.query)['lastName'][0])
+	email = (urlparse.parse_qs(parsedData.query)['email'][0])
+	password = (urlparse.parse_qs(parsedData.query)['password'][0])
+	employeeID = (urlparse.parse_qs(parsedData.query)['employeeID'][0])
+	userType = (urlparse.parse_qs(parsedData.query)['userType'][0])
+	groupName = (urlparse.parse_qs(parsedData.query)['groupName'][0])
+	
+	newGroup = Group.objects.filter(name=groupName)[0]
+	
+	newUser = User()
+	newUser.username = userName
+	newUser.first_name = firstName
+	newUser.last_name = lastName
+	newUser.email = email
+	newUser.password = password
+	newUser.Profile.usertype = userType
+	newUser.Profile.employeeID = employeeID
+	newUser.Profile.group = newGroup
+	newUser.save()
+	
+	
+	
+	
+	
+	
+	
+	return HttpResponseRedirect(json.dumps(JSONer))
+
+	# if request.method == 'POST':
+		# form = SignUpForm(request.POST)
 		# if form.is_valid() and User.objects.all().filter(username__iexact=form.cleaned_data.get('username')).count() == 0 and User.objects.all().filter(email__iexact=form.cleaned_data.get('email')).count() == 0 and Profile.objects.all().filter(employeeID__iexact=form.cleaned_data.get('employeeID')).count() == 0:
-		user = form.save()
-		user.refresh_from_db()
-		user.profile.usertype = form.cleaned_data.get('usertype')
-		user.profile.employeeID = form.cleaned_data.get('employeeID')
-		user.profile.group = form.cleaned_data.get('group')
+		# user = form.save()
+		# user.refresh_from_db()
+		# user.profile.usertype = form.cleaned_data.get('usertype')
+		# user.profile.employeeID = form.cleaned_data.get('employeeID')
+		# user.profile.group = form.cleaned_data.get('group')
 		# print("usertype: " + form.cleaned_data.get('usertype'))
-		user.profile.save()
-		user.save()
+		# user.profile.save()
+		# user.save()
 		# else:
 			# print('Error')
 			# print(User.objects.all().filter(username__iexact=form.cleaned_data.get('username')).count() == 0)
 			# print(User.objects.all().filter(email__iexact=form.cleaned_data.get('email')).count() == 0)
 			# print(Profile.objects.all().filter(employeeID__iexact=form.cleaned_data.get('employeeID')).count() == 0)
-	return HttpResponseRedirect("/admin/")
+	# return HttpResponseRedirect("/admin/")
 	
 
 @login_required(login_url="/login")	
 def createGroup(request):
-	if request.method == 'POST':
-		form = CreateGroupForm(request.POST)
-		if form.is_valid() and (Group.objects.all().filter(name__iexact=form.cleaned_data.get('name')).count() == 0):
-			post = form.save(commit=False)
-			post.save()
-	return HttpResponseRedirect("/admin/")
+	JSONer = {}
+	parsedData = urlparse.urlparse(request.get_full_path())
+	name = (urlparse.parse_qs(parsedData.query)['groupName'][0])
+	
+	print("New Group Name: " + name)
+	
+	grp = Group()
+	grp.name = name
+	grp.save()
+	
+	return HttpResponseRedirect(json.dumps(JSONer))
+
+
+# def createGroup(request):
+	# if request.method == 'POST':
+		# form = CreateGroupForm(request.POST)
+		# if form.is_valid() and (Group.objects.all().filter(name__iexact=form.cleaned_data.get('name')).count() == 0):
+			# post = form.save(commit=False)
+			# post.save()
+	# return HttpResponseRedirect("/admin/")
 	
 def validate_username(request):
 	username = request.GET.get('username', None)
