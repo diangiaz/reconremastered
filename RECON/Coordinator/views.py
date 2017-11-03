@@ -132,12 +132,13 @@ def editModal(request):
 	lastname = (urlparse.parse_qs(parsedData.query)['last-name'][0])
 	username = (urlparse.parse_qs(parsedData.query)['username'][0])
 	email = (urlparse.parse_qs(parsedData.query)['email'][0])
-	newid = (urlparse.parse_qs(parsedData.query)['newid'][0])
+	
 
 	if User.objects.filter(id=pkid).count() > 0:
 	 	userID = User.objects.filter(id=pkid)[0]
-	 	print(newid)
-	 	userID.profile.employeeID = newid
+	
+	 
+	 	userID.profile.employeeID = idnum
 	 	userID.first_name = firstname
 	 	userID.last_name = lastname
 	 	userID.username = username
@@ -171,3 +172,10 @@ def createGroup(request):
 			post.save()
 	return HttpResponseRedirect("/admin/")
 
+@login_required(login_url="/login")	
+def getSerialOutput1(request):
+	global strBuilder1
+	
+	JSONer = {}
+	JSONer['datatable'] = strBuilder1
+	return HttpResponse(json.dumps(JSONer))
