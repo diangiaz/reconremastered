@@ -157,8 +157,9 @@ def createUser(request):
 	newUser.password = password
 	newUser.save()
 	
-	Profile.objects.create(user=newUser)
-	print("profile Created")
+	# Profile.objects.create(user=newUser)
+	# print("profile Created")
+	# newProfile = Profile.objects.get(User = newUser)
 	newUser.refresh_from_db()
 	
 	newUser.profile.usertype = "employee"
@@ -174,9 +175,9 @@ def createUser(request):
 	# print(newUser.last_name)
 	# print(newUser.email)
 	# print(newUser.password)
-	print("Type: " + newUser.Profile.usertype)
-	print("ID: " + newUser.Profile.employeeID)
-	print("Group: " + newUser.Profile.group)
+	print("Type: " + newUser.profile.usertype)
+	print("ID: " + newUser.profile.employeeID)
+	print("Group: " + newUser.profile.group)
 	
 	
 	

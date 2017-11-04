@@ -146,8 +146,6 @@
 								
 								
 		                        <div class="tab-pane" id="routerPanel">
-									<!-- <form id="routerSubmit" method="post"> -->
-									<!-- {% csrf_token %} -->
 		                        	<textarea class="config" id="routerConfig" readonly> {{ routerConfig }} </textarea>
 	                        	  <div class="form-group command-group">
 	                        	  	<div class="col-sm-12 input-group">
@@ -157,7 +155,6 @@
 					                        </span>
 				                    </div>
 				                      </div>
-									<!-- </form> -->
 		                        </div>
 								
 								
@@ -430,11 +427,13 @@
     </script>
 	
 	<script>
-		<!-- $('#routerSubmit').on('submit', function(event){ -->
-			<!-- event.preventDefault(); -->
-			<!-- console.log("tried to submit router") -->
-			<!-- routerSend() -->
-		<!-- }); -->
+		var routerInput = document.getElementById("routerInput");
+		routerInput.addEventListener("keydown", function (e) {
+			if (e.keyCode == 13){
+				routerSend();
+				}
+		});
+		
 		
 		function routerSend(){
 			var textarea = document.getElementById('routerConfig');
