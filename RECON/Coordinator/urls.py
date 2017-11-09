@@ -11,6 +11,7 @@ urlpatterns = [
 	# url(r'^admin/edituser$', views.editUser, name='edituser'),
 	url(r'^admin/createuser$', views.createUser, name='createuser'),
 	url(r'^admin/creategroup$', views.createGroup, name='createuser'),
+	url(r'^admin/allocateDevice$', views.allocateDevice, name='allocateDevice'),
 	url(r'^editModal/$', views.editModal, name='editModal'),
 	url(r'^editGrp/$', views.editGrp, name='editGrp'),
 	url(r'^user/reserveDevice$', views.reserveDevice, name='reserveDevice'),

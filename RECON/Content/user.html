@@ -390,8 +390,9 @@
 		                    <td>
 		                    {% for grouptodevice in grouptodevice %}
 		                    	{% ifequal grouptodevice.device.id devices.id %}
-		                    		{{grouptodevice.startDateTime}} - {{grouptodevice.endDateTime}} <br>
-		                    		 
+		                    		{% ifequal grouptodevice.type 'AP' %}
+		                    			{{grouptodevice.startDateTime}} - {{grouptodevice.endDateTime}} <br>
+		                    		{% endifequal %} 
 		                    			
 		                    	{% endifequal %}
 

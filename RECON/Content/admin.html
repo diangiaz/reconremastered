@@ -66,6 +66,9 @@
                     <!-- <span data-toggle="modal" data-target="#auditLogs"> -->
                       <button class="btn btn-default" id="navButton" type="button" onclick="toggleVisibility('divAudit')"><i class="fa fa-list"></i></button>
                     </span>
+                    <span data-toggle="modal" data-target="#allocateModal-{{current_user.id}}">
+                      <button class="btn btn-default" id="navButton" type="button" data-toggle="tooltip" data-placement="bottom" title="Allocate Device"><i class="fa fa-cogs"></i></button>
+                    </span>
                     <span data-toggle="modal" data-target="#approveRes-{{user.id}}">
                       <button class="btn btn-default" id="navButton" type="button" data-toggle="tooltip" data-placement="bottom" title="Pending Reservations"><i class="fa fa-exclamation-circle"></i></button>
                     </span>
@@ -181,7 +184,7 @@
                                <!--  <a type="submit" href="#editModal-{{user.id}}" data-toggle="modal" class="btn btn-info btn-xs"><i class="fa fa-pencil"></i> Edit </a>
                                 <a type="submit" href="#allocateModal-{{user.id}}" data-toggle="modal" class="btn btn-primary btn-xs"><i class="fa fa-cogs"></i> Allocate </a> -->
 																 
-                                <a type="submit" href="#allocateModal" data-toggle="modal" class="btn btn-primary btn-xs"><i class="fa fa-cogs"></i> Allocate </a>                              
+                                                             
                               </td>
                             </tr>
                          
@@ -742,64 +745,74 @@
      
     {% endfor %}
     <!-- end EDIT GROUP -->	
-
+    
     <!--start ALLOCATE MODAL -->
-    <div id="allocateModal" class="modal fade" role="dialog" aria-hidden="true">
+    <div id="allocateModal-{{current_user.id}}" class="modal fade" role="dialog" aria-hidden="true" style="padding-top: 90px">
+      {% csrf_token %}
       <div class="modal-dialog">
         <div class="modal-content">
-          <div class="form-horizontal form-label-left">
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
-              </button>
-              <h3 class="modal-title" id="myModalLabel">Allocate Device</h3>
-            </div>
-            <div class="modal-body">
-              <h2>Device List</h2>
-              <table class="table-width table table-striped jambo_table">
-                <thead>
-                  <tr>
-                    <th style="width: 10%"></th>
-                    <th style="width: 30%">Device</th>
-                    <th>Quantity</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td class="a-center ">
-                      <input type="checkbox" id="routerBox" onchange="enableRQty(this)">
-                    </td>
-                    <td>Router</td>
-                    <td>
-                      <div class="col-md-4">
-                        <input type="text" id="routerQty" class="form-control" data-inputmask="'mask': '9'" placeholder="0" disabled>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="a-center ">
-                      <input type="checkbox" id="switchBox" value="sw" onchange="enableSWQty(this)">
-                    </td>
-                    <td>Switch</td>
-                    <td>
-                      <div class="col-md-4">
-                        <input type="text" id="switchQty" placeholder="0" disabled class="form-control" data-inputmask="'mask': '9'">
-                      </div>
-                    </td>
-                  </tr>
-                 
-                  <tr>
-                    <td class="a-center ">
-                      <input type="checkbox" id="terminalBox" value="host" onclick="enableTQty(this)">
-                    </td>
-                    <td>Terminal</td>
-                    <td>
-                      <div class="col-md-4">
-                        <input type="text" id="terminalQty" placeholder="0" disabled class="form-control" data-inputmask="'mask': '9'">
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+          <div class="modal-header">
+             <input type="hidden" name="pkid" id="pkid" class="form-control" value="{{ current_user.id }}"> 
+            <h3 style="display: inline;"><i class="fa fa-calendar"></i> Reservation Form</h3>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
+            </button>  
+          </div>
+          <div class="modal-body" style="padding-bottom: 0">
+            <div class="form-horizontal form-label-left">
+              <div class="x_content" style="margin-top:0;padding-bottom:10px">
+                <h2>Available devices:</h2>
+                <div style="width: 100%;float: left;height: 215px;overflow:auto;" id="availableDevices" data-target-id="datesRes">
+                  <table class="table-width table table-striped jambo_table" style="width: 100%">
+                    <thead>
+                      <tr>
+                        <th>Device</th>
+                        <th style="width: 70%">Dates Reserved</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    {% for devices in devices %}
+                      <tr>
+                        <td class="a-center ">
+                          <div class="radio">
+                            <label style="padding-left: 0">
+                              <input type="radio" id="deviceList-{{devices.id}}" class="flat" name="deviceList" value="{{devices.id}}"> {{devices.name}}
+                            </label>
+                          </div>
+                        </td>
+                        <td>
+                        {% for grouptodevice in grouptodevice %}
+                          {% ifequal grouptodevice.device.id devices.id %}
+                            {% ifequal grouptodevice.type 'AP' %}
+                              {{grouptodevice.startDateTime}} - {{grouptodevice.endDateTime}} <br>
+                            {% endifequal %} 
+                              
+                          {% endifequal %}
+
+                        {% endfor %}
+                        </td>
+                      </tr>
+                     {% endfor %}
+                    </tbody>
+                  </table>
+                 </div>
+                
+              </div>
+
+             <div class="form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12">Select Group:</label>
+                <div class="col-md-8 col-sm-6 col-xs-12">
+                  <select name="groupName" id="groupName-{{group.id}}" class="select2_single form-control" tabindex="-1">
+                  
+                  {% for group in groups %}
+                    
+                      <option id="userGroup-{{ group.id }}" value="{{group.id}}">{{group.name}}</option>
+                  
+                     
+                  {% endfor %}
+                  </select>
+
+                </div>
+              </div>
               <div class="form-group">
                 <div class="col-md-6 col-sm-6 col-xs-12" style="padding-right: 0">
                   <label class="control-label col-md-3" style="width: 17%" for="datetimepicker6">Date</label>
@@ -807,7 +820,7 @@
                     <span class="input-group-addon">
                       <span class="fa fa-calendar-o"></span>
                     </span>
-                    <input type='text' class="form-control" />
+                    <input type='text' class="form-control" name='start-date' id='start-date' />
                     <!-- <span class="input-group-addon">to</span> -->
                   </div>
                 </div>   
@@ -815,22 +828,26 @@
                 <div class="col-md-6 col-sm-6 col-xs-12" style="padding-left: 0">
                   <label class="control-label col-md-3" style="width: 12%" for="datetimepicker7">to</label>
                   <div class='input-group date' id='datetimepicker7'>
-                    <input type='text' class="form-control" />
+                    <input type='text' class="form-control" name='end-date' id='end-date' />
                     <span class="input-group-addon">
                       <span class="fa fa-calendar-o"></span>
                     </span>
                   </div>
                 </div>
               </div>
-            </div>              
-            <div class="modal-footer">
-              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-primary">Allocate</button>
             </div>
+          </div>              
+          <div class="modal-footer">
+
+            <button type="submit" onClick="allocateDeviceAjax({{current_user.id}},'groupName-{{group.id}}')"  class="btn btn-primary">Reserve</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
           </div>
         </div>
       </div>
+     
     </div>
+    <!-- end RESERVE -->
+    
     <!-- end ALLOCATE MODAL -->
   
     <script>
@@ -1030,6 +1047,37 @@
     $("#datetimepicker7").on("dp.change", function(e) {
         $('#datetimepicker6').data("DateTimePicker").maxDate(e.date);
     });
+    </script>
+
+    <script> $('input[name="deviceList"]').first().prop('checked', true) </script>
+    <script>
+        function allocateDeviceAjax(id,groupid){
+            var newgroupid = document.getElementById(groupid).options[document.getElementById(groupid).selectedIndex].value;
+            var startDate = document.getElementById('start-date').value;
+            var endDate = document.getElementById('end-date').value;
+            var deviceid;
+            var radios = document.getElementsByName('deviceList');
+            for (var i = 0, length = radios.length; i < length; i++) {
+          if (radios[i].checked) {
+            deviceid = radios[i].value;
+            
+            
+              break;
+          }
+      }
+      
+            console.log(startDate)
+            console.log(endDate)
+           
+            console.log(newgroupid)
+            console.log(deviceid)
+            $.ajax({url: 'http://127.0.0.1:8000/admin/allocateDevice?pkid='+ id + "&groupid=" + newgroupid + "&deviceList=" + deviceid + "&start-date=" + startDate + "&end-date=" + endDate,
+                success: function(result){
+                  window.location.reload();
+                  // insert success message here
+                }
+            });
+        }
     </script>
 
     <!-- Calendar -->
