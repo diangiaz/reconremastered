@@ -485,7 +485,7 @@
 
     <!-- RECON REMASTERED Script -->
     <script src="{% static '/production/js/recon.js' %}"></script>
-
+    <script> $('input[name="deviceList"]').first().prop('checked', true) </script>
     <script>
         function reserveDeviceAjax(userid,groupid){
           	var startDate = document.getElementById('start-date').value;
@@ -507,7 +507,7 @@
           	console.log(groupid)
           	console.log(deviceid)
             $.ajax({url: 'http://127.0.0.1:8000/user/reserveDevice?pkid='+ userid + "&groupid=" + groupid + "&deviceList=" + deviceid + "&start-date=" + startDate + "&end-date=" + endDate,
-                error: function(result){
+                success: function(result){
                   window.location.reload();
                   // insert success message here
                 }

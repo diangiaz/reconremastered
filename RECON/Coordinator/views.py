@@ -7,7 +7,8 @@ from django.shortcuts import render, redirect
 from . import forms
 from .forms import SignUpForm, CreateGroupForm
 from .models import Group, Profile, Device, GroupToDevice
-
+import datetime
+from datetime import timedelta
 import json
 import urllib.parse as urlparse
 # Create your views here.
@@ -20,7 +21,7 @@ import urllib.parse as urlparse
 def userPage(request):
 	currentUser = request.user
 	
-	if currentUser.profile.usertype == 'admin':
+	if currentUser.profile.usertype != 'employee':
 		return HttpResponseRedirect("/admin/")
 
 	users = User.objects.all()	
@@ -33,7 +34,7 @@ def userPage(request):
 def adminPage(request):
 	currentUser = request.user
 	
-	if currentUser.profile.usertype == 'employee':
+	if currentUser.profile.usertype != 'admin':
 		return HttpResponseRedirect("/user/")
 	
 	signupForm = SignUpForm()
@@ -58,7 +59,7 @@ def adminPage(request):
 def userPage(request):
 	currentUser = request.user
 	
-	if currentUser.profile.usertype == 'admin':
+	if currentUser.profile.usertype != 'employee':
 		return HttpResponseRedirect("/admin/")
 	
 	users = User.objects.all()	
@@ -133,6 +134,7 @@ def declinedRes(request):
 	
 @login_required(login_url="/login")	
 def reserveDevice(request):
+	ctr = 0
 	currentUser = request.user
 	JSONer = {}	
 	parsedData = urlparse.urlparse(request.get_full_path())
@@ -141,19 +143,46 @@ def reserveDevice(request):
 	startdate = (urlparse.parse_qs(parsedData.query)['start-date'][0])
 	enddate = (urlparse.parse_qs(parsedData.query)['end-date'][0])
 	deviceid = (urlparse.parse_qs(parsedData.query)['deviceList'][0])
-	#daterange1 = GroupToDevice.objects.filter(date__range=[startdate, enddate])
 
-	
+	comparedate = datetime.datetime.strptime(startdate, "%Y-%m-%d").date()
+	comparedate2 = datetime.datetime.strptime(enddate, "%Y-%m-%d").date()
+
+	#daterange1 = GroupToDevice.objects.filter(date__range=[startdate, enddate])
+	reservelist = GroupToDevice.objects.all()
+	success = True
+	ctr = 0
+	context = {
+	'success':success,
+	}
 	if User.objects.filter(id=pkid).count() > 0 and Group.objects.filter(id=groupid).count() > 0:
+		devicename=Device.objects.filter(id=deviceid)[0]
+		devicename = devicename.name
+		while ctr < GroupToDevice.objects.filter(device=deviceid).count() and success == True:
+			arr1=GroupToDevice.objects.filter(device=deviceid).values_list('startDateTime', flat=True)
+			#arr1[ctr].strftime("%Y-%m-%d")
+			arr2=GroupToDevice.objects.filter(device=deviceid).values_list('endDateTime', flat=True)
+
 			
-		newgroupID = Group.objects.get(id=groupid)
-		newdeviceID = Device.objects.get(id=deviceid)
-		a = GroupToDevice(group=newgroupID,device=newdeviceID,startDateTime=startdate,endDateTime=enddate,type='RS')
-		a.save()
+			if (comparedate >= arr1[ctr] and comparedate <= arr2[ctr]) or (comparedate2 >= arr1[ctr] and comparedate2 <= arr2[ctr]) or (arr1[ctr]  >= comparedate and arr1[ctr] <= comparedate2) or (arr2[ctr] >= comparedate and arr2[ctr] <= comparedate2):
+			 	print("false")
+			 	success = False
+			else:
+			 	print("true")
+			 	success = True
+			ctr = ctr+1
 			
 		
-	return HttpResponseRedirect(json.dumps(JSONer))
+		if success == True:
+			newgroupID = Group.objects.get(id=groupid)
+			newdeviceID = Device.objects.get(id=deviceid)
+			a = GroupToDevice(group=newgroupID,device=newdeviceID,startDateTime=startdate,endDateTime=enddate,type='RS')
+			a.save()
+		
+	return HttpResponse(json.dumps(JSONer), context)		
 
+			
+		
+	
 @login_required(login_url="/login")
 def editModal(request):
 
