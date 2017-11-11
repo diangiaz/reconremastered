@@ -99,6 +99,14 @@
                   <div class="x_title">
                     <h2>Manage Groups and Devices</h2>
                     <div class="clearfix"></div>
+
+                  </div>
+                  <div class="x_content bs-example-popovers">
+                   <div class="alert alert-success alert-dismissible fade in" role="alert">
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span>
+                      </button>
+                      <strong>Account has been successfully created!</strong>
+                   </div>
                   </div>
                   <div class="x_content">
                     <div class="col-md-9" style="padding-left: 0;width: 80%">
@@ -108,7 +116,7 @@
                               <th rowspan="2" style="text-align: center; width:10%; font-weight: 700">Group</th>
                               <th rowspan="2" style="text-align: center; width:10%; font-weight: 700">Member</th>
                               <th colspan="3" rowspan="1" style="text-align: center;width:60%; font-weight: 700">Devices</th>
-                              <th rowspan="2" style="width:10%"></th>
+                              
                             </tr>
                             <tr style="display: none;">
                               <th>Router</th>
@@ -142,19 +150,70 @@
                               {% endfor %}
                               </ul>
                             </td>
-                              <td>
+                            
+
+                            <td>
+                            {% for gtd in grouptodevice %}
+                             {% ifequal gtd.group.id groups.id %}
+                              {% ifequal gtd.type 'AP' %}
+                               {% ifequal gtd.device.type 'Router' %}
                                 <ul class="allocatedDev-list">
                                   <li style="padding-left: 0">                                 
                                     <a>
                                       <img src="{% static 'production/images/routerAvatar.png' %}" class="avatar" alt="Avatar" style="margin-right: 6px">
-                                      <strong>Monday - Wednesday</strong>
-                                      <br />
-                                      <small>September 3-6</small>
+                                      <strong>{{gtd.device.name}}</strong>
+                                      <br/>
+                                      <small>{{ gtd.startDateTime }} - {{ gtd.endDateTime }}</small>
                                     </a>
                                   </li>
                                 </ul>
-                              </td>
-                              <td>
+                               {% endifequal %}
+                              {% endifequal %}
+                             {% endifequal %}
+                            {% endfor %}
+                            </td>
+                            <td>
+                            {% for gtd in grouptodevice %}
+                             {% ifequal gtd.group.id groups.id %}
+                              {% ifequal gtd.type 'AP' %}
+                               {% ifequal gtd.device.type 'Switch' %}
+                                <ul class="allocatedDev-list">
+                                  <li style="padding-left: 0">                                 
+                                    <a>
+                                      <img src="{% static 'production/images/switchAvatar.png' %}" class="avatar" alt="Avatar" style="margin-right: 6px">
+                                      <strong>{{gtd.device.name}}</strong>
+                                      <br/>
+                                      <small>{{ gtd.startDateTime }} - {{ gtd.endDateTime }}</small>
+                                    </a>
+                                  </li>
+                                </ul>
+                               {% endifequal %}
+                              {% endifequal %}
+                             {% endifequal %}
+                            {% endfor %}
+                            </td>
+                            <td>
+                            {% for gtd in grouptodevice %}
+                             {% ifequal gtd.group.id groups.id %}
+                              {% ifequal gtd.type 'AP' %}
+                               {% ifequal gtd.device.type 'Terminal' %}
+                                <ul class="allocatedDev-list">
+                                  <li style="padding-left: 0">                                 
+                                    <a>
+                                      <img src="{% static 'production/images/terminalAvatar.png' %}" class="avatar" alt="Avatar" style="margin-right: 6px">
+                                      <strong>{{gtd.device.name}}</strong>
+                                      <br/>
+                                      <small>{{ gtd.startDateTime }} - {{ gtd.endDateTime }}</small>
+                                    </a>
+                                  </li>
+                                </ul>
+                               {% endifequal %}
+                              {% endifequal %}
+                             {% endifequal %}
+                            {% endfor %}
+                            </td>
+                              
+                              <!-- <td>
                                 <ul class="allocatedDev-list">
                                   <li style="padding-left: 0">                                 
                                     <a>
@@ -177,15 +236,8 @@
                                     </a>
                                   </li>
                                 </ul>
-                              </td>
-                              <td>
-                                <!-- <a type="submit" href="#editModal" data-toggle="modal" class="btn btn-info btn-xs"><i class="fa fa-pencil"></i> Edit </a>
-                                <a type="submit" href="#allocateModal" data-toggle="modal" class="btn btn-primary btn-xs"><i class="fa fa-cogs"></i> Allocate </a> -->
-                               <!--  <a type="submit" href="#editModal-{{user.id}}" data-toggle="modal" class="btn btn-info btn-xs"><i class="fa fa-pencil"></i> Edit </a>
-                                <a type="submit" href="#allocateModal-{{user.id}}" data-toggle="modal" class="btn btn-primary btn-xs"><i class="fa fa-cogs"></i> Allocate </a> -->
-																 
-                                                             
-                              </td>
+                              </td> -->
+                              
                             </tr>
                          
                           {% endfor %}
