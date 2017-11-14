@@ -6,7 +6,7 @@ from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
 from . import forms
 from .forms import SignUpForm
-from .models import Group, Profile
+from .models import Group, Profile, SaveTopology
 from time import sleep
 from threading import Thread
 import serial
@@ -15,69 +15,45 @@ import urllib.parse as urlparse
 
 # Create your views here.
 
-readState = False
-serialPort = serial.Serial("COM4", 9600)
-strBuilder1 = ""
-varCurr = ""
-varPrev = ""
-		
-		
-		
-def Sender1():
-	global serialPort
-	
-	while True:
-		serialPort.flushInput()
-		text = input("") + "\n"
-		serialPort.write(text.encode('utf-8'))
-		bytes_to_read = serialPort.inWaiting()
-		sleep(.2)
+# serial reader/sender start
 
-# def serialReceiver1():
-	# global readState
+
+strBuilder1 = ""
+# readState = False
+# serialPort = serial.Serial("COM4", 9600)
+# varCurr = ""
+# varPrev = ""
+		
+# def Sender1():
 	# global serialPort
-	# global strBuilder1
-	# global varCurr
-	# global varPrev
 	
 	# while True:
-		# varPrev = varCurr
-		# serialRead = serialPort.read()
-		# varCurr = serialRead.decode()
+		# serialPort.flushInput()
+		# text = input("") + "\n"
+		# serialPort.write(text.encode('utf-8'))
+		# bytes_to_read = serialPort.inWaiting()
+		# sleep(.2)
 	
-		# if readState == False:
-			# readState = True
-			# strBuilder = ""
-	
-		# elif readState == True:
-			# text = serialPort.readline()
-			# strBuilder1 += text.decode() + "\n"
-			# print("serial output: " + text.decode())
-
+# class Receiver1(Thread):
+		# def __init__(self, serialPort): 
+			# Thread.__init__(self) 
+			# self.serialPort = serialPort 
+		# def run(self):
+			# global serialPort
+			# global strBuilder1
+			# text = "" 
+			# while (text != "exitReceiverThread\n"): 
+				# text = serialPort.readline()
+				# strBuilder1 += text.decode() + "\n"
+				# print("serial output: " + text.decode())
 			
-# sRead1 = Thread(target=serialReceiver1)
-# sRead1.start()
-
-class Receiver1(Thread):
-		def __init__(self, serialPort): 
-			Thread.__init__(self) 
-			self.serialPort = serialPort 
-		def run(self):
-			global serialPort
-			global strBuilder1
-			text = "" 
-			while (text != "exitReceiverThread\n"): 
-				text = serialPort.readline()
-				strBuilder1 += text.decode() + "\n"
-				print("serial output: " + text.decode())
+			# self.serialPort.close()
 			
-			self.serialPort.close()
-			
-receive = Receiver1(serialPort) 
-receive.start()
+# receive = Receiver1(serialPort) 
+# receive.start()
 
-sSend1 = Thread(target=Sender1)
-sSend1.start()
+# sSend1 = Thread(target=Sender1)
+# sSend1.start()
 
 def getSerialOutput1(request):
 	global strBuilder1
@@ -93,27 +69,67 @@ def sendSerial1(request):
 	
 	text += "\n"
 	
-	serialPort.flushInput()
-	serialPort.write(text.encode('utf-8'))
-	bytes_to_read = serialPort.inWaiting()
+	# serialPort.flushInput()
+	# serialPort.write(text.encode('utf-8'))
+	# bytes_to_read = serialPort.inWaiting()
 	print(text)
 	
 	return HttpResponseRedirect(json.dumps(JSONer))
 
+	
+# serial reader/sender end
+
+		
 
 		
 @login_required(login_url="/login")
 def userPage(request):
 	currentUser = request.user
+	groupTopologies = SaveTopology.objects.filter(group = currentUser.profile.group)
+	
 	
 	if currentUser.profile.usertype == 'admin':
 		return HttpResponseRedirect("/admin/")
 
 	users = User.objects.all()	
 	context = {
-		'current_user': currentUser
+		'current_user': currentUser,
+		'topologies': groupTopologies,
 	}
 	return render(request, 'user.html', context)
+	
+@login_required(login_url="/login")
+def loadTopology(request):
+	JSONer = {}
+	parsedData = urlparse.urlparse(request.get_full_path())
+	topologyID = (urlparse.parse_qs(parsedData.query)['topologyID'][0])
+	
+	currentTopology = SaveTopology.objects.filter(id=topologyID)[0]
+	print("Loaded " + currentTopology.name)
+	return HttpResponse(json.dumps(JSONer))	
+
+	
+@login_required(login_url="/login")
+def saveTopologyFunc(request):
+	user = request.user
+
+	JSONer = {}
+	parsedData = urlparse.urlparse(request.get_full_path())
+	name = (urlparse.parse_qs(parsedData.query)['topologyName'][0])
+
+	if (SaveTopology.objects.filter(name).count() > 0):
+		name = name + "(copy)"
+	
+	
+	newTopology = SaveTopology()	
+	newTopology.name = name
+	newTopology.group = user.profile.group
+	newTopology.save()
+	
+	print("topology saved")
+	
+	return HttpResponse(json.dumps(JSONer))
+
 
 @login_required(login_url="/login")	
 def adminPage(request):
@@ -157,9 +173,6 @@ def createUser(request):
 	newUser.password = password
 	newUser.save()
 	
-	# Profile.objects.create(user=newUser)
-	# print("profile Created")
-	# newProfile = Profile.objects.get(User = newUser)
 	newUser.refresh_from_db()
 	
 	newUser.profile.usertype = "employee"
@@ -169,43 +182,9 @@ def createUser(request):
 	newUser.save()
 	
 	
-	print("user created")
-	# print(newUser.username)
-	# print(newUser.first_name)
-	# print(newUser.last_name)
-	# print(newUser.email)
-	# print(newUser.password)
-	print("Type: " + newUser.profile.usertype)
-	print("ID: " + newUser.profile.employeeID)
-	print("Group: " + newUser.profile.group)
-	
-	
-	
-	
-	
-	
-	
 	
 	return HttpResponse(json.dumps(JSONer))
 
-	# if request.method == 'POST':
-		# form = SignUpForm(request.POST)
-		# if form.is_valid() and User.objects.all().filter(username__iexact=form.cleaned_data.get('username')).count() == 0 and User.objects.all().filter(email__iexact=form.cleaned_data.get('email')).count() == 0 and Profile.objects.all().filter(employeeID__iexact=form.cleaned_data.get('employeeID')).count() == 0:
-		# user = form.save()
-		# user.refresh_from_db()
-		# user.profile.usertype = form.cleaned_data.get('usertype')
-		# user.profile.employeeID = form.cleaned_data.get('employeeID')
-		# user.profile.group = form.cleaned_data.get('group')
-		# print("usertype: " + form.cleaned_data.get('usertype'))
-		# user.profile.save()
-		# user.save()
-		# else:
-			# print('Error')
-			# print(User.objects.all().filter(username__iexact=form.cleaned_data.get('username')).count() == 0)
-			# print(User.objects.all().filter(email__iexact=form.cleaned_data.get('email')).count() == 0)
-			# print(Profile.objects.all().filter(employeeID__iexact=form.cleaned_data.get('employeeID')).count() == 0)
-	# return HttpResponseRedirect("/admin/")
-	
 
 @login_required(login_url="/login")	
 def createGroup(request):
@@ -213,29 +192,8 @@ def createGroup(request):
 	parsedData = urlparse.urlparse(request.get_full_path())
 	name = (urlparse.parse_qs(parsedData.query)['groupName'][0])
 	
-	print("New Group Name: " + name)
-	
 	grp = Group()
 	grp.name = name
 	grp.save()
 	
 	return HttpResponse(json.dumps(JSONer))
-
-
-# def createGroup(request):
-	# if request.method == 'POST':
-		# form = CreateGroupForm(request.POST)
-		# if form.is_valid() and (Group.objects.all().filter(name__iexact=form.cleaned_data.get('name')).count() == 0):
-			# post = form.save(commit=False)
-			# post.save()
-	# return HttpResponseRedirect("/admin/")
-	
-def validate_username(request):
-	username = request.GET.get('username', None)
-	data = {
-		'is_taken': User.objects.filter(username__iexact=username).exists()
-	}
-	return JsonResponse(data)
-	
-	
-	

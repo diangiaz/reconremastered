@@ -1,3 +1,6 @@
+	console.log("current user = {{ current_user.username }}")
+	
+	
 	var Content = document.getElementById("Content");
 	var CnvsWorkspace = document.getElementById("Workspace");
 	var Workspace = CnvsWorkspace.getContext("2d");

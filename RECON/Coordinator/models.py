@@ -37,7 +37,6 @@ class Profile(models.Model):
 def create_user_profile(sender, instance, created, **kwargs):
 	if created:
 		Profile.objects.create(user=instance)
-		# print("Profile created")
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
@@ -63,7 +62,6 @@ class Device(models.Model):
 		choices=DEVICE_TYPE_CHOICES
 	)
 	name = models.CharField(
-		unique=True,
 		max_length=25,
 	)
 	ycord = models.PositiveIntegerField(
@@ -128,15 +126,15 @@ class GroupToDevice(models.Model):
 		choices = TYPE_CHOICES,
 	)
 	
-class UserToGroup(models.Model):
-	user = models.ForeignKey(
-		User,
-		on_delete=models.CASCADE,
-	)
-	group = models.ForeignKey(
-		Group,
-		on_delete=models.CASCADE,
-	)
+# class UserToGroup(models.Model):
+	# user = models.ForeignKey(
+		# User,
+		# on_delete=models.CASCADE,
+	# )
+	# group = models.ForeignKey(
+		# Group,
+		# on_delete=models.CASCADE,
+	# )
 
 class Connection(models.Model):
 	CONSOLE = 'Console'
@@ -186,6 +184,8 @@ class SaveTopology(models.Model):
 	name = models.CharField(
 		max_length = 40
 	)
+	def __str__(self):
+		return self.name
 
 class SaveConn(models.Model):
 	CONSOLE = 'Console'
@@ -210,6 +210,10 @@ class SaveConn(models.Model):
 	)
 
 class SaveDev(models.Model):
+	SaveTopology = models.ForeignKey(
+		SaveTopology,
+		on_delete=models.CASCADE,
+	)
 	xCord = models.IntegerField(
 	)
 	yCord = models.IntegerField(
