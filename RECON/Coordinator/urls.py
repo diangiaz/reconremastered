@@ -15,4 +15,5 @@ urlpatterns = [
 	url(r'^routerSend$', views.sendSerial1, name='sendserial1'),
 	url(r'^loadTopology$', views.loadTopology, name='loadTopology'),
 	url(r'^saveTopology$', views.saveTopologyFunc, name='saveTopology'),
+	url(r'^saveDevice$', views.saveDevice, name='saveDevice'),
 ]	

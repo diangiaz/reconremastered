@@ -44,8 +44,6 @@ def save_user_profile(sender, instance, **kwargs):
 		
 post_save.connect(create_user_profile, sender=User)	
 	
-	
-	
 class Device(models.Model):
 	ROUTER = 'Router'
 	SWITCH = 'Switch'
@@ -63,10 +61,6 @@ class Device(models.Model):
 	)
 	name = models.CharField(
 		max_length=25,
-	)
-	ycord = models.PositiveIntegerField(
-	)
-	xcord = models.PositiveIntegerField(
 	)
 	def __str__(self):
 		return self.name
@@ -125,16 +119,6 @@ class GroupToDevice(models.Model):
 		max_length = 2,
 		choices = TYPE_CHOICES,
 	)
-	
-# class UserToGroup(models.Model):
-	# user = models.ForeignKey(
-		# User,
-		# on_delete=models.CASCADE,
-	# )
-	# group = models.ForeignKey(
-		# Group,
-		# on_delete=models.CASCADE,
-	# )
 
 class Connection(models.Model):
 	CONSOLE = 'Console'
@@ -210,16 +194,27 @@ class SaveConn(models.Model):
 	)
 
 class SaveDev(models.Model):
-	SaveTopology = models.ForeignKey(
+	saveTopology = models.ForeignKey(
 		SaveTopology,
 		on_delete=models.CASCADE,
 	)
-	xCord = models.IntegerField(
+	# GroupToDevice = models.ForeignKey(
+		# GroupToDevice,
+		# on_delete=models.CASCADE,
+	# )
+	deviceName = models.CharField(
+		max_length = 40,
 	)
-	yCord = models.IntegerField(
+	xCord = models.FloatField(
+		default = 0,
+		null = True,
 	)
-	devID = models.IntegerField(
+	yCord = models.FloatField(
+		default = 0,
+		null = True,
 	)
+	def __str__(self):
+		return self.deviceName + " of " + self.saveTopology.name
 
 class Log(models.Model):
 	device = models.ForeignKey(

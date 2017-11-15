@@ -1,12 +1,13 @@
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.template import Context, RequestContext
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
 from . import forms
 from .forms import SignUpForm
-from .models import Group, Profile, SaveTopology
+from .models import Group, Profile, SaveTopology, SaveDev
 from time import sleep
 from threading import Thread
 import serial
@@ -14,10 +15,9 @@ import json
 import urllib.parse as urlparse
 
 # Create your views here.
+savedTopology = SaveTopology()
 
 # serial reader/sender start
-
-
 strBuilder1 = ""
 # readState = False
 # serialPort = serial.Serial("COM4", 9600)
@@ -79,9 +79,6 @@ def sendSerial1(request):
 	
 # serial reader/sender end
 
-		
-
-		
 @login_required(login_url="/login")
 def userPage(request):
 	currentUser = request.user
@@ -100,36 +97,76 @@ def userPage(request):
 	
 @login_required(login_url="/login")
 def loadTopology(request):
+	currentUser = request.user
+	if currentUser.profile.usertype == 'admin':
+		return HttpResponseRedirect("/admin/")
+		
 	JSONer = {}
 	parsedData = urlparse.urlparse(request.get_full_path())
 	topologyID = (urlparse.parse_qs(parsedData.query)['topologyID'][0])
 	
-	currentTopology = SaveTopology.objects.filter(id=topologyID)[0]
-	print("Loaded " + currentTopology.name)
-	return HttpResponse(json.dumps(JSONer))	
-
+	loadThisTopology = SaveTopology.objects.filter(id=topologyID)[0]
+	print("Loaded " + loadThisTopology.name)
+	
+	groupTopologies = SaveTopology.objects.filter(group = currentUser.profile.group)
+	loadDevices = SaveDev.objects.filter(saveTopology = loadThisTopology)
+	
+	
+	context = {
+		'current_user': currentUser,
+		'topologies': groupTopologies,
+		'devices': loadDevices,
+	}
+	return render(request, 'user.html', context)
+	
 	
 @login_required(login_url="/login")
 def saveTopologyFunc(request):
+	global savedTopology
 	user = request.user
 
 	JSONer = {}
 	parsedData = urlparse.urlparse(request.get_full_path())
-	name = (urlparse.parse_qs(parsedData.query)['topologyName'][0])
-
-	if (SaveTopology.objects.filter(name).count() > 0):
-		name = name + "(copy)"
+	topName = (urlparse.parse_qs(parsedData.query)['topologyName'][0])
 	
-	
-	newTopology = SaveTopology()	
-	newTopology.name = name
-	newTopology.group = user.profile.group
-	newTopology.save()
-	
-	print("topology saved")
-	
+	if (SaveTopology.objects.filter(name = topName).count() > 0):
+		savedTopology = SaveTopology.objects.filter(name = topName)[0]
+		SaveDev.objects.filter(saveTopology = savedTopology).delete()
+		print("Overwrite " + savedTopology.name)
+	else:
+		newTopology = SaveTopology()	
+		newTopology.name = topName
+		newTopology.group = user.profile.group
+		newTopology.save()
+		newTopology.refresh_from_db()
+		savedTopology = newTopology
+		print("Created " + newTopology.name)
+		
 	return HttpResponse(json.dumps(JSONer))
+	
+@login_required(login_url="/login")
+def saveDevice(request):
+	global savedTopology
+	
+	JSONer = {}
+	parsedData = urlparse.urlparse(request.get_full_path())
+	devName = (urlparse.parse_qs(parsedData.query)['deviceName'][0])
+	x = (urlparse.parse_qs(parsedData.query)['x'][0])
+	y = (urlparse.parse_qs(parsedData.query)['y'][0])
+	
+	print("Save " + devName + " x/y=" + x + y + " to " + savedTopology.name)
 
+	newSaveDev = SaveDev()
+	newSaveDev.saveTopology = savedTopology
+	newSaveDev.deviceName = devName
+	newSaveDev.xCord = float(x)
+	newSaveDev.yCord = float(y)
+	newSaveDev.save()
+	
+	print("Saved " + newSaveDev.deviceName + " to " + newSaveDev.saveTopology.name)
+	print("Saved coordinates are " + str(newSaveDev.xCord) + " and " + str(newSaveDev.yCord))
+		
+	return HttpResponse(json.dumps(JSONer))
 
 @login_required(login_url="/login")	
 def adminPage(request):
@@ -165,12 +202,14 @@ def createUser(request):
 	
 	newGroup = Group.objects.filter(name=groupName)[0]
 	
+	hashedPass = make_password(password)
+	
 	newUser = User()
 	newUser.username = userName
 	newUser.first_name = firstName
 	newUser.last_name = lastName
 	newUser.email = email
-	newUser.password = password
+	newUser.password = hashedPass
 	newUser.save()
 	
 	newUser.refresh_from_db()
