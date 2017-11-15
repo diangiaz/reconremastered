@@ -115,6 +115,7 @@ def loadTopology(request):
 	context = {
 		'current_user': currentUser,
 		'topologies': groupTopologies,
+		'currTopology':loadThisTopology.name,
 		'devices': loadDevices,
 	}
 	return render(request, 'user.html', context)
