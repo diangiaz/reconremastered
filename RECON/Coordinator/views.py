@@ -7,10 +7,12 @@ from django.shortcuts import render, redirect
 from . import forms
 from .forms import SignUpForm, CreateGroupForm
 from .models import Group, Profile, Device, GroupToDevice
+from django.db.models import Q
 import datetime
 from datetime import timedelta
 import json
 import urllib.parse as urlparse
+
 # Create your views here.
 
 
@@ -45,6 +47,8 @@ def adminPage(request):
 	grouptodevice = GroupToDevice.objects.all()
 	devices = Device.objects.all()
 	test = Group.objects.all()
+	devicesort= Device.objects.all().order_by('name')
+	today=datetime.datetime.now().date()
 	
 	
 
@@ -52,12 +56,14 @@ def adminPage(request):
 	'groups':groups,
 	'groups2':groups,
 	'test':test,
+	'today':today,
 	'users':users,
 	'current_user': currentUser,
 	'newgroupForm': newgroupForm,
 	'signupForm' : signupForm,
 	'grouptodevice' : grouptodevice,
 	'devices':devices,
+	'devicesort':devicesort
 	}
 	return render(request, 'admin.html', context)
 
@@ -184,6 +190,7 @@ def reserveDevice(request):
 			a = GroupToDevice(group=newgroupID,device=newdeviceID,startDateTime=startdate,endDateTime=enddate,type='RS')
 			a.save()
 		
+		
 	return HttpResponse(json.dumps(JSONer), context)		
 
 			
@@ -239,7 +246,7 @@ def allocateDevice(request):
 def editModal(request):
 
 	JSONer = {}
-	
+	valid = True
 	parsedData = urlparse.urlparse(request.get_full_path())
 	pkid = (urlparse.parse_qs(parsedData.query)['pkid'][0])
 	idnum = (urlparse.parse_qs(parsedData.query)['id-num'][0])
@@ -247,20 +254,35 @@ def editModal(request):
 	lastname = (urlparse.parse_qs(parsedData.query)['last-name'][0])
 	username = (urlparse.parse_qs(parsedData.query)['username'][0])
 	email = (urlparse.parse_qs(parsedData.query)['email'][0])
+	error_msg1 = "test"
+	error_msg2 = False
+	
 	
 
 	if User.objects.filter(id=pkid).count() > 0:
-	 	userID = User.objects.filter(id=pkid)[0]
-	
-	 
-	 	userID.profile.employeeID = idnum
-	 	userID.first_name = firstname
-	 	userID.last_name = lastname
-	 	userID.username = username
-	 	userID.email = email
-	 	userID.save()
-	
-	return HttpResponse(json.dumps(JSONer))
+		
+		if Profile.objects.filter(Q(employeeID__contains=idnum) & ~Q(user_id=pkid)).count() > 0:
+			valid = False
+			error_msg1 = "test"
+			print("id is already taken!")
+		if User.objects.filter(Q(username__contains = username) & ~Q(id=pkid)).count() > 0:
+			valid = False
+			error_msg2=True
+			print("username is already taken!")
+		if User.objects.filter(Q(email__contains = email) & ~Q(id=pkid)).count() > 0:
+			valid = False
+			print("email is already taken!")
+		if valid:
+			userID = User.objects.filter(id=pkid)[0]
+			userID.profile.employeeID = idnum
+			userID.first_name = firstname
+			userID.last_name = lastname
+			userID.username = username
+			userID.email = email
+			userID.save()
+		return HttpResponse(json.dumps(JSONer),{'error_msg1':error_msg1,'error_msg2':error_msg2})
+
+	return HttpResponse(json.dumps(JSONer),{'error_msg1':error_msg1,'error_msg2':error_msg2})
 
 @login_required(login_url="/login")	
 def editGrp(request):		
@@ -277,6 +299,8 @@ def editGrp(request):
 		print(userID.username)
 		userID.save(force_update=True)
 	return HttpResponse(json.dumps(JSONer))	
+
+
 	
 @login_required(login_url="/login")	
 def createGroup(request):

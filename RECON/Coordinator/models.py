@@ -64,10 +64,7 @@ class Device(models.Model):
 		unique=True,
 		max_length=25,
 	)
-	ycord = models.PositiveIntegerField(
-	)
-	xcord = models.PositiveIntegerField(
-	)
+
 
 	def __str__(self):
 		return self.name
@@ -224,8 +221,8 @@ class Log(models.Model):
 		Device,
 		on_delete=models.CASCADE,
 	)
-	user = models.ForeignKey(
-		User,
+	group = models.ForeignKey(
+		Group,
 		on_delete=models.CASCADE,
 	)
 	timestamp = models.DateTimeField(

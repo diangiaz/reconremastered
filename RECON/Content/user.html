@@ -88,178 +88,222 @@
 											</div>
 										</div>
 										<div class="tab-position">
-		                  <div class="x_content" style="padding: 0; height: 300px;">
-		                    <div class="col-xs-3" style="padding-left: 0;">
-		                      <!-- required for floating -->
-		                      <!-- Nav tabs -->
-		                      <ul class="nav nav-tabs tabs-left" style="height: 450px; border:0;">
-		                        <li class="active"><a href="#devicesPanel" data-toggle="tab" id="devicesTab">Devices</a>
-		                        </li>
-		                        <li><a href="#routerPanel" data-toggle="tab" id="routerTab">Router 1</a>
-		                        </li>
-		                        <li><a href="#switchPanel" data-toggle="tab" id="switchTab">Switch 1</a>
-		                        </li>
-		                        <li><a href="#terminalPanel" data-toggle="tab" id="terminalTab">Terminal 1</a>
-		                        </li>
-		                      </ul>
-		                    </div>
+						                  <div class="x_content" style="padding: 0; height: 300px;">
+						                    <div class="col-xs-3" style="padding-left: 0;">
+						                      <!-- required for floating -->
+						                      <!-- Nav tabs -->
+						                      <ul class="nav nav-tabs tabs-left" style="height: 450px; border:0;">
+						                        <li class="active"><a href="#devicesPanel" data-toggle="tab" id="devicesTab">Devices</a>
+						                        </li>
 
-		                    <div class="col-xs-9" style="padding: 0;">
-		                      <div class="tab-content">
-		                        <div class="tab-pane active" id="devicesPanel">
-															<ul class="device-list"> <!-- style="column-count: 3;" -->
-																<li>
-																	<img class="deviceIcons" id="DeviceRouter" src="{% static '/production/images/routerIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Router">
-																</li>
-																<li>
-																	<img class="deviceIcons" id="DeviceSwitch" src="{% static '/production/images/switchIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Switch">
-																</li>
-																<li>
-																	<img class="deviceIcons" id="DeviceTerminal" src="{% static '/production/images/terminalIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Terminal">
-																</li>
-																<li>
-																	<img class="deviceIcons" id="DeviceRouter" src="{% static '/production/images/routerIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Router">
-																</li>
-																<li>
-																	<img class="deviceIcons" id="DeviceSwitch" src="{% static '/production/images/switchIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Switch">
-																</li>
-																<li>
-																	<img class="deviceIcons" id="DeviceTerminal" src="{% static '/production/images/terminalIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Terminal">
-																</li>
-																<li>
-																	<img class="deviceIcons" id="DeviceRouter" src="{% static '/production/images/routerIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Router">
-																</li>
-																<li>
-																	<img class="deviceIcons" id="DeviceSwitch" src="{% static '/production/images/switchIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Switch">
-																</li>
-																<li>
-																	<img class="deviceIcons" id="DeviceTerminal" src="{% static '/production/images/terminalIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Terminal">
-																</li>																
-															</ul>
-															<ul class="cable-list" style="padding-left:0">
-																<li><img class="deviceIcons" id="CableLan" src="{% static '/production/images/lan.png' %}" draggable="false" onclick="EvtOnClick(this)" data-toggle="tooltip" data-placement="bottom" title="LAN"></li>
-																<li><img class="deviceIcons" id="CableWan" src="{% static '/production/images/wan.png' %}" draggable="false" onclick="EvtOnClick(this)" data-toggle="tooltip" data-placement="bottom" title="WAN"></li>
-																<li><img class="deviceIcons" id="CableConsole" src="{% static '/production/images/console.png' %}" draggable="false" onclick="EvtOnClick(this)" data-toggle="tooltip" data-placement="bottom" title="Console"></li>
-																<li><img class="deviceIcons" id="CableConsole" src="{% static '/production/images/delete.png' %}" draggable="false" onclick="remove();" data-toggle="tooltip" data-placement="bottom" title="Delete device"></li>
-															</ul>
-		                        </div>
-		                        <div class="tab-pane" id="routerPanel">
-		                        	<textarea class="config" id="routerConfig" readonly>R1#show running-config
-																Building configuration...
-																Current configuration : 723 bytes
-																!
-																version 12.4
-																no service pad
-																service timestamps debug datetime msec
-																service timestamps log datetime msec
-																no service password-encryption
-																!
-																hostname Router
-																!
-																boot-start-marker
-																boot-end-marker
-																!
-																logging message-counter syslog
-																!
-																no aaa new-model
-																!
-																no ipv6 cef
-																ip source-route
-																ip cef
-																!
-																!
-																!
-																!
-																multilink bundle-name authenticated
-																!
-																!
-																archive
-																log config
-																hidekeys
-																!
-																!
-																!
-																!
-																!
-																interface GigabitEthernet0/0
-																no ip address
-																shutdown
-																duplex auto
-																speed auto
-																!
-																interface GigabitEthernet0/1
-																no ip address
-																shutdown
-																duplex auto
-																speed auto
-																!
-																interface GigabitEthernet0/2
-																no ip address
-																shutdown
-																duplex auto
-																speed auto
-																!
-																ip forward-protocol nd
-																!
-																no ip http server
-																!
-																!
-																!
-																!
-																!
-																control-plane
-																!
-																!
-																line con 0
-																line aux 0
-																line vty 0 3
-																login
-																!
-																exception data-corruption buffer truncate
-																scheduler allocate 20000 1000
-																end</textarea>
-	                        	  <div class="form-group command-group">
-	                        	  	<div class="col-sm-12 input-group">
-				                        	<input type="text" class="form-control" placeholder="Input command here" required="required" style="padding:5px;" id="routerCmd">
-					                        <span class="input-group-btn">
-					                        	<button type="button" class="btn btn-info">Add</button>
-					                        </span>
-				                        </div>
-				                      </div>
-		                        </div>
-		                        <div class="tab-pane" id="switchPanel">
-		                        	<textarea class="config" id="switchConfig" readonly>SW1#show running-config
-																Building configuration...
-																...
-																end</textarea>
-	                        	  <div class="form-group command-group">
-	                        	  	<div class="col-sm-12 input-group">
-				                        	<input type="text" class="form-control" placeholder="Input command here" required="required" style="padding:5px;" id="switchCmd">
-					                        <span class="input-group-btn">
-					                        	<button type="button" class="btn btn-info">Add</button>
-					                        </span>
-				                        </div>
-				                      </div>
-		                        </div>
-		                        <div class="tab-pane" id="terminalPanel">
-		                        	<textarea class="config" id="terminalConfig" readonly>PC1#show running-config
-																Building configuration...
-																...
-																end</textarea>
-	                        	  <div class="form-group command-group">
-	                        	  	<div class="col-sm-12 input-group">
-				                        	<input type="text" class="form-control" placeholder="Input command here" required="required" style="padding:5px;" id="terminalCmd">
-					                        <span class="input-group-btn">
-					                        	<button type="button" class="btn btn-info">Add</button>
-					                        </span>
-				                        </div>
-				                      </div>
-		                        </div>
-		                      </div>
-		                    </div>                   
-		                  </div>
+						                        {% for gtd in grouptodevice %}
+						                         {% ifequal current_user.profile.group.id gtd.group.id %}
+						                          {% ifequal gtd.type 'AP' %}
+						                           {% ifequal gtd.device.type 'Router' %}
+						                        <li><a href="#routerPanel" data-toggle="tab" id="routerTab-{{gtd.id}}">Router 1</a>
+						                        </li>
+						                           {% endifequal %}
+						                           {% ifequal gtd.device.type 'Switch' %}
+						                        <li><a href="#switchPanel" data-toggle="tab" id="switchTab-{{gtd.id}}">Switch 1</a>
+						                        </li>
+						                           {% endifequal %}
+						                           {% ifequal gtd.device.type 'Terminal' %}
+						                        <li><a href="#terminalPanel" data-toggle="tab" id="terminalTab-{{gtd.id}}">Terminal 1</a>
+						                        </li>
+						                           {% endifequal %}
+						                          {% endifequal %}
+						                         {% endifequal %}
+						                        {% endfor %}
+						                      </ul>
+						                    </div>
 
-																			
+						                    <div class="col-xs-9" style="padding: 0;"> 
+						                      <div class="tab-content">
+						                        <div class="tab-pane active" id="devicesPanel">
+						                        	<div class="x_content">
+						                        		<table>
+							                        		<tbody>
+							                        		
+										                     
+							                        			<tr>
+							                        			   {% for gtd in grouptodevice %}	
+							                        				{% ifequal current_user.profile.group.id gtd.group.id %}
+												                       {% ifequal gtd.type 'AP' %}
+												                         {% ifequal gtd.device.type 'Router' %}
+							                        				<td class="deviceCell">
+							                        					<img class="deviceIcons" name="router-{{gtd.device.id}}" id="DeviceRouter" src="{% static '/production/images/routerIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Router">
+							                        				</td>
+							                        					 {% endifequal %}
+				           								  				 {% ifequal gtd.device.type 'Switch' %}
+							                        				<td class="deviceCell">
+																		<img class="deviceIcons" name="switch-{{gtd.device.id}}" id="DeviceSwitch" src="{% static '/production/images/switchIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Switch">
+																	</td>
+																		 {% endifequal %}
+				           								  				 {% ifequal gtd.device.type 'Terminal' %}
+																	<td class="deviceCell">
+																		<img class="deviceIcons" name="terminal-{{gtd.device.id}}" id="DeviceTerminal" src="{% static '/production/images/terminalIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Terminal">
+																	</td>
+																	{% endifequal %}
+										                          {% endifequal %}
+										                         {% endifequal %}
+										                        {% endfor %}
+							                        			</tr>
+							                        			
+							                        		</tbody>
+							                        	</table>
+						                        	</div>
+						                        	<div class="x_content">
+						                        		<ul class="cable-list" style="padding-left:0">
+															<li><img class="deviceIcons" id="CableLan" src="{% static '/production/images/lan.png' %}" draggable="false" onclick="EvtOnClick(this)" data-toggle="tooltip" data-placement="bottom" title="LAN"></li>
+															<li><img class="deviceIcons" id="CableWan" src="{% static '/production/images/wan.png' %}" draggable="false" onclick="EvtOnClick(this)" data-toggle="tooltip" data-placement="bottom" title="WAN"></li>
+															<li><img class="deviceIcons" id="CableConsole" src="{% static '/production/images/console.png' %}" draggable="false" onclick="EvtOnClick(this)" data-toggle="tooltip" data-placement="bottom" title="Console"></li>
+															<li><img class="deviceIcons" id="CableConsole" src="{% static '/production/images/delete.png' %}" draggable="false" onclick="remove();" data-toggle="tooltip" data-placement="bottom" title="Delete device"></li>
+														</ul>
+						                        	</div>
+						                        	
+
+													<!-- <ul class="device-list">
+														{% for gtd in grouptodevice %}
+								                         {% ifequal current_user.profile.group.id gtd.group.id %}
+								                          {% ifequal gtd.type 'AP' %}
+								                           {% ifequal gtd.device.type 'Router' %}
+														<li>
+															<img class="deviceIcons" id="DeviceRouter" src="{% static '/production/images/routerIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Router">
+														</li>
+														  	{% endifequal %}
+				           								   {% ifequal gtd.device.type 'Switch' %}
+														<li>
+															<img class="deviceIcons" id="DeviceSwitch" src="{% static '/production/images/switchIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Switch">
+														</li>
+														   {% endifequal %}
+				           								   {% ifequal gtd.device.type 'Terminal' %}
+														<li>
+															<img class="deviceIcons" id="DeviceTerminal" src="{% static '/production/images/terminalIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Terminal">
+														</li>
+														    {% endifequal %}
+								                          {% endifequal %}
+								                         {% endifequal %}
+								                        {% endfor %}
+													</ul> -->
+
+													
+						                        </div>
+
+						                        <div class="tab-pane" id="routerPanel">
+						                        	<textarea class="config" id="routerConfig" readonly>R1#show running-config
+																				Building configuration...
+																				Current configuration : 723 bytes
+																				!
+																				version 12.4
+																				no service pad
+																				service timestamps debug datetime msec
+																				service timestamps log datetime msec
+																				no service password-encryption
+																				!
+																				hostname Router
+																				!
+																				boot-start-marker
+																				boot-end-marker
+																				!
+																				logging message-counter syslog
+																				!
+																				no aaa new-model
+																				!
+																				no ipv6 cef
+																				ip source-route
+																				ip cef
+																				!
+																				!
+																				!
+																				!
+																				multilink bundle-name authenticated
+																				!
+																				!
+																				archive
+																				log config
+																				hidekeys
+																				!
+																				!
+																				!
+																				!
+																				!
+																				interface GigabitEthernet0/0
+																				no ip address
+																				shutdown
+																				duplex auto
+																				speed auto
+																				!
+																				interface GigabitEthernet0/1
+																				no ip address
+																				shutdown
+																				duplex auto
+																				speed auto
+																				!
+																				interface GigabitEthernet0/2
+																				no ip address
+																				shutdown
+																				duplex auto
+																				speed auto
+																				!
+																				ip forward-protocol nd
+																				!
+																				no ip http server
+																				!
+																				!
+																				!
+																				!
+																				!
+																				control-plane
+																				!
+																				!
+																				line con 0
+																				line aux 0
+																				line vty 0 3
+																				login
+																				!
+																				exception data-corruption buffer truncate
+																				scheduler allocate 20000 1000
+																				end</textarea>
+					                        	  <div class="form-group command-group">
+					                        	  	<div class="col-sm-12 input-group">
+								                        	<input type="text" class="form-control" placeholder="Input command here" required="required" style="padding:5px;" id="routerCmd">
+									                        <span class="input-group-btn">
+									                        	<button type="button" class="btn btn-info">Add</button>
+									                        </span>
+								                        </div>
+								                      </div>
+						                        </div>
+						                        <div class="tab-pane" id="switchPanel">
+						                        	<textarea class="config" id="switchConfig" readonly>SW1#show running-config
+																				Building configuration...
+																				...
+																				end</textarea>
+					                        	  <div class="form-group command-group">
+					                        	  	<div class="col-sm-12 input-group">
+								                        	<input type="text" class="form-control" placeholder="Input command here" required="required" style="padding:5px;" id="switchCmd">
+									                        <span class="input-group-btn">
+									                        	<button type="button" class="btn btn-info">Add</button>
+									                        </span>
+								                        </div>
+								                      </div>
+						                        </div>
+						                        <div class="tab-pane" id="terminalPanel">
+						                        	<textarea class="config" id="terminalConfig" readonly>PC1#show running-config
+																				Building configuration...
+																				...
+																				end</textarea>
+					                        	  <div class="form-group command-group">
+					                        	  	<div class="col-sm-12 input-group">
+								                        	<input type="text" class="form-control" placeholder="Input command here" required="required" style="padding:5px;" id="terminalCmd">
+									                        <span class="input-group-btn">
+									                        	<button type="button" class="btn btn-info">Add</button>
+									                        </span>
+								                        </div>
+								                      </div>
+						                        </div>
+						                      </div>
+						                    </div>                   
+						                  </div>								
 										</div>
 
 										<div id="menu-ports"> 
@@ -466,13 +510,15 @@
      $('#datetimepicker6').datetimepicker({
 
       format: 'YYYY-MM-DD',
-      useCurrent: true
+      useCurrent: true,
+      minDate:new Date()
     });
         
     $('#datetimepicker7').datetimepicker({
       
       format: 'YYYY-MM-DD',
-      useCurrent: false
+      useCurrent: false,
+      minDate:new Date()
     });
     
     $("#datetimepicker6").on("dp.change", function(e) {
