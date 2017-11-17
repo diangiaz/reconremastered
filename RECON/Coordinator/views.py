@@ -7,7 +7,7 @@ from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
 from . import forms
 from .forms import SignUpForm
-from .models import Group, Profile, SaveTopology, SaveDev
+from .models import Group, Profile, SaveTopology, SaveDev, SaveConn, Log
 from time import sleep
 from threading import Thread
 import serial
@@ -17,6 +17,22 @@ import urllib.parse as urlparse
 # Create your views here.
 savedTopology = SaveTopology()
 
+@login_required(login_url="/login")
+def userPage(request):
+	currentUser = request.user
+	groupTopologies = SaveTopology.objects.filter(group = currentUser.profile.group)
+	
+	
+	if currentUser.profile.usertype == 'admin':
+		return HttpResponseRedirect("/admin/")
+
+	users = User.objects.all()	
+	context = {
+		'current_user': currentUser,
+		'topologies': groupTopologies,
+	}
+	return render(request, 'user.html', context)
+	
 # serial reader/sender start
 strBuilder1 = ""
 # readState = False
@@ -67,6 +83,12 @@ def sendSerial1(request):
 	parsedData = urlparse.urlparse(request.get_full_path())
 	text = (urlparse.parse_qs(parsedData.query)['routerInput'][0])
 	
+	audit = Log()
+	audit.device = "Router"
+	audit.user = request.user
+	audit.action = text
+	audit.save()	
+	
 	text += "\n"
 	
 	# serialPort.flushInput()
@@ -74,26 +96,11 @@ def sendSerial1(request):
 	# bytes_to_read = serialPort.inWaiting()
 	print(text)
 	
+	print("Audited " + audit.action + " @ time " + str(audit.timestamp))
 	return HttpResponseRedirect(json.dumps(JSONer))
 
 	
-# serial reader/sender end
-
-@login_required(login_url="/login")
-def userPage(request):
-	currentUser = request.user
-	groupTopologies = SaveTopology.objects.filter(group = currentUser.profile.group)
-	
-	
-	if currentUser.profile.usertype == 'admin':
-		return HttpResponseRedirect("/admin/")
-
-	users = User.objects.all()	
-	context = {
-		'current_user': currentUser,
-		'topologies': groupTopologies,
-	}
-	return render(request, 'user.html', context)
+# serial reader/sender end	
 	
 @login_required(login_url="/login")
 def loadTopology(request):
@@ -110,6 +117,7 @@ def loadTopology(request):
 	
 	groupTopologies = SaveTopology.objects.filter(group = currentUser.profile.group)
 	loadDevices = SaveDev.objects.filter(saveTopology = loadThisTopology)
+	loadConnections = SaveConn.objects.filter(saveTopology = loadThisTopology)
 	
 	
 	context = {
@@ -117,6 +125,7 @@ def loadTopology(request):
 		'topologies': groupTopologies,
 		'currTopology':loadThisTopology.name,
 		'devices': loadDevices,
+		'connections': loadConnections
 	}
 	return render(request, 'user.html', context)
 	
@@ -133,6 +142,7 @@ def saveTopologyFunc(request):
 	if (SaveTopology.objects.filter(name = topName).count() > 0):
 		savedTopology = SaveTopology.objects.filter(name = topName)[0]
 		SaveDev.objects.filter(saveTopology = savedTopology).delete()
+		SaveConn.objects.filter(saveTopology = savedTopology).delete()
 		print("Overwrite " + savedTopology.name)
 	else:
 		newTopology = SaveTopology()	
@@ -163,10 +173,43 @@ def saveDevice(request):
 	newSaveDev.xCord = float(x)
 	newSaveDev.yCord = float(y)
 	newSaveDev.save()
-	
-	print("Saved " + newSaveDev.deviceName + " to " + newSaveDev.saveTopology.name)
-	print("Saved coordinates are " + str(newSaveDev.xCord) + " and " + str(newSaveDev.yCord))
 		
+	return HttpResponse(json.dumps(JSONer))
+
+@login_required(login_url="/login")
+def saveConnection(request):
+	global savedTopology
+	
+	JSONer = {}
+	parsedData = urlparse.urlparse(request.get_full_path())
+	connectionName = (urlparse.parse_qs(parsedData.query)['connectionName'][0])
+	srcDevice = (urlparse.parse_qs(parsedData.query)['srcDevice'][0])
+	endDevice = (urlparse.parse_qs(parsedData.query)['endDevice'][0])
+	srcPort = (urlparse.parse_qs(parsedData.query)['srcPort'][0])
+	endPort = (urlparse.parse_qs(parsedData.query)['endPort'][0])
+	
+	print("Save " + connectionName + "src:" + srcDevice + " end:" + endDevice +" to " + savedTopology.name)
+	
+	if "LAN" in connectionName:
+		cableType = 0
+	elif "WAN" in connectionName:
+		cableType = 1
+	elif "CONSOLE" in connectionName:
+		cableType = 2
+	
+	print("cable type is " + str(cableType))
+	
+	newSaveConn = SaveConn()
+	newSaveConn.saveTopology = savedTopology
+	newSaveConn.connectionName = connectionName
+	newSaveConn.srcDevice = srcDevice
+	newSaveConn.endDevice = endDevice
+	newSaveConn.srcPort = srcPort
+	newSaveConn.endPort = endPort
+	newSaveConn.cableType = cableType
+	newSaveConn.save()
+	
+	
 	return HttpResponse(json.dumps(JSONer))
 
 @login_required(login_url="/login")	

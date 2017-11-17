@@ -172,26 +172,30 @@ class SaveTopology(models.Model):
 		return self.name
 
 class SaveConn(models.Model):
-	CONSOLE = 'Console'
-	SERIAL = 'Serial'
-	STRAIGHT = 'Straight'
-	CONNECTION_TYPE_CHOICES = (
-		(CONSOLE, 'Console'),
-		(SERIAL, 'Serial'),
-		(STRAIGHT, 'Straight'),
+	saveTopology = models.ForeignKey(
+		SaveTopology,
+		on_delete=models.CASCADE,
 	)
-	srcDevID = models.IntegerField(
+	connectionName = models.CharField(
+		max_length=25,
 	)
-	srcDevPort = models.IntegerField(
+	srcDevice = models.CharField(
+		max_length=25,
 	)
-	destDevID = models.IntegerField(
+	srcPort = models.CharField(
+		max_length=25,
 	)
-	destDevPort = models.IntegerField(
+	endDevice = models.CharField(
+		max_length=25,
+	)
+	endPort = models.CharField(
+		max_length=25,
 	)
 	cableType = models.CharField(
-		max_length=10,
-		choices=CONNECTION_TYPE_CHOICES,
+		max_length=25,
 	)
+	def __str__(self):
+		return self.connectionName + " between " + self.srcDevice + " and " + self.endDevice + " of " + self.saveTopology.name
 
 class SaveDev(models.Model):
 	saveTopology = models.ForeignKey(
@@ -217,17 +221,22 @@ class SaveDev(models.Model):
 		return self.deviceName + " of " + self.saveTopology.name
 
 class Log(models.Model):
-	device = models.ForeignKey(
-		Device,
-		on_delete=models.CASCADE,
+	device = models.CharField(
+		max_length = 40,
 	)
 	user = models.ForeignKey(
 		User,
 		on_delete=models.CASCADE,
 	)
 	timestamp = models.DateTimeField(
-		auto_now_add=True, blank=True
+		auto_now_add=True, 
+		blank=True,
 	)
+	action = models.CharField(
+		max_length = 50,
+	)
+	def __str__(self):
+		return self.user.username + "(" + str(self.timestamp) + "): " + self.action
 	
 	
 	

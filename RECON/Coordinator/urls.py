@@ -16,4 +16,5 @@ urlpatterns = [
 	url(r'^loadTopology$', views.loadTopology, name='loadTopology'),
 	url(r'^saveTopology$', views.saveTopologyFunc, name='saveTopology'),
 	url(r'^saveDevice$', views.saveDevice, name='saveDevice'),
+	url(r'^saveConnection$', views.saveConnection, name='saveConnection'),
 ]	

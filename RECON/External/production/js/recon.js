@@ -1,4 +1,4 @@
-			var Content = document.getElementById("Content");
+var Content = document.getElementById("Content");
 			var CnvsWorkspace = document.getElementById("Workspace");
 			var Workspace = CnvsWorkspace.getContext("2d");
 			var Devspace = document.getElementById("Devspace");
@@ -88,10 +88,12 @@
 				var RefDevice = DeviceTypes[SearchDeviceTypeIdFromElementId(arg.id)];
 				RefDevice.count++;
 				var TempDevice = JSON.parse(JSON.stringify(RefDevice));
+				
 				TempDevice.name = TempDevice.name + " " + RefDevice.count;
 				NewDeviceIcon.src = TempDevice.image;
 				var PosX = 0;
 				var PosY = 0;
+				
 				NewDeviceIcon.onload = function(){
 					Workspace.drawImage(NewDeviceIcon, PosX, PosY);
 					Workspace.fillText(TempDevice.name, PosX + TempDevice.width / 2, PosY + TempDevice.height + 20);
@@ -99,6 +101,12 @@
 				var NewDevice = { object:NewDeviceIcon, x:PosX, y:PosY, height:TempDevice.height, width:TempDevice.width, name:TempDevice.name};
 				
 				Devices.push(NewDevice);
+				
+				/*
+				for(var nCtr = 0; nCtr < Cables.length; nCtr++){
+					console.log("Cable " + (nCtr + 1) + " is " + Cables[nCtr].name);
+				} */
+				
 			}
 			
 			function remove(){
@@ -519,7 +527,7 @@
 					 var firstd = SearchTopDeviceIdOnMousePosition(MouseXTwo,MouseYTwo);
 					 var secondd = SearchTopDeviceIdOnMousePosition(MouseX,MouseY);
 					 
-					  addCable(firstx,firsty,secondx,secondy,firstd,secondd, tempStartPort, tempEndPort);
+					 addCable(firstx,firsty,secondx,secondy,firstd,secondd, tempStartPort, tempEndPort);
 					 
 					console.log(Cables[0].s)
 					// console.log("counter: " +counter);
@@ -563,8 +571,6 @@
 					
 					var NewCable = {startpointx: firstxpoint, startpointy: firstypoint, endpointx: secondxpoint, endpointy: secondypoint, startdevice: Devices[firstdevice].name, enddevice: Devices[seconddevice].name, startport:firstport, endport:secondport, name:TempCable.name};
 					Cables.push(NewCable);
-					
-					
 				
 			}
 				
