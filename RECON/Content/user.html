@@ -77,7 +77,42 @@
         <div class="right_col" role="main">
         	<div class="">
 	      		<div class="clearfix"></div>
+	      		 {% if messages %}
+                  <ul class="messages">
+                      {% for message in messages %}
+                      {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                      <div class="x_content bs-example-popovers">
+                   <div class="alert alert-success alert-dismissible fade in" role="alert">
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span>
+                      </button>
+                      <strong>{{message}}</strong>
+                   </div>
+                  </div>
+                      {% endif %}
+                      {% endfor %}
+                  </ul>
+                  {% endif %}
 
+                  {% if messages %}
+                  <ul class="messages">
+                      {% for message in messages %}
+                      {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                      <div class="x_content bs-example-popovers" style="margin-top: 10px">
+                    <div class="alert alert-danger alert-dismissible fade in" role="alert">
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span>
+                      </button>
+                      <i class="fa fa-times-circle pull-left" style="font-size: 35px"></i>
+                      <div class="media-body" >
+                        <strong>ERROR!</strong>
+                        <br>
+                        {{message}}
+                      </div>
+                    </div>
+                  </div>
+                      {% endif %}
+                      {% endfor %}
+                  </ul>
+                  {% endif %}
 		        <div class="row">
 							<div class="col-md-12 col-sm-12 col-xs-12">
 								<div class="x_panel" style="padding-top: 5px;padding-bottom: 5px;">
@@ -435,9 +470,11 @@
 		                    {% for grouptodevice in grouptodevice %}
 		                    	{% ifequal grouptodevice.device.id devices.id %}
 		                    		{% ifequal grouptodevice.type 'AP' %}
+		                    		 {% if grouptodevice.startDateTime >= today and grouptodevice.endDateTime >= today %}
 		                    			{{grouptodevice.startDateTime}} - {{grouptodevice.endDateTime}} <br>
+		                    		 {% endif %}
 		                    		{% endifequal %} 
-		                    			
+		                    	  
 		                    	{% endifequal %}
 
 		                    {% endfor %}

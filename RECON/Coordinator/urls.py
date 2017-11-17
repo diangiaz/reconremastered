@@ -17,5 +17,6 @@ urlpatterns = [
 	url(r'^user/reserveDevice$', views.reserveDevice, name='reserveDevice'),
 	url(r'^approvedRes/$', views.approvedRes, name='approvedRes'),
 	url(r'^declinedRes/$', views.declinedRes, name='declinedRes'),
+	url(r'^deleteRes/$', views.deleteRes, name='deleteRes'),
 	url(r'^$', views.adminPage, name='defaultPage'),
 ]	

@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
+from django.contrib import messages
 from . import forms
 from .forms import SignUpForm, CreateGroupForm
 from .models import Group, Profile, Device, GroupToDevice
@@ -26,9 +27,11 @@ def userPage(request):
 	if currentUser.profile.usertype != 'employee':
 		return HttpResponseRedirect("/admin/")
 
-	users = User.objects.all()	
+	users = User.objects.all()
+	today=datetime.datetime.now().date()	
 	context = {
-		'current_user': currentUser
+		'current_user': currentUser,
+		'today': today
 	}
 	return render(request, 'user.html', context)
 
@@ -49,7 +52,7 @@ def adminPage(request):
 	test = Group.objects.all()
 	devicesort= Device.objects.all().order_by('name')
 	today=datetime.datetime.now().date()
-	
+	valid = True
 	
 
 	context = {
@@ -63,7 +66,8 @@ def adminPage(request):
 	'signupForm' : signupForm,
 	'grouptodevice' : grouptodevice,
 	'devices':devices,
-	'devicesort':devicesort
+	'devicesort':devicesort,
+	'valid':valid
 	}
 	return render(request, 'admin.html', context)
 
@@ -78,6 +82,7 @@ def userPage(request):
 	groups = Group.objects.all()
 	devices = Device.objects.all()
 	grouptodevice =GroupToDevice.objects.all()
+	today=datetime.datetime.now().date()	
 	
 	context = {
 	'current_user': currentUser,
@@ -85,6 +90,7 @@ def userPage(request):
 	'devices':devices,
 	'groups':groups,
 	'users':users,
+	'today':today
 	}
 	return render(request, 'user.html', context)
 	
@@ -101,6 +107,7 @@ def createUser(request):
 			# print("usertype: " + form.cleaned_data.get('usertype'))
 			user.profile.save()
 			user.save()
+			messages.success(request,"User successfully created!")
 		else:
 			print('Error')
 			print(User.objects.all().filter(username__iexact=form.cleaned_data.get('username')).count() == 0)
@@ -124,6 +131,7 @@ def approvedRes(request):
 		grouptodeviceID.type = "AP"
 		print(grouptodeviceID.type)
 		grouptodeviceID.save(force_update=True)
+		messages.success(request,"Device reservation approved!")
 	return HttpResponse(json.dumps(JSONer))	
 
 def declinedRes(request):		
@@ -141,6 +149,25 @@ def declinedRes(request):
 		grouptodeviceID.type = "DC"
 		
 		grouptodeviceID.save(force_update=True)
+		messages.success(request,"Device reservation declined!")
+	return HttpResponse(json.dumps(JSONer))	
+
+def deleteRes(request):		
+	JSONer = {}
+	parsedData = urlparse.urlparse(request.get_full_path())
+	print("check")
+	print((urlparse.parse_qs(parsedData.query)['grouptodeviceid'][0]))
+	pkid = (urlparse.parse_qs(parsedData.query)['grouptodeviceid'][0])
+	print(pkid)
+	
+	if GroupToDevice.objects.filter(id=pkid).count() > 0:
+		print(pkid)
+	
+		grouptodeviceID = GroupToDevice.objects.filter(id=pkid)[0]
+		grouptodeviceID.type = "DC"
+		
+		grouptodeviceID.save(force_update=True)
+		messages.success(request,"Device reservation removed!")
 	return HttpResponse(json.dumps(JSONer))	
 
 	
@@ -169,10 +196,10 @@ def reserveDevice(request):
 	if User.objects.filter(id=pkid).count() > 0 and Group.objects.filter(id=groupid).count() > 0:
 		devicename=Device.objects.filter(id=deviceid)[0]
 		devicename = devicename.name
-		while ctr < GroupToDevice.objects.filter(device=deviceid).count() and success == True:
-			arr1=GroupToDevice.objects.filter(device=deviceid).values_list('startDateTime', flat=True)
+		while ctr < GroupToDevice.objects.filter(device=deviceid).filter(type="AP").count() and success == True:
+			arr1=GroupToDevice.objects.filter(device=deviceid).filter(type="AP").values_list('startDateTime', flat=True)
 			#arr1[ctr].strftime("%Y-%m-%d")
-			arr2=GroupToDevice.objects.filter(device=deviceid).values_list('endDateTime', flat=True)
+			arr2=GroupToDevice.objects.filter(device=deviceid).filter(type="AP").values_list('endDateTime', flat=True)
 
 			
 			if (comparedate >= arr1[ctr] and comparedate <= arr2[ctr]) or (comparedate2 >= arr1[ctr] and comparedate2 <= arr2[ctr]) or (arr1[ctr]  >= comparedate and arr1[ctr] <= comparedate2) or (arr2[ctr] >= comparedate and arr2[ctr] <= comparedate2):
@@ -189,7 +216,9 @@ def reserveDevice(request):
 			newdeviceID = Device.objects.get(id=deviceid)
 			a = GroupToDevice(group=newgroupID,device=newdeviceID,startDateTime=startdate,endDateTime=enddate,type='RS')
 			a.save()
-		
+			messages.success(request,"Device reserved, please wait for it to be confirmed!")
+		else:
+			messages.error(request,"The device is already reserved on those dates!")
 		
 	return HttpResponse(json.dumps(JSONer), context)		
 
@@ -219,10 +248,10 @@ def allocateDevice(request):
 	if User.objects.filter(id=pkid).count() > 0 and Group.objects.filter(id=groupid).count() > 0:
 		devicename=Device.objects.filter(id=deviceid)[0]
 		devicename = devicename.name
-		while ctr < GroupToDevice.objects.filter(device=deviceid).count() and success == True:
-			arr1=GroupToDevice.objects.filter(device=deviceid).values_list('startDateTime', flat=True)
+		while ctr < GroupToDevice.objects.filter(device=deviceid).filter(type="AP").count() and success == True:
+			arr1=GroupToDevice.objects.filter(device=deviceid).filter(type="AP").values_list('startDateTime', flat=True)
 			#arr1[ctr].strftime("%Y-%m-%d")
-			arr2=GroupToDevice.objects.filter(device=deviceid).values_list('endDateTime', flat=True)
+			arr2=GroupToDevice.objects.filter(device=deviceid).filter(type="AP").values_list('endDateTime', flat=True)
 
 			
 			if (comparedate >= arr1[ctr] and comparedate <= arr2[ctr]) or (comparedate2 >= arr1[ctr] and comparedate2 <= arr2[ctr]) or (arr1[ctr]  >= comparedate and arr1[ctr] <= comparedate2) or (arr2[ctr] >= comparedate and arr2[ctr] <= comparedate2):
@@ -239,7 +268,10 @@ def allocateDevice(request):
 			newdeviceID = Device.objects.get(id=deviceid)
 			a = GroupToDevice(group=newgroupID,device=newdeviceID,startDateTime=startdate,endDateTime=enddate,type='AP')
 			a.save()
-		
+			messages.success(request,"Successfully allocated!")
+		else:
+			messages.error(request,"Date already reserved!")
+
 	return HttpResponse(json.dumps(JSONer), context)		
 	
 @login_required(login_url="/login")
@@ -254,25 +286,35 @@ def editModal(request):
 	lastname = (urlparse.parse_qs(parsedData.query)['last-name'][0])
 	username = (urlparse.parse_qs(parsedData.query)['username'][0])
 	email = (urlparse.parse_qs(parsedData.query)['email'][0])
-	error_msg1 = "test"
-	error_msg2 = False
-	
+	error_msg1 = "empty"
+	error_msg2 = "empty"
+	context = {
+	'valid':valid,
+	'error_msg1':error_msg1,
+	'error_msg2':error_msg2,
+
+	}
 	
 
 	if User.objects.filter(id=pkid).count() > 0:
 		
-		if Profile.objects.filter(Q(employeeID__contains=idnum) & ~Q(user_id=pkid)).count() > 0:
+		if Profile.objects.filter(Q(employeeID=idnum) & ~Q(user_id=pkid)).count() > 0:
 			valid = False
-			error_msg1 = "test"
+			error_msg1 = "id is taken"
 			print("id is already taken!")
-		if User.objects.filter(Q(username__contains = username) & ~Q(id=pkid)).count() > 0:
+		if User.objects.filter(Q(username = username) & ~Q(id=pkid)).count() > 0:
 			valid = False
-			error_msg2=True
-			print("username is already taken!")
-		if User.objects.filter(Q(email__contains = email) & ~Q(id=pkid)).count() > 0:
+			error_msg2="username is taken"
+			print("username is taken")
+			messages.error(request,'Username is taken!',extra_tags="sameuser")
+		if User.objects.filter(Q(email = email) & ~Q(id=pkid)).count() > 0:
 			valid = False
 			print("email is already taken!")
-		if valid:
+		if valid == False:
+			response = HttpResponse(status=401)
+			response['Content-Length'] = len(response.content)
+			return response
+		else:
 			userID = User.objects.filter(id=pkid)[0]
 			userID.profile.employeeID = idnum
 			userID.first_name = firstname
@@ -280,9 +322,11 @@ def editModal(request):
 			userID.username = username
 			userID.email = email
 			userID.save()
-		return HttpResponse(json.dumps(JSONer),{'error_msg1':error_msg1,'error_msg2':error_msg2})
+			messages.success(request,"Successfully updated account!")
+		return HttpResponse(json.dumps(JSONer),context)
 
-	return HttpResponse(json.dumps(JSONer),{'error_msg1':error_msg1,'error_msg2':error_msg2})
+
+	return HttpResponse(json.dumps(JSONer),context)
 
 @login_required(login_url="/login")	
 def editGrp(request):		
@@ -298,6 +342,7 @@ def editGrp(request):
 		userID.profile.group_id = groupid
 		print(userID.username)
 		userID.save(force_update=True)
+		messages.success(request,"User successfully reassigned!")
 	return HttpResponse(json.dumps(JSONer))	
 
 
@@ -309,5 +354,6 @@ def createGroup(request):
 		if form.is_valid():
 			post = form.save(commit=False)
 			post.save()
+			messages.success(request,"Group successfully created!")
 	return HttpResponseRedirect("/admin/")
 

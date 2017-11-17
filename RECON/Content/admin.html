@@ -101,14 +101,49 @@
                     <div class="clearfix"></div>
 
                   </div>
-                 
-                  <div class="x_content bs-example-popovers">
+                 {% if messages %}
+                  <ul class="messages">
+                      {% for message in messages %}
+                      {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                      
+                      <div class="x_content bs-example-popovers">
                    <div class="alert alert-success alert-dismissible fade in" role="alert">
                       <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span>
                       </button>
-                      <strong>{{valid}}</strong>
+                      <strong>{{message}}</strong>
                    </div>
                   </div>
+                      
+                      {% endif %}
+                      {% endfor %}
+                  </ul>
+                  {% endif %}
+
+                  {% if messages %}
+                  <ul class="messages">
+                      {% for message in messages %}
+                      {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                      
+                      <div class="x_content bs-example-popovers" style="margin-top: 10px">
+                    <div class="alert alert-danger alert-dismissible fade in" role="alert">
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span>
+                      </button>
+                      <i class="fa fa-times-circle pull-left" style="font-size: 35px"></i>
+                      <div class="media-body" >
+                        <strong>ERROR!</strong>
+                        <br>
+                        {{message}}
+                      </div>
+                    </div>
+                  </div>
+                      
+                      {% endif %}
+                      {% endfor %}
+                  </ul>
+                  {% endif %}
+                  
+              
+                   
                   
                   <div class="x_content">
                     <div class="col-md-9" style="padding-left: 0;width: 80%" id="testRefresh">
@@ -154,6 +189,7 @@
                             {% for gtd in grouptodevice %}
                              {% ifequal gtd.group.id groups.id %}
                               {% ifequal gtd.type 'AP' %}
+                               {% if gtd.startDateTime >= today %}
                                {% ifequal gtd.device.type 'Router' %}
                                 <ul class="allocatedDev-list">
                                   <li style="padding-left: 0">                                 
@@ -166,7 +202,8 @@
                                   </li>
                                 </ul>
                                {% endifequal %}
-                              {% endifequal %}
+                               {% endif %}
+                              {% endifequal %}                            
                              {% endifequal %}
                             {% endfor %}
                             </td>
@@ -174,6 +211,7 @@
                             {% for gtd in grouptodevice %}
                              {% ifequal gtd.group.id groups.id %}
                               {% ifequal gtd.type 'AP' %}
+                              {% if gtd.startDateTime >= today %}
                                {% ifequal gtd.device.type 'Switch' %}
                                 <ul class="allocatedDev-list">
                                   <li style="padding-left: 0">                                 
@@ -186,14 +224,16 @@
                                   </li>
                                 </ul>
                                {% endifequal %}
+                               {% endif %}
                               {% endifequal %}
-                             {% endifequal %}
+                             {% endifequal %}                             
                             {% endfor %}
                             </td>
                             <td>
                             {% for gtd in grouptodevice %}
                              {% ifequal gtd.group.id groups.id %}
                               {% ifequal gtd.type 'AP' %}
+                              {% if gtd.startDateTime >= today %}
                                {% ifequal gtd.device.type 'Terminal' %}
                                 <ul class="allocatedDev-list">
                                   <li style="padding-left: 0">                                 
@@ -206,6 +246,7 @@
                                   </li>
                                 </ul>
                                {% endifequal %}
+                               {% endif %}
                               {% endifequal %}
                              {% endifequal %}
                             {% endfor %}
@@ -580,6 +621,7 @@
                   <tbody>
                   {% for grouptodevice in grouptodevice %}
                     {% ifequal grouptodevice.type 'RS' %}
+                     {% if grouptodevice.startDateTime >= today and grouptodevice.endDateTime >= today %}
                     <tr>
                       <input type="hidden" name="grouptodeviceid" id="grouptodeviceid" class="form-control" value="{{ grouptodevice.id }}"> 
                       <td value ="{{grouptodevice.group.name}}" style="vertical-align: unset;">{{ grouptodevice.group.name }}</td>
@@ -590,6 +632,7 @@
                         <a type="button" data-dismiss="modal" onClick="declinedAjax({{grouptodevice.id}})" class="btn btn-danger btn-xs" data-toggle="tooltip" data-placement="bottom" title="Reject" style="padding: 1px 6px"><i class="fa fa-close"></i></a>
                       </td>
                     </tr>
+                     {% endif %}
                     {% endifequal %}
                   {% endfor %}
                   </tbody>
@@ -618,7 +661,7 @@
                       <td style="vertical-align: unset;">{{ grouptodevice.startDateTime }} - {{ grouptodevice.endDateTime }}</td>
                       <td style="vertical-align: unset;">
                         
-                        <a type="button" data-dismiss="modal" onClick="declinedAjax({{grouptodevice.id}})" class="btn btn-danger btn-xs" data-toggle="tooltip" data-placement="bottom" title="Reject" style="padding: 1px 6px"><strong>Delete</strong></a>
+                        <a type="button" data-dismiss="modal" onClick="deleteAjax({{grouptodevice.id}})" class="btn btn-danger btn-xs" data-toggle="tooltip" data-placement="bottom" title="Reject" style="padding: 1px 6px"><strong>Delete</strong></a>
                       </td>
                     </tr>
                      {% endif %}
@@ -660,9 +703,7 @@
                 <div class="col-md-8 col-sm-6 col-xs-12">
                   <input type="number" name="id-num" id="id-num-{{ user.id }}" class="form-control" value="{{ user.profile.employeeID }}"> 
                 </div>
-                {% for error_msg1 in error_msg1 %}
-                  <script> alert("error"); </script>
-                {% endfor %}
+                
               </div>
               <div class="form-group">
                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">First Name
@@ -684,10 +725,23 @@
                 <div class="col-md-8 col-sm-6 col-xs-12">
                   <input type="text" id="user-name-{{ user.id }}" name="user-name" class="form-control" value="{{ user.username }}">
                 </div>
-                {% if error_msg2 %}
-                  {{ error_msg2 }}
-                {% endif %}
+                <!-- {% if messages %}
+                  <ul class="messages">
+                      {% for message in messages %}
+                      {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                      <div>
+                      <p{% if message.tags %} class ="{{message.tags}}"{% endif %}><b>{% if "sameuser" in message.tags %}{{message}}{% endif %}</b></p>
+                  </div>
+                      {% endif %}
+                      {% endfor %}
+                  </ul>
+                  {% endif %} -->
+
+                  
               </div>
+               
+
+               
               <div class="form-group">
                 <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Email</label>
                 <div class="col-md-8 col-sm-6 col-xs-12">
@@ -697,7 +751,7 @@
             </div>
             <div class="modal-footer">
              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-              <button type="submit" data-dismiss="modal" onClick="editAcctAjax({{ user.id }})" class="btn btn-primary">Save changes</button>
+              <button type="submit" onClick="editAcctAjax({{ user.id }})" class="btn btn-primary">Save changes</button>
             </div>
           </div>
         </div>
@@ -770,6 +824,7 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
+
              <input type="hidden" name="pkid" id="pkid" class="form-control" value="{{ current_user.id }}"> 
             <h3 style="display: inline;"><i class="fa fa-calendar"></i> Reservation Form</h3>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
@@ -801,7 +856,9 @@
                         {% for grouptodevice in grouptodevice %}
                           {% ifequal grouptodevice.device.id devices.id %}
                             {% ifequal grouptodevice.type 'AP' %}
+                             {% if grouptodevice.startDateTime >= today %}
                               {{grouptodevice.startDateTime}} - {{grouptodevice.endDateTime}} <br>
+                             {% endif %}
                             {% endifequal %} 
                               
                           {% endifequal %}
@@ -952,10 +1009,12 @@
 
     <script>
        function approvedAjax(id){
-        var pkid = document.getElementById('grouptodeviceid').value;
+        var pkid = id;
+        // var pkid = document.getElementById('grouptodeviceid').value;
         console.log(pkid);
         $.ajax({url: 'http://127.0.0.1:8000/approvedRes/?grouptodeviceid='+ pkid,
                 success: function(result){
+                
                 window.location.reload();
                   // insert success message here
                 }
@@ -965,10 +1024,25 @@
 
     <script>
        function declinedAjax(id){
-        var pkid = document.getElementById('grouptodeviceid').value;
+        var pkid = id
         console.log(pkid);
         $.ajax({url: 'http://127.0.0.1:8000/declinedRes/?grouptodeviceid='+ pkid,
                 success: function(result){
+                
+                window.location.reload();
+                  // insert success message here
+                }
+            });
+       }
+    </script>
+
+    <script>
+       function deleteAjax(id){
+        var pkid = id
+        console.log(pkid);
+        $.ajax({url: 'http://127.0.0.1:8000/deleteRes/?grouptodeviceid='+ pkid,
+                success: function(result){
+                
                 window.location.reload();
                   // insert success message here
                 }
@@ -984,6 +1058,7 @@
           console.log(groupid);
             $.ajax({url: '/editGrp/?pkid='+ newid + "&groupid=" + newgroupid, 
                 success: function(result){
+                  
                   window.location.reload();
                   // insert success message here
                 }
@@ -1069,12 +1144,18 @@
           var email = document.getElementById('email-' + id).value;
             $.ajax({url: '/editModal/?pkid='+ id + '&id-num=' + employeeid + '&first-name=' + firstname + '&last-name=' + lastname + '&username=' + username + '&email=' + email, 
                 success: function(data){
-                  alert("successfully updated!");
                   window.location.reload();
+
                   // $("#testRefresh").replaceWith($("#testRefresh",$(data)));
                   // window.location.reload();
 
-                }
+                },
+                 error: function(data) { 
+                    alert("invalid!");
+                }    
+                // error:function(data){
+                //   alert("invalid!");
+                // }
             });
         }
     </script>
@@ -1102,7 +1183,9 @@
             console.log(deviceid)
             $.ajax({url: 'http://127.0.0.1:8000/admin/allocateDevice?pkid='+ id + "&groupid=" + newgroupid + "&deviceList=" + deviceid + "&start-date=" + startDate + "&end-date=" + endDate,
                 success: function(result){
+                  
                   window.location.reload();
+
                   // insert success message here
                 }
             });
