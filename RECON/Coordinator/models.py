@@ -89,15 +89,16 @@ class Port(models.Model):
 		on_delete=models.CASCADE,
 	)
 	
-
 class GroupToDevice(models.Model):
 	RESERVE = 'RS'
 	APPROVE = 'AP'
 	ALLOCATION = 'AL'
+	DECLINED = 'DC'
 	TYPE_CHOICES = (
 		(RESERVE, 'Reserve'),
 		(APPROVE, 'Approve'),
 		(ALLOCATION, 'Allocation'),
+		(DECLINED, 'Declined'),
 	)
 	group = models.ForeignKey(
 		Group,
@@ -107,11 +108,11 @@ class GroupToDevice(models.Model):
 		Device,
 		on_delete=models.CASCADE,
 	)
-	startDateTime = models.DateTimeField(
+	startDateTime = models.DateField(
 		auto_now=False,
 		auto_now_add=False,
 		)
-	endDateTime = models.DateTimeField(
+	endDateTime = models.DateField(
 		auto_now=False,
 		auto_now_add=False,
 	)
@@ -193,6 +194,18 @@ class SaveConn(models.Model):
 	)
 	cableType = models.CharField(
 		max_length=25,
+	)
+	startX = models.FloatField(
+		default = 0,
+	)
+	startY = models.FloatField(
+		default = 0,
+	)
+	endX = models.FloatField(
+		default = 0,
+	)
+	endY = models.FloatField(
+		default = 0,
 	)
 	def __str__(self):
 		return self.connectionName + " between " + self.srcDevice + " and " + self.endDevice + " of " + self.saveTopology.name

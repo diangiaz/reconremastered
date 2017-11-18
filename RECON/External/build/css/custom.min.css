@@ -130,9 +130,8 @@ body .site_logo {
   padding: 0 10px;
 }
 
-.device-list{
+/*.device-list{
   list-style: none;
-  border-bottom: 1px solid #DBDBDB;
   margin-bottom: 10px;
   padding-left: 0;
   width: 100%;
@@ -144,10 +143,16 @@ body .site_logo {
   margin-top: 5px;
   margin-bottom: 10px;
   cursor: pointer;
+}*/
+
+.deviceCell {
+	padding: 0 5px 0 5px;
 }
 
 .cable-list{
   list-style: none;
+  border-top: 1px solid #DBDBDB;
+  padding-top: 10px;
   width: 100%;
   display: table;
   margin: 0 auto;
@@ -292,4 +297,7 @@ body .site_logo {
 	text-align:right;
 }
 
+.form-control {
+	border-radius: 4px;
+}
 /*T R B L*/

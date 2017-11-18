@@ -54,7 +54,7 @@
 										<span data-toggle="modal" data-target="#loadFile">
 			                <button class="btn btn-default" type="button" data-toggle="tooltip" data-placement="bottom" title="Open File"><i class="fa fa-download"></i></button>
 			              </span>
-										<span data-toggle="modal" data-target="#reserveDevice">
+										<span data-toggle="modal" data-target="#reserveDevice-{{current_user.profile.group.id}}">
 		                	<button class="btn btn-default" type="button" data-toggle="tooltip" data-placement="bottom" title="Reserve Device"><i class="fa fa-calendar"></i></button>
 		                </span>
 									</div>              		
@@ -77,120 +77,195 @@
         <div class="right_col" role="main">
         	<div class="">
 	      		<div class="clearfix"></div>
+	      		 {% if messages %}
+                  <ul class="messages">
+                      {% for message in messages %}
+                      {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                      <div class="x_content bs-example-popovers">
+                   <div class="alert alert-success alert-dismissible fade in" role="alert">
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span>
+                      </button>
+                      <strong>{{message}}</strong>
+                   </div>
+                  </div>
+                      {% endif %}
+                      {% endfor %}
+                  </ul>
+                  {% endif %}
 
+                  {% if messages %}
+                  <ul class="messages">
+                      {% for message in messages %}
+                      {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                      <div class="x_content bs-example-popovers" style="margin-top: 10px">
+                    <div class="alert alert-danger alert-dismissible fade in" role="alert">
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span>
+                      </button>
+                      <i class="fa fa-times-circle pull-left" style="font-size: 35px"></i>
+                      <div class="media-body" >
+                        <strong>ERROR!</strong>
+                        <br>
+                        {{message}}
+                      </div>
+                    </div>
+                  </div>
+                      {% endif %}
+                      {% endfor %}
+                  </ul>
+                  {% endif %}
 		        <div class="row">
 							<div class="col-md-12 col-sm-12 col-xs-12">
 								<div class="x_panel" style="padding-top: 5px;padding-bottom: 5px;">
 									<div class="x_content" id="Content">								
 										<div class="canvas-position">                    
-											<div id="DivWorkspace" style="border: 1px solid #e5e5e5; overflow: auto; background-color: #000;">
+											<div id="DivWorkspace" style="border: 1px solid #e5e5e5; overflow: auto; background-color: #fff;">
 												<canvas id="Workspace" style="background-color: #fff;" ondrop="EvtOnDrop(event)" ondragover="EvtOnDragOver(event)" onclick="EvtOnDraw(event)"></canvas>
 											</div>
 										</div>
 										<div class="tab-position">
-		                  <div class="x_content" style="padding: 0; height: 300px;">
-		                    <div class="col-xs-3" style="padding-left: 0;">
-		                      <!-- required for floating -->
-		                      <!-- Nav tabs -->
-		                      <ul class="nav nav-tabs tabs-left" style="height: 450px; border:0;">
-		                        <li class="active"><a href="#devicesPanel" data-toggle="tab" id="devicesTab">Devices</a>
-		                        </li>
-		                        <li><a href="#routerPanel" data-toggle="tab" id="routerTab">Router 1</a>
-		                        </li>
-		                        <li><a href="#switchPanel" data-toggle="tab" id="switchTab">Switch 1</a>
-		                        </li>
-		                        <li><a href="#terminalPanel" data-toggle="tab" id="terminalTab">Terminal 1</a>
-		                        </li>
-		                      </ul>
-		                    </div>
+						                  <div class="x_content" style="padding: 0; height: 300px;">
+						                    <div class="col-xs-3" style="padding-left: 0;">
+						                      <!-- required for floating -->
+						                      <!-- Nav tabs -->
+						                      <ul class="nav nav-tabs tabs-left" style="height: 450px; border:0;">
+						                        <li class="active"><a href="#devicesPanel" data-toggle="tab" id="devicesTab">Devices</a>
+						                        </li>
 
-		                    <div class="col-xs-9" style="padding: 0;">
-		                      <div class="tab-content">
-		                        <div class="tab-pane active" id="devicesPanel">
-															<ul class="device-list"> <!-- style="column-count: 3;" -->
-																<li>
-																	<img class="deviceIcons" id="DeviceRouter" src="{% static '/production/images/routerIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Router">
-																</li>
-																<li>
-																	<img class="deviceIcons" id="DeviceSwitch" src="{% static '/production/images/switchIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Switch">
-																</li>
-																<li>
-																	<img class="deviceIcons" id="DeviceTerminal" src="{% static '/production/images/terminalIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Terminal">
-																</li>
-																<li>
-																	<img class="deviceIcons" id="DeviceRouter" src="{% static '/production/images/routerIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Router">
-																</li>
-																<li>
-																	<img class="deviceIcons" id="DeviceSwitch" src="{% static '/production/images/switchIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Switch">
-																</li>
-																<li>
-																	<img class="deviceIcons" id="DeviceTerminal" src="{% static '/production/images/terminalIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Terminal">
-																</li>
-																<li>
-																	<img class="deviceIcons" id="DeviceRouter" src="{% static '/production/images/routerIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Router">
-																</li>
-																<li>
-																	<img class="deviceIcons" id="DeviceSwitch" src="{% static '/production/images/switchIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Switch">
-																</li>
-																<li>
-																	<img class="deviceIcons" id="DeviceTerminal" src="{% static '/production/images/terminalIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Terminal">
-																</li>																
-															</ul>
-															<ul class="cable-list" style="padding-left:0">
-																<li><img class="deviceIcons" id="CableLan" src="{% static '/production/images/lan.png' %}" draggable="false" onclick="EvtOnClick(this)" data-toggle="tooltip" data-placement="bottom" title="LAN"></li>
-																<li><img class="deviceIcons" id="CableWan" src="{% static '/production/images/wan.png' %}" draggable="false" onclick="EvtOnClick(this)" data-toggle="tooltip" data-placement="bottom" title="WAN"></li>
-																<li><img class="deviceIcons" id="CableConsole" src="{% static '/production/images/console.png' %}" draggable="false" onclick="EvtOnClick(this)" data-toggle="tooltip" data-placement="bottom" title="Console"></li>
-																<li><img class="deviceIcons" id="CableConsole" src="{% static '/production/images/delete.png' %}" draggable="false" onclick="remove();" data-toggle="tooltip" data-placement="bottom" title="Delete device"></li>
-															</ul>
-		                        </div>
-								
-								
-		                        <div class="tab-pane" id="routerPanel">
-		                        	<textarea class="config" id="routerConfig" readonly> {{ routerConfig }} </textarea>
-	                        	  <div class="form-group command-group">
-	                        	  	<div class="col-sm-12 input-group">
-				                        	<input type="text" class="form-control" placeholder="Input command here" style="padding:5px;" id="routerInput">
-					                        <span class="input-group-btn">
-					                        	<button class="btn btn-info" onclick="routerSend()">Add</button>
-					                        </span>
-				                    </div>
-				                      </div>
-		                        </div>
-								
-								
-		                        <div class="tab-pane" id="switchPanel">
-		                        	<textarea class="config" id="switchConfig" readonly>SW1#show running-config
-																Building configuration...
-																...
-																end</textarea>
-	                        	  <div class="form-group command-group">
-	                        	  	<div class="col-sm-12 input-group">
-				                        	<input type="text" class="form-control" placeholder="Input command here" required="required" style="padding:5px;" id="switchCmd">
-					                        <span class="input-group-btn">
-					                        	<button type="button" class="btn btn-info">Add</button>
-					                        </span>
-				                        </div>
-				                      </div>
-		                        </div>
-		                        <div class="tab-pane" id="terminalPanel">
-		                        	<textarea class="config" id="terminalConfig" readonly>PC1#show running-config
-																Building configuration...
-																...
-																end</textarea>
-	                        	  <div class="form-group command-group">
-	                        	  	<div class="col-sm-12 input-group">
-				                        	<input type="text" class="form-control" placeholder="Input command here" required="required" style="padding:5px;" id="terminalCmd">
-					                        <span class="input-group-btn">
-					                        	<button type="button" class="btn btn-info">Add</button>
-					                        </span>
-				                        </div>
-				                      </div>
-		                        </div>
-		                      </div>
-		                    </div>                   
-		                  </div>
+						                        {% for gtd in grouptodevice %}
+						                         {% ifequal current_user.profile.group.id gtd.group.id %}
+						                          {% ifequal gtd.type 'AP' %}
+						                           {% ifequal gtd.device.type 'Router' %}
+						                        <li><a href="#routerPanel" data-toggle="tab" id="routerTab-{{gtd.id}}">Router 1</a>
+						                        </li>
+						                           {% endifequal %}
+						                           {% ifequal gtd.device.type 'Switch' %}
+						                        <li><a href="#switchPanel" data-toggle="tab" id="switchTab-{{gtd.id}}">Switch 1</a>
+						                        </li>
+						                           {% endifequal %}
+						                           {% ifequal gtd.device.type 'Terminal' %}
+						                        <li><a href="#terminalPanel" data-toggle="tab" id="terminalTab-{{gtd.id}}">Terminal 1</a>
+						                        </li>
+						                           {% endifequal %}
+						                          {% endifequal %}
+						                         {% endifequal %}
+						                        {% endfor %}
+						                      </ul>
+						                    </div>
 
-																			
+						                    <div class="col-xs-9" style="padding: 0;"> 
+						                      <div class="tab-content">
+						                        <div class="tab-pane active" id="devicesPanel">
+						                        	<div class="x_content">
+						                        		<table>
+							                        		<tbody>
+							                        		
+										                     
+							                        			<tr>
+							                        			   {% for gtd in grouptodevice %}	
+							                        				{% ifequal current_user.profile.group.id gtd.group.id %}
+												                       {% ifequal gtd.type 'AP' %}
+												                         {% ifequal gtd.device.type 'Router' %}
+							                        				<td class="deviceCell">
+							                        					<img class="deviceIcons" name="router-{{gtd.device.id}}" id="DeviceRouter" src="{% static '/production/images/routerIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Router">
+							                        				</td>
+							                        					 {% endifequal %}
+				           								  				 {% ifequal gtd.device.type 'Switch' %}
+							                        				<td class="deviceCell">
+																		<img class="deviceIcons" name="switch-{{gtd.device.id}}" id="DeviceSwitch" src="{% static '/production/images/switchIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Switch">
+																	</td>
+																		 {% endifequal %}
+				           								  				 {% ifequal gtd.device.type 'Terminal' %}
+																	<td class="deviceCell">
+																		<img class="deviceIcons" name="terminal-{{gtd.device.id}}" id="DeviceTerminal" src="{% static '/production/images/terminalIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Terminal">
+																	</td>
+																	{% endifequal %}
+										                          {% endifequal %}
+										                         {% endifequal %}
+										                        {% endfor %}
+							                        			</tr>
+							                        			
+							                        		</tbody>
+							                        	</table>
+						                        	</div>
+						                        	<div class="x_content">
+						                        		<ul class="cable-list" style="padding-left:0">
+															<li><img class="deviceIcons" id="CableLan" src="{% static '/production/images/lan.png' %}" draggable="false" onclick="EvtOnClick(this)" data-toggle="tooltip" data-placement="bottom" title="LAN"></li>
+															<li><img class="deviceIcons" id="CableWan" src="{% static '/production/images/wan.png' %}" draggable="false" onclick="EvtOnClick(this)" data-toggle="tooltip" data-placement="bottom" title="WAN"></li>
+															<li><img class="deviceIcons" id="CableConsole" src="{% static '/production/images/console.png' %}" draggable="false" onclick="EvtOnClick(this)" data-toggle="tooltip" data-placement="bottom" title="Console"></li>
+															<li><img class="deviceIcons" id="CableConsole" src="{% static '/production/images/delete.png' %}" draggable="false" onclick="remove();" data-toggle="tooltip" data-placement="bottom" title="Delete device"></li>
+														</ul>
+						                        	</div>
+						                        	
+
+													<!-- <ul class="device-list">
+														{% for gtd in grouptodevice %}
+								                         {% ifequal current_user.profile.group.id gtd.group.id %}
+								                          {% ifequal gtd.type 'AP' %}
+								                           {% ifequal gtd.device.type 'Router' %}
+														<li>
+															<img class="deviceIcons" id="DeviceRouter" src="{% static '/production/images/routerIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Router">
+														</li>
+														  	{% endifequal %}
+				           								   {% ifequal gtd.device.type 'Switch' %}
+														<li>
+															<img class="deviceIcons" id="DeviceSwitch" src="{% static '/production/images/switchIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Switch">
+														</li>
+														   {% endifequal %}
+				           								   {% ifequal gtd.device.type 'Terminal' %}
+														<li>
+															<img class="deviceIcons" id="DeviceTerminal" src="{% static '/production/images/terminalIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Terminal">
+														</li>
+														    {% endifequal %}
+								                          {% endifequal %}
+								                         {% endifequal %}
+								                        {% endfor %}
+													</ul> -->
+
+													
+						                        </div>
+
+						                        <div class="tab-pane" id="routerPanel">
+						                        	<textarea class="config" id="routerConfig" readonly> {{ routerConfig }} </textarea>
+					                        	  <div class="form-group command-group">
+					                        	  	<div class="col-sm-12 input-group">
+								                        <input type="text" class="form-control" placeholder="Input command here" style="padding:5px;" id="routerInput">
+															<span class="input-group-btn">
+																<button class="btn btn-info" onclick="routerSend()">Add</button>
+									                        </span>
+								                        </div>
+								                      </div>
+						                        </div>
+						                        <div class="tab-pane" id="switchPanel">
+						                        	<textarea class="config" id="switchConfig" readonly>SW1#show running-config
+																				Building configuration...
+																				...
+																				end</textarea>
+					                        	  <div class="form-group command-group">
+					                        	  	<div class="col-sm-12 input-group">
+								                        	<input type="text" class="form-control" placeholder="Input command here" required="required" style="padding:5px;" id="switchCmd">
+									                        <span class="input-group-btn">
+									                        	<button type="button" class="btn btn-info">Add</button>
+									                        </span>
+								                        </div>
+								                      </div>
+						                        </div>
+						                        <div class="tab-pane" id="terminalPanel">
+						                        	<textarea class="config" id="terminalConfig" readonly>PC1#show running-config
+																				Building configuration...
+																				...
+																				end</textarea>
+					                        	  <div class="form-group command-group">
+					                        	  	<div class="col-sm-12 input-group">
+								                        	<input type="text" class="form-control" placeholder="Input command here" required="required" style="padding:5px;" id="terminalCmd">
+									                        <span class="input-group-btn">
+									                        	<button type="button" class="btn btn-info">Add</button>
+									                        </span>
+								                        </div>
+								                      </div>
+						                        </div>
+						                      </div>
+						                    </div>                   
+						                  </div>								
 										</div>
 
 										<div id="menu-ports"> 
@@ -266,7 +341,6 @@
 	              </label>
 	              <div class="col-md-7">
 	              	<select id="topologyID" class="select2_single form-control" tabindex="-1">
-                    <option></option>
 					{% for topology in topologies %}
 						<option value = {{ topology.pk }}>{{ topology.name }}</option>
 					{% endfor %}
@@ -283,9 +357,10 @@
       </div>
     </div>
     <!-- end LOAD -->
-
+    {% for groups in groups %}
     <!--start RESERVE -->
-    <div id="reserveDevice" class="modal fade" role="dialog" aria-hidden="true" style="padding-top: 90px">
+    <div id="reserveDevice-{{current_user.profile.group.id}}" class="modal fade" role="dialog" aria-hidden="true" style="padding-top: 90px">
+      {% csrf_token %}
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
@@ -293,89 +368,49 @@
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
             </button>  
           </div>
-          <div class="modal-body">
+          <div class="modal-body" style="padding-bottom: 0">
             <div class="form-horizontal form-label-left">
-              <h2>Available devices:</h2>
-              <table class="table-width table table-striped jambo_table">
-                <thead>
-                  <tr>
-                    <th style="width: 33%">Router</th>
-                    <th style="width: 33%">Switch</th>
-                    <th style="width: 33%">Terminal</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td class="a-center ">
-                    	<div class="checkbox">
-                        <label style="padding-left: 0">
-                          <input type="checkbox" class="flat"> Router1
-                        </label>
-                      </div>
-                    </td>
-                    <td>
-                    	<div class="checkbox">
-                        <label style="padding-left: 0">
-                          <input type="checkbox" class="flat"> Switch1
-                        </label>
-                      </div>
-                    </td>
-                    <td>
-                    	<div class="checkbox">
-                        <label style="padding-left: 0">
-                          <input type="checkbox" class="flat"> Terminal1
-                        </label>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="a-center ">
-                    	<div class="checkbox">
-                        <label style="padding-left: 0">
-                          <input type="checkbox" class="flat"> Router2
-                        </label>
-                      </div>
-                    </td>
-                    <td>
-                    	<div class="checkbox">
-                        <label style="padding-left: 0">
-                          <input type="checkbox" class="flat"> Switch2
-                        </label>
-                      </div>
-                    </td>
-                    <td>
-                    	<div class="checkbox">
-                        <label style="padding-left: 0">
-                          <input type="checkbox" class="flat"> Terminal2
-                        </label>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="a-center ">
-                    	<div class="checkbox">
-                        <label style="padding-left: 0">
-                          <input type="checkbox" class="flat" disabled="disabled"> Router3
-                        </label>
-                      </div>
-                    </td>
-                    <td>
-                    	<div class="checkbox">
-                        <label style="padding-left: 0">
-                          <input type="checkbox" class="flat" disabled="disabled"> Switch3
-                        </label>
-                      </div>
-                    </td>
-                    <td>
-                    	<div class="checkbox">
-                        <label style="padding-left: 0">
-                          <input type="checkbox" class="flat" disabled="disabled"> Terminal3
-                        </label>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <div class="x_content" style="margin-top:0;padding-bottom:10px">
+              	<h2>Available devices:</h2>
+              	<div style="width: 100%;float: left;height: 215px;overflow:auto;" id="availableDevices" data-target-id="datesRes">
+		              <table class="table-width table table-striped jambo_table" style="width: 100%">
+		                <thead>
+		                  <tr>
+		                    <th>Device</th>
+		                    <th style="width: 70%">Dates Reserved</th>
+		                  </tr>
+		                </thead>
+		                <tbody>
+		                {% for devices in devices %}
+		                  <tr>
+		                    <td class="a-center ">
+		                    	<div class="radio">
+		                        <label style="padding-left: 0">
+		                          <input type="radio" id="deviceList-{{devices.id}}" class="flat" name="deviceList" value="{{devices.id}}"> {{devices.name}}
+		                        </label>
+		                      </div>
+		                    </td>
+		                    <td>
+		                    {% for grouptodevice in grouptodevice %}
+		                    	{% ifequal grouptodevice.device.id devices.id %}
+		                    		{% ifequal grouptodevice.type 'AP' %}
+		                    		 {% if grouptodevice.startDateTime >= today and grouptodevice.endDateTime >= today %}
+		                    			{{grouptodevice.startDateTime}} - {{grouptodevice.endDateTime}} <br>
+		                    		 {% endif %}
+		                    		{% endifequal %} 
+		                    	  
+		                    	{% endifequal %}
+
+		                    {% endfor %}
+		                    </td>
+		                  </tr>
+		                 {% endfor %}
+		                </tbody>
+		              </table>
+		             </div>
+	              
+              </div>
+
               <div class="form-group">
                 <div class="col-md-6 col-sm-6 col-xs-12" style="padding-right: 0">
               		<label class="control-label col-md-3" style="width: 17%" for="datetimepicker6">Date</label>
@@ -383,7 +418,7 @@
                     <span class="input-group-addon">
                       <span class="fa fa-calendar-o"></span>
                     </span>
-                    <input type='text' class="form-control" />
+                    <input type='text' class="form-control" name='start-date' id='start-date' />
                     <!-- <span class="input-group-addon">to</span> -->
                   </div>
                 </div>   
@@ -391,7 +426,7 @@
                 <div class="col-md-6 col-sm-6 col-xs-12" style="padding-left: 0">
                 	<label class="control-label col-md-3" style="width: 12%" for="datetimepicker7">to</label>
                   <div class='input-group date' id='datetimepicker7'>
-                    <input type='text' class="form-control" />
+                    <input type='text' class="form-control" name='end-date' id='end-date' />
                     <span class="input-group-addon">
                       <span class="fa fa-calendar-o"></span>
                     </span>
@@ -401,14 +436,94 @@
             </div>
           </div>              
           <div class="modal-footer">
-            <button type="submit" class="btn btn-primary">Reserve</button>
+            <button type="submit" onClick="reserveDeviceAjax({{current_user.id}},{{current_user.profile.group.id}})"  class="btn btn-primary">Reserve</button>
             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
           </div>
         </div>
       </div>
+     
     </div>
     <!-- end RESERVE -->
+    {% endfor %}
+    <!-- jQuery -->
+    <script src="{% static '/vendors/jquery/dist/jquery.min.js' %}"></script>
+    <!-- Bootstrap -->
+    <script src="{% static '/vendors/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+    <!-- FastClick -->
+    <script src="{% static '/vendors/fastclick/lib/fastclick.js' %}"></script>
+    <!-- NProgress -->
+    <script src="{% static '/vendors/nprogress/nprogress.js' %}"></script>
+    <!-- validator -->
+    <script src="{% static '/vendors/validator/validator.js' %}"></script>
+    <!-- iCheck -->
+    <script src="{% static '/vendors/iCheck/icheck.min.js' %}"></script>
+    <!-- bootstrap-daterangepicker -->
+    <script src="{% static '/vendors/moment/min/moment.min.js' %}"></script>
+    <script src="{% static '/vendors/bootstrap-daterangepicker/daterangepicker.js' %}"></script>
+    <!-- bootstrap-datetimepicker -->    
+    <script src="{% static '/vendors/bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js' %}"></script>
+    
+    <!-- Custom Theme Scripts -->
+    <script src="{% static '/build/js/custom.min.js' %}"></script>
+
+     <!-- Initialize datetimepicker -->
+    <script>  
+     $('#datetimepicker6').datetimepicker({
+
+      format: 'YYYY-MM-DD',
+      useCurrent: true,
+      minDate:new Date()
+    });
+        
+    $('#datetimepicker7').datetimepicker({
+      
+      format: 'YYYY-MM-DD',
+      useCurrent: false,
+      minDate:new Date()
+    });
+    
+    $("#datetimepicker6").on("dp.change", function(e) {
+        $('#datetimepicker7').data("DateTimePicker").minDate(e.date);
+    });
+    
+    $("#datetimepicker7").on("dp.change", function(e) {
+        $('#datetimepicker6').data("DateTimePicker").maxDate(e.date);
+    });
+    </script>
+
+    <!-- RECON REMASTERED Script -->
+    <script src="{% static '/production/js/recon.js' %}"></script>
+    <script> $('input[name="deviceList"]').first().prop('checked', true) </script>
+    <script>
+        function reserveDeviceAjax(userid,groupid){
+          	var startDate = document.getElementById('start-date').value;
+          	var endDate = document.getElementById('end-date').value;
+          	var deviceid;
+          	var radios = document.getElementsByName('deviceList');
+           	for (var i = 0, length = radios.length; i < length; i++) {
+    			if (radios[i].checked) {
+    				deviceid = radios[i].value;
+    				
+    				
+        			break;
+   				}
+			}
+			
+          	console.log(startDate)
+          	console.log(endDate)
+          	console.log(userid)
+          	console.log(groupid)
+          	console.log(deviceid)
+            $.ajax({url: 'http://127.0.0.1:8000/user/reserveDevice?pkid='+ userid + "&groupid=" + groupid + "&deviceList=" + deviceid + "&start-date=" + startDate + "&end-date=" + endDate,
+                success: function(result){
+                  window.location.reload();
+                  // insert success message here
+                }
+            });
+        }
+    </script>
 	
+	<!-- Receiver Scripts Start -->
 	<script>
        // setInterval(function(){reloader();},1000);
        //
@@ -423,7 +538,9 @@
 		//	textarea.scrollTop = textarea.scrollHeight;
        // }
     </script>
+	<!-- Receiver Scripts End -->
 	
+	<!-- Serial Sender Scripts Start -->
 	<script>
 		var routerInput = document.getElementById("routerInput");
 		routerInput.addEventListener("keydown", function (e) {
@@ -431,7 +548,6 @@
 				routerSend();
 				}
 		});
-		
 		
 		function routerSend(){
 			var textarea = document.getElementById('routerConfig');
@@ -444,7 +560,11 @@
 			
 			textarea.scrollTop = textarea.scrollHeight;
 		}
-		
+	</script>
+	<!-- Serial Sender Scripts End -->
+	
+	<!-- Save/Load Functions Start -->
+	<script>
 		function loadTopology(){
 			var topologyID = document.getElementById('topologyID').value;
 			window.location = "http://127.0.0.1:8000/loadTopology?topologyID=" + topologyID;
@@ -470,67 +590,21 @@
 		function saveConnections(){
 			var connectionsArrayLength = Cables.length;
 			for (var ctr = 0; ctr < connectionsArrayLength; ctr++) {		
-				$.ajax({url: "http://127.0.0.1:8000/saveConnection?srcDevice=" + Cables[ctr].startdevice + "&endDevice=" + Cables[ctr].enddevice + "&srcPort=" + Cables[ctr].startport + "&endPort=" + Cables[ctr].endport + "&connectionName=" + Cables[ctr].name,
+				$.ajax({url: "http://127.0.0.1:8000/saveConnection?startX=" + Cables[ctr].startpointx + "&startY=" + Cables[ctr].startpointy + "&endX=" + Cables[ctr].endpointx + "&endY=" + Cables[ctr].endpointy + "&srcDevice=" + Cables[ctr].startdevice + "&endDevice=" + Cables[ctr].enddevice + "&srcPort=" + Cables[ctr].startport + "&endPort=" + Cables[ctr].endport + "&connectionName=" + Cables[ctr].name,
 				});
 			}
 			console.log("Saved Connections")
 		}
-		
 	</script>
-	
-    <!-- jQuery -->
-    <script src="{% static '/vendors/jquery/dist/jquery.min.js' %}"></script>
-    <!-- Bootstrap -->
-    <script src="{% static '/vendors/bootstrap/dist/js/bootstrap.min.js' %}"></script>
-    <!-- FastClick -->
-    <script src="{% static '/vendors/fastclick/lib/fastclick.js' %}"></script>
-    <!-- NProgress -->
-    <script src="{% static '/vendors/nprogress/nprogress.js' %}"></script>
-    <!-- validator -->
-    <script src="{% static '/vendors/validator/validator.js' %}"></script>
-    <!-- iCheck -->
-    <script src="{% static '/vendors/iCheck/icheck.min.js' %}"></script>
-    <!-- bootstrap-daterangepicker -->
-    <script src="{% static '/vendors/moment/min/moment.min.js' %}"></script>
-    <script src="{% static '/vendors/bootstrap-daterangepicker/daterangepicker.js' %}"></script>
-    <!-- bootstrap-datetimepicker -->    
-    <script src="{% static '/vendors/bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js' %}"></script>
-    
-    <!-- Custom Theme Scripts -->
-    <script src="{% static '/build/js/custom.min.js' %}"></script>
+	<!-- Save/Load Functions End -->
 
-     <!-- Initialize datetimepicker -->
-    <script>  
-     $('#datetimepicker6').datetimepicker({
-      format: 'MM/DD/YYYY',
-      useCurrent: true
-    });
-        
-    $('#datetimepicker7').datetimepicker({
-      format: 'MM/DD/YYYY',
-      useCurrent: false
-    });
-    
-    $("#datetimepicker6").on("dp.change", function(e) {
-        $('#datetimepicker7').data("DateTimePicker").minDate(e.date);
-    });
-    
-    $("#datetimepicker7").on("dp.change", function(e) {
-        $('#datetimepicker6').data("DateTimePicker").maxDate(e.date);
-    });
-    </script>
-	<!-- Jquery Scripts -->
-	<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
-	
-    <!-- RECON REMASTERED Script -->
-    <script src="{% static '/production/js/recon.js' %}"></script>
-	
 	<!-- Canvass Loader -->		
 	<script>
 		console.log("Loaded {{ currTopology }}")
 		document.getElementById("saveTopologyInput").value="{{ currTopology }}";
 	</script>
-	{% for device in devices %}
+	
+	{% for device in loadDevices %}
 	<script>
 		var loaddeviceImage = new Image();
 		var loaddeviceName = "{{ device.deviceName }}";
@@ -560,26 +634,33 @@
 		Devices.push(loadedDevice);
 	</script>
 	{% endfor %}
-	
+	<script>
+		WorkspaceRepaint();
+	</script>
 	
 	{% for connection in connections %}
 	<script>
-		var name = "{{ connection.connectionName }}"
-		var srcDevice = "{{ connection.srcDevice }}"
-		var endDevice = "{{ connection.endDevice }}"
-		var srcPort = "{{ connection.srcPort }}"
-		var endPort = "{{ connection.endPort }}"
-		var cableType = {{ cableType }}
-	
-	
-	
-	
+		var name = "{{ connection.connectionName }}";
+		var srcDevice = "{{ connection.srcDevice }}";
+		var endDevice = "{{ connection.endDevice }}";
+		var srcPort = "{{ connection.srcPort }}";
+		var endPort = "{{ connection.endPort }}";
+		var cableType = {{ connection.cableType }};
+		var startX = {{ connection.startX }};
+		var startY = {{ connection.startY }};
+		var endX = {{ connection.endX }};
+		var endY = {{ connection.endY }};
+		
+		var loadCable = {startpointx: startX, startpointy: startY, endpointx: endX, endpointy: endY, startdevice: srcDevice, enddevice: endDevice, startport:srcPort, endport:endPort, name:name};
+		Cables.push(loadCable);
+		
+		console.log("Saved a cable")
+		
 	</script>
 	{% endfor %}
-	
-	
-	
-	
-	
+	<script>
+		WorkspaceRepaint();
+	</script>
+	<!-- Canvass Loader End -->	
   </body>
 </html>
