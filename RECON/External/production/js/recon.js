@@ -39,7 +39,7 @@
 	// TEMPORARY Ports
 	var SwitchPorts = [];
 	
-	for(c=0;c<=24;c++){
+	for(c=1;c<=24;c++){
 		SwitchPorts[c] = "fa0/" + c;
 	}
 	
@@ -274,12 +274,13 @@
 				isDevice=true;
 			}
 			
-			if(CheckForCables(MouseX,MouseY)!=-1 && (isDevice!=true)){
+			if(CheckForCables(MouseX,MouseY)!=-1 && isDevice!=true){
 				LastTouchedDevice = null
 				LastTouchedCable = CheckForCables(MouseX,MouseY);
 				LastTouched="cable";
+				
 			}
-			
+			isDevice=false;
 			
 		if(DraggingDeviceNum != -1){
 			IsDragging = true;
@@ -410,7 +411,7 @@
 		
 		deviceType = (Devices[deviceId].name).substring(0,(Devices[deviceId].name).indexOf(' '));
 		
-		
+		console.log(deviceType);
 		
 		var options="";
 		$("#menu-ports ul").empty();
@@ -421,7 +422,7 @@
 				} 
 		}
 		else if(deviceType=="Switch"){
-				for (var i = 0; i < SwitchPorts.length; i++){
+				for (var i = 1; i < SwitchPorts.length; i++){
 					   options += '<li value=" ' + SwitchPorts[i]+ '">' + SwitchPorts[i] + '</li>';
 					} 	
 		}
@@ -570,13 +571,14 @@
 			var NewCable = {startpointx: firstxpoint, startpointy: firstypoint, endpointx: secondxpoint, endpointy: secondypoint, startdevice: Devices[firstdevice].name, enddevice: Devices[seconddevice].name, startport:firstport, endport:secondport, name:TempCable.name};
 			Cables.push(NewCable);
 			
-			$.ajax({url: "http://127.0.0.1:8000/connectDevices?srcDevice=" + Devices[firstdevice].name + "&endDevice=" + Devices[seconddevice].name + "&startPort=" + firstport + "&endPort=" + secondport,
+			
+		if((Devices[firstdevice].name == "Router 1" && Devices[seconddevice].name == "Switch 1") && (firstport == "fa0/1" && secondport == "fa0/1")){
+				$.ajax({url: "http://127.0.0.1:8000/connectDevices",
 				});
-			
-			
-			console.log(firstxpoint);
-			console.log(firstypoint);
-		
+			}else if((Devices[firstdevice].name == "Switch 1" && Devices[seconddevice].name == "Router 1") && (firstport == "fa0/1" && secondport == "fa0/1")){
+				$.ajax({url: "http://127.0.0.1:8000/connectDevices",
+				});
+			}			
 	}
 		
 	function EvtOnDrop(arg) {
@@ -724,10 +726,7 @@
 	function WorkspaceRepaint(arg){
 		
 		
-		for(var nCtr = 0; nCtr < Devices.length; nCtr++){
-			Workspace.drawImage(Devices[nCtr].object, Devices[nCtr].x, Devices[nCtr].y);
-			Workspace.fillText(Devices[nCtr].name, Devices[nCtr].x + Devices[nCtr].width / 2, Devices[nCtr].y + Devices[nCtr].height + 20);
-		}
+	
 	
 		for(var nCtr = 0; nCtr < Cables.length; nCtr++){
 			 context.beginPath();
@@ -775,6 +774,11 @@
 				context.bezierCurveTo(Cables[nCtr].startpointx,Cables[nCtr].startpointy-20,Cables[nCtr].endpointx,Cables[nCtr].endpointy-20,Cables[nCtr].endpointx,Cables[nCtr].endpointy);
 				context.stroke();
 			 }	
+		}
+		
+		for(var nCtr = 0; nCtr < Devices.length; nCtr++){
+			Workspace.drawImage(Devices[nCtr].object, Devices[nCtr].x, Devices[nCtr].y);
+			Workspace.fillText(Devices[nCtr].name, Devices[nCtr].x + Devices[nCtr].width / 2, Devices[nCtr].y + Devices[nCtr].height + 20);
 		}
 	
 		
@@ -829,13 +833,23 @@
 				WorkspaceRepaint();
 			}
 			else{
-				WorkspaceRemove();
+				
+					if((Cables[LastTouchedCable].startdevice == "Router 1" && Cables[LastTouchedCable].enddevice == "Switch 1") && (Cables[LastTouchedCable].startport == "fa0/1" || Cables[LastTouchedCable].endport == "fa0/1")){
+						$.ajax({url: "http://127.0.0.1:8000/disconnectDevices",
+						});
+					} else if((Cables[LastTouchedCable].startdevice == "Switch 1" && Cables[LastTouchedCable].enddevice == "Router 1") && (Cables[LastTouchedCable].startport == "fa0/1" || Cables[LastTouchedCable].endport == "fa0/1"))
+						$.ajax({url: "http://127.0.0.1:8000/disconnectDevices",
+						});
+					}
+					
+			WorkspaceRemove();
 				Cables.splice(LastTouchedCable,1);
 				WorkspaceRepaint();
-			}
+					
 			document.getElementById('dialogbox').style.display = "none";
 			document.getElementById('dialogoverlay').style.display = "none";
-			
+		
 		}
 	}
+	
 	var Confirm = new CustomConfirm();

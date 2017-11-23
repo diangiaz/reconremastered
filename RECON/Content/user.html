@@ -49,13 +49,13 @@
               		<img src="{% static '/production/images/logo4.png' %}" class="nav-img-logo" id="reconLogo">
 	                <div class="buttonPadding">
 										<span data-toggle="modal" data-target="#saveWork">	
-											<button class="btn btn-default" type="button" data-toggle="tooltip" data-placement="bottom" title="Save Topology"><i class="fa fa-save"></i></button>
+											<button class="btn btn-default" type="button" data-toggle="tooltip" data-placement="bottom" title="Save Topology" style="margin-right:10px"><i class="fa fa-save"></i></button>
 										</span>
 										<span data-toggle="modal" data-target="#loadFile">
-			                <button class="btn btn-default" type="button" data-toggle="tooltip" data-placement="bottom" title="Open File"><i class="fa fa-download"></i></button>
+			                <button class="btn btn-default" type="button" data-toggle="tooltip" data-placement="bottom" title="Open File" style="margin-right:10px"><i class="fa fa-download"></i></button>
 			              </span>
 										<span data-toggle="modal" data-target="#reserveDevice-{{current_user.profile.group.id}}">
-		                	<button class="btn btn-default" type="button" data-toggle="tooltip" data-placement="bottom" title="Reserve Device"><i class="fa fa-calendar"></i></button>
+		                	<button class="btn btn-default" type="button" data-toggle="tooltip" data-placement="bottom" title="Reserve Device" style="margin-right:10px"><i class="fa fa-calendar"></i></button>
 		                </span>
 									</div>              		
               	</div>
@@ -204,30 +204,6 @@
 														</ul>
 						                        	</div>
 						                        	
-													<!-- <ul class="device-list">
-														{% for gtd in grouptodevice %}
-								                         {% ifequal current_user.profile.group.id gtd.group.id %}
-								                          {% ifequal gtd.type 'AP' %}
-								                           {% ifequal gtd.device.type 'Router' %}
-														<li>
-															<img class="deviceIcons" id="DeviceRouter" src="{% static '/production/images/routerIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Router">
-														</li>
-														  	{% endifequal %}
-				           								   {% ifequal gtd.device.type 'Switch' %}
-														<li>
-															<img class="deviceIcons" id="DeviceSwitch" src="{% static '/production/images/switchIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Switch">
-														</li>
-														   {% endifequal %}
-				           								   {% ifequal gtd.device.type 'Terminal' %}
-														<li>
-															<img class="deviceIcons" id="DeviceTerminal" src="{% static '/production/images/terminalIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Terminal">
-														</li>
-														    {% endifequal %}
-								                          {% endifequal %}
-								                         {% endifequal %}
-								                        {% endfor %}
-													</ul> -->
-													
 						                        </div>
 												
 												{% for gtd in grouptodevice %}	
@@ -238,7 +214,7 @@
 						                        	<textarea class="config" id="configTextArea {{gtd.device.id}}" readonly></textarea>
 					                        	  <div class="form-group command-group">
 					                        	  	<div class="col-sm-12 input-group">
-								                        	<input type="text" class="form-control" placeholder="Input command here" required="required" style="padding:5px;" id="deviceInput-{{gtd.device.id}}">
+								                        	<input type="text" class="form-control" placeholder="Input command here" required="required" style="padding:5px;" id="deviceInput {{gtd.device.id}}">
 									                        <span class="input-group-btn">
 									                        	<button type="button" class="btn btn-info" onclick=inputSend{{gtd.device.id}}()>Add</button>
 									                        </span>
@@ -511,33 +487,33 @@
 	
 	<!-- Receiver Scripts Start -->
 	<script>
-	//	setInterval(function(){reloader1();},1000);
-    //
-	//	function reloader1(){
-	//		$.ajax({url: 'http://127.0.0.1:8000/getouts1', 
-	//			success: function(result){
-	//				var res = JSON.parse(result);
-	//				document.getElementById('configTextArea 4').innerHTML = res['config'];              
-	//			}
-	//		});
-	//		var textarea = document.getElementById('configTextArea 4');
-	//		textarea.scrollTop = textarea.scrollHeight;
-    //    }
-    //</script>
+		setInterval(function(){reloader1();},1000);
+    
+		function reloader1(){
+			$.ajax({url: 'http://127.0.0.1:8000/getouts2', 
+				success: function(result){
+					var res = JSON.parse(result);
+					document.getElementById('configTextArea 1').innerHTML = res['config'];              
+				}
+			});
+			var textarea = document.getElementById('configTextArea 1');
+			textarea.scrollTop = textarea.scrollHeight;
+        }
+    </script>
 	
 	<script>
-	//	setInterval(function(){reloader2();},1000);
-    //
-	//	function reloader2(){
-	//		$.ajax({url: 'http://127.0.0.1:8000/getouts2', 
-	//			success: function(result){
-	//				var res = JSON.parse(result);
-	//				document.getElementById('configTextArea 5').innerHTML = res['config'];              
-	//			}
-	//		});
-	//		var textarea = document.getElementById('configTextArea 5');
-	//		textarea.scrollTop = textarea.scrollHeight;
-    //    }
+		setInterval(function(){reloader2();},1000);
+    
+		function reloader2(){
+			$.ajax({url: 'http://127.0.0.1:8000/getouts1', 
+				success: function(result){
+					var res = JSON.parse(result);
+					document.getElementById('configTextArea 3').innerHTML = res['config'];              
+				}
+			});
+			var textarea = document.getElementById('configTextArea 3');
+			textarea.scrollTop = textarea.scrollHeight;
+        }
     </script>
 	<!-- Receiver Scripts End -->
 	
@@ -547,7 +523,7 @@
 		{% ifequal gtd.type 'AP' %}
 		{% if gtd.startDateTime <= today and gtd.endDateTime >= today %}
 			<script>
-				var inputField = document.getElementById("deviceInput-{{gtd.device.id}}");
+				var inputField = document.getElementById("deviceInput {{gtd.device.id}}");
 				inputField.addEventListener("keydown", function (e) {
 					if (e.keyCode == 13){
 						inputSend{{gtd.device.id}}();
@@ -558,10 +534,10 @@
 					var textarea = document.getElementById('configTextArea {{gtd.device.id}}');
 					textarea.scrollTop = textarea.scrollHeight;
 					
-					var command = document.getElementById("deviceInput-{{gtd.device.id}}").value;
+					var command = document.getElementById("deviceInput {{gtd.device.id}}").value;
 					$.ajax({url: 'http://127.0.0.1:8000/inputSend?input=' + command + '&deviceId={{gtd.device.id}}',
 					});
-					document.getElementById("deviceInput-{{gtd.device.id}}").value = "";
+					document.getElementById("deviceInput {{gtd.device.id}}").value = "";
 					
 					console.log("Input: " + command)
 					
@@ -612,7 +588,8 @@
 
 	<!-- Canvass Loader -->		
 	<script>
-		console.log("Loaded {{ currTopology }}")
+		if ("{{currTopology}}" != "")
+			console.log("Loaded {{ currTopology }}");
 		document.getElementById("saveTopologyInput").value="{{ currTopology }}";
 	</script>
 	
@@ -641,12 +618,7 @@
 		
 		var loadedDevice = { object:loaddeviceImage, x:loadPosX, y:loadPosY, height:loaddeviceHeight, width:loaddeviceWidth, name:loaddeviceName};
 		
-		Devices.push(loadedDevice);
-		
-		<!-- Workspace.drawImage(loaddeviceImage, loadPosX, loadPosY); -->
-		<!-- Workspace.fillText(loaddeviceName, loadPosX + loaddeviceWidth / 2, loadPosY + loaddeviceHeight + 20); -->
-		
-		
+		Devices.push(loadedDevice);	
 		
 		var i = document.getElementById(loaddeviceName);
 		i.draggable = false;
@@ -682,12 +654,17 @@
 	{% endfor %}
 	
 	<script>
-		if ({{load}} == 1)
+		var load = "{{load}}";
+		if (load == "")
+			loadInt = 0;
+		else if (load == "1")
+			loadInt = 1;
+		else if (load == "0")
+			loadInt = 0;
+			
+		if (loadInt == 1)
 			window.location = "http://127.0.0.1:8000/loadTopology?topologyID={{currTopologyID}}&newload=0";
 	</script>
-			
-	
-	
 	<!-- Canvass Loader End -->	
   </body>
 </html>

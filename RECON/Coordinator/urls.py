@@ -15,6 +15,7 @@ urlpatterns = [
 	url(r'^user/reserveDevice$', views.reserveDevice, name='reserveDevice'),
 	url(r'^inputSend$', views.inputSend, name='inputSend'),
 	url(r'^connectDevices$', views.connectDevices, name='connectDevices'),
+	url(r'^discconnectDevices$', views.disconnectDevices, name='connectDevices'),
 	url(r'^loadTopology$', views.loadTopology, name='loadTopology'),
 	url(r'^saveTopology$', views.saveTopologyFunc, name='saveTopology'),
 	url(r'^saveDevice$', views.saveDevice, name='saveDevice'),
