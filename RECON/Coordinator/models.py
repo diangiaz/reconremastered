@@ -11,7 +11,9 @@ EMPLOYEE_TYPE_CHOICES = (
 	
 class Group(models.Model):
 	name = models.CharField(
-		unique=True, max_length=50,)
+	unique=True,
+	max_length=50,
+	)
 		
 	def __str__(self):
 		return self.name
@@ -27,7 +29,8 @@ class Profile(models.Model):
 	group = models.ForeignKey(
 		Group,
 		on_delete = models.CASCADE,	
-		default = 1,
+		null = True,
+		blank = True,
 	)
 	
 	def __str__(self):
@@ -215,10 +218,10 @@ class SaveDev(models.Model):
 		SaveTopology,
 		on_delete=models.CASCADE,
 	)
-	# GroupToDevice = models.ForeignKey(
-		# GroupToDevice,
-		# on_delete=models.CASCADE,
-	# )
+	GroupToDevice = models.ForeignKey(
+		GroupToDevice,
+		on_delete=models.CASCADE,
+	)
 	deviceName = models.CharField(
 		max_length = 40,
 	)
@@ -234,8 +237,9 @@ class SaveDev(models.Model):
 		return self.deviceName + " of " + self.saveTopology.name
 
 class Log(models.Model):
-	device = models.CharField(
-		max_length = 40,
+	device = models.ForeignKey(
+		Device,
+		on_delete=models.CASCADE
 	)
 	user = models.ForeignKey(
 		User,

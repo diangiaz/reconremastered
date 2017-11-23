@@ -81,6 +81,7 @@
                   <ul class="messages">
                       {% for message in messages %}
                       {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                      
                       <div class="x_content bs-example-popovers">
                    <div class="alert alert-success alert-dismissible fade in" role="alert">
                       <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span>
@@ -88,6 +89,7 @@
                       <strong>{{message}}</strong>
                    </div>
                   </div>
+                      
                       {% endif %}
                       {% endfor %}
                   </ul>
@@ -97,6 +99,7 @@
                   <ul class="messages">
                       {% for message in messages %}
                       {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                      
                       <div class="x_content bs-example-popovers" style="margin-top: 10px">
                     <div class="alert alert-danger alert-dismissible fade in" role="alert">
                       <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span>
@@ -109,6 +112,7 @@
                       </div>
                     </div>
                   </div>
+                      
                       {% endif %}
                       {% endfor %}
                   </ul>
@@ -134,18 +138,20 @@
 						                        {% for gtd in grouptodevice %}
 						                         {% ifequal current_user.profile.group.id gtd.group.id %}
 						                          {% ifequal gtd.type 'AP' %}
+												  {% if gtd.startDateTime <= today and gtd.endDateTime >= today %}
 						                           {% ifequal gtd.device.type 'Router' %}
-						                        <li><a href="#routerPanel" data-toggle="tab" id="routerTab-{{gtd.id}}">Router 1</a>
+						                        <li><a href="#devicePanel-{{gtd.device.id}}" data-toggle="tab" id="devTab-{{gtd.device.id}}">{{gtd.device.name}}</a>
 						                        </li>
 						                           {% endifequal %}
 						                           {% ifequal gtd.device.type 'Switch' %}
-						                        <li><a href="#switchPanel" data-toggle="tab" id="switchTab-{{gtd.id}}">Switch 1</a>
+						                        <li><a href="#devicePanel-{{gtd.device.id}}" data-toggle="tab" id="devTab-{{gtd.device.id}}">{{gtd.device.name}}</a>
 						                        </li>
 						                           {% endifequal %}
 						                           {% ifequal gtd.device.type 'Terminal' %}
-						                        <li><a href="#terminalPanel" data-toggle="tab" id="terminalTab-{{gtd.id}}">Terminal 1</a>
+						                        <li><a href="#devicePanel-{{gtd.device.id}}" data-toggle="tab" id="devTab-{{gtd.device.id}}">{{gtd.device.name}}</a>
 						                        </li>
 						                           {% endifequal %}
+												   {% endif %}
 						                          {% endifequal %}
 						                         {% endifequal %}
 						                        {% endfor %}
@@ -164,21 +170,23 @@
 							                        			   {% for gtd in grouptodevice %}	
 							                        				{% ifequal current_user.profile.group.id gtd.group.id %}
 												                       {% ifequal gtd.type 'AP' %}
+																	    {% if gtd.startDateTime <= today and gtd.endDateTime >= today %}
 												                         {% ifequal gtd.device.type 'Router' %}
 							                        				<td class="deviceCell">
-							                        					<img class="deviceIcons" name="router-{{gtd.device.id}}" id="DeviceRouter" src="{% static '/production/images/routerIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Router">
+							                        					<img class="deviceIcons" name="{{gtd.device.name}}" id="{{gtd.device.name}}" src="{% static '/production/images/routerIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Router">
 							                        				</td>
 							                        					 {% endifequal %}
 				           								  				 {% ifequal gtd.device.type 'Switch' %}
 							                        				<td class="deviceCell">
-																		<img class="deviceIcons" name="switch-{{gtd.device.id}}" id="DeviceSwitch" src="{% static '/production/images/switchIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Switch">
+																		<img class="deviceIcons" name="{{gtd.device.name}}" id="{{gtd.device.name}}" src="{% static '/production/images/switchIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Switch {{gtd.device.id}}">
 																	</td>
 																		 {% endifequal %}
 				           								  				 {% ifequal gtd.device.type 'Terminal' %}
 																	<td class="deviceCell">
-																		<img class="deviceIcons" name="terminal-{{gtd.device.id}}" id="DeviceTerminal" src="{% static '/production/images/terminalIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Terminal">
+																		<img class="deviceIcons" name="{{gtd.device.name}}" id="{{gtd.device.name}}" src="{% static '/production/images/terminalIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Terminal">
 																	</td>
 																	{% endifequal %}
+																	{% endif %}
 										                          {% endifequal %}
 										                         {% endifequal %}
 										                        {% endfor %}
@@ -196,7 +204,6 @@
 														</ul>
 						                        	</div>
 						                        	
-
 													<!-- <ul class="device-list">
 														{% for gtd in grouptodevice %}
 								                         {% ifequal current_user.profile.group.id gtd.group.id %}
@@ -220,49 +227,28 @@
 								                         {% endifequal %}
 								                        {% endfor %}
 													</ul> -->
-
 													
 						                        </div>
-
-						                        <div class="tab-pane" id="routerPanel">
-						                        	<textarea class="config" id="routerConfig" readonly> {{ routerConfig }} </textarea>
+												
+												{% for gtd in grouptodevice %}	
+							                     {% ifequal current_user.profile.group.id gtd.group.id %}
+												  {% ifequal gtd.type 'AP' %}
+												   {% if gtd.startDateTime <= today and gtd.endDateTime >= today %}
+						                        <div class="tab-pane" id="devicePanel-{{gtd.device.id}}">
+						                        	<textarea class="config" id="configTextArea {{gtd.device.id}}" readonly></textarea>
 					                        	  <div class="form-group command-group">
 					                        	  	<div class="col-sm-12 input-group">
-								                        <input type="text" class="form-control" placeholder="Input command here" style="padding:5px;" id="routerInput">
-															<span class="input-group-btn">
-																<button class="btn btn-info" onclick="routerSend()">Add</button>
-									                        </span>
-								                        </div>
-								                      </div>
-						                        </div>
-						                        <div class="tab-pane" id="switchPanel">
-						                        	<textarea class="config" id="switchConfig" readonly>SW1#show running-config
-																				Building configuration...
-																				...
-																				end</textarea>
-					                        	  <div class="form-group command-group">
-					                        	  	<div class="col-sm-12 input-group">
-								                        	<input type="text" class="form-control" placeholder="Input command here" required="required" style="padding:5px;" id="switchCmd">
+								                        	<input type="text" class="form-control" placeholder="Input command here" required="required" style="padding:5px;" id="deviceInput-{{gtd.device.id}}">
 									                        <span class="input-group-btn">
-									                        	<button type="button" class="btn btn-info">Add</button>
+									                        	<button type="button" class="btn btn-info" onclick=inputSend{{gtd.device.id}}()>Add</button>
 									                        </span>
 								                        </div>
 								                      </div>
 						                        </div>
-						                        <div class="tab-pane" id="terminalPanel">
-						                        	<textarea class="config" id="terminalConfig" readonly>PC1#show running-config
-																				Building configuration...
-																				...
-																				end</textarea>
-					                        	  <div class="form-group command-group">
-					                        	  	<div class="col-sm-12 input-group">
-								                        	<input type="text" class="form-control" placeholder="Input command here" required="required" style="padding:5px;" id="terminalCmd">
-									                        <span class="input-group-btn">
-									                        	<button type="button" class="btn btn-info">Add</button>
-									                        </span>
-								                        </div>
-								                      </div>
-						                        </div>
+												    {% endif %}
+												   {% endifequal %}
+												  {% endifequal %}
+												 {% endfor %}
 						                      </div>
 						                    </div>                   
 						                  </div>								
@@ -472,14 +458,14 @@
 
       format: 'YYYY-MM-DD',
       useCurrent: true,
-      minDate:new Date()
+      minDate:moment()
     });
         
     $('#datetimepicker7').datetimepicker({
       
       format: 'YYYY-MM-DD',
       useCurrent: false,
-      minDate:new Date()
+      minDate:moment()
     });
     
     $("#datetimepicker6").on("dp.change", function(e) {
@@ -525,49 +511,75 @@
 	
 	<!-- Receiver Scripts Start -->
 	<script>
-       // setInterval(function(){reloader();},1000);
-       //
-       // function reloader(){
-       //     $.ajax({url: 'http://127.0.0.1:8000/getouts1', 
-       //         success: function(result){
-       //             var res = JSON.parse(result);
-       //             document.getElementById('routerConfig').innerHTML = res['routerConfig'];              
-       //         }
-       //     });
-		//	var textarea = document.getElementById('routerConfig');
-		//	textarea.scrollTop = textarea.scrollHeight;
-       // }
+	//	setInterval(function(){reloader1();},1000);
+    //
+	//	function reloader1(){
+	//		$.ajax({url: 'http://127.0.0.1:8000/getouts1', 
+	//			success: function(result){
+	//				var res = JSON.parse(result);
+	//				document.getElementById('configTextArea 4').innerHTML = res['config'];              
+	//			}
+	//		});
+	//		var textarea = document.getElementById('configTextArea 4');
+	//		textarea.scrollTop = textarea.scrollHeight;
+    //    }
+    //</script>
+	
+	<script>
+	//	setInterval(function(){reloader2();},1000);
+    //
+	//	function reloader2(){
+	//		$.ajax({url: 'http://127.0.0.1:8000/getouts2', 
+	//			success: function(result){
+	//				var res = JSON.parse(result);
+	//				document.getElementById('configTextArea 5').innerHTML = res['config'];              
+	//			}
+	//		});
+	//		var textarea = document.getElementById('configTextArea 5');
+	//		textarea.scrollTop = textarea.scrollHeight;
+    //    }
     </script>
 	<!-- Receiver Scripts End -->
 	
 	<!-- Serial Sender Scripts Start -->
-	<script>
-		var routerInput = document.getElementById("routerInput");
-		routerInput.addEventListener("keydown", function (e) {
-			if (e.keyCode == 13){
-				routerSend();
+	{% for gtd in grouptodevice %}	
+		{% ifequal current_user.profile.group.id gtd.group.id %}
+		{% ifequal gtd.type 'AP' %}
+		{% if gtd.startDateTime <= today and gtd.endDateTime >= today %}
+			<script>
+				var inputField = document.getElementById("deviceInput-{{gtd.device.id}}");
+				inputField.addEventListener("keydown", function (e) {
+					if (e.keyCode == 13){
+						inputSend{{gtd.device.id}}();
+						}
+				});
+				
+				function inputSend{{gtd.device.id}}(){
+					var textarea = document.getElementById('configTextArea {{gtd.device.id}}');
+					textarea.scrollTop = textarea.scrollHeight;
+					
+					var command = document.getElementById("deviceInput-{{gtd.device.id}}").value;
+					$.ajax({url: 'http://127.0.0.1:8000/inputSend?input=' + command + '&deviceId={{gtd.device.id}}',
+					});
+					document.getElementById("deviceInput-{{gtd.device.id}}").value = "";
+					
+					console.log("Input: " + command)
+					
+					textarea.scrollTop = textarea.scrollHeight;
 				}
-		});
-		
-		function routerSend(){
-			var textarea = document.getElementById('routerConfig');
-			textarea.scrollTop = textarea.scrollHeight;
-			
-			var command = document.getElementById("routerInput").value;
-			$.ajax({url: 'http://127.0.0.1:8000/routerSend?routerInput=' + command,
-			});
-			document.getElementById("routerInput").value = "";
-			
-			textarea.scrollTop = textarea.scrollHeight;
-		}
-	</script>
+			</script>
+		{% endif %}
+		{% endifequal %}
+		{% endifequal %}
+	{% endfor %}
+	
 	<!-- Serial Sender Scripts End -->
 	
 	<!-- Save/Load Functions Start -->
 	<script>
 		function loadTopology(){
 			var topologyID = document.getElementById('topologyID').value;
-			window.location = "http://127.0.0.1:8000/loadTopology?topologyID=" + topologyID;
+			window.location = "http://127.0.0.1:8000/loadTopology?topologyID=" + topologyID + "&newload=1";
 		}
 		
 		function saveTopology(){
@@ -626,17 +638,26 @@
 			loaddeviceWidth = 62;
 		}
 		
-		Workspace.drawImage(loaddeviceImage, loadPosX, loadPosY);
-		Workspace.fillText(loaddeviceName, loadPosX + loaddeviceWidth / 2, loadPosY + loaddeviceHeight + 20);
 		
 		var loadedDevice = { object:loaddeviceImage, x:loadPosX, y:loadPosY, height:loaddeviceHeight, width:loaddeviceWidth, name:loaddeviceName};
 		
 		Devices.push(loadedDevice);
+		
+		<!-- Workspace.drawImage(loaddeviceImage, loadPosX, loadPosY); -->
+		<!-- Workspace.fillText(loaddeviceName, loadPosX + loaddeviceWidth / 2, loadPosY + loaddeviceHeight + 20); -->
+		
+		
+		
+		var i = document.getElementById(loaddeviceName);
+		i.draggable = false;
+		i.onclick = false;	
+		
+		WorkspaceRepaint();
+		
+		
+		
 	</script>
 	{% endfor %}
-	<script>
-		WorkspaceRepaint();
-	</script>
 	
 	{% for connection in connections %}
 	<script>
@@ -656,11 +677,17 @@
 		
 		console.log("Saved a cable")
 		
-	</script>
-	{% endfor %}
-	<script>
 		WorkspaceRepaint();
 	</script>
+	{% endfor %}
+	
+	<script>
+		if ({{load}} == 1)
+			window.location = "http://127.0.0.1:8000/loadTopology?topologyID={{currTopologyID}}&newload=0";
+	</script>
+			
+	
+	
 	<!-- Canvass Loader End -->	
   </body>
 </html>

@@ -39,7 +39,7 @@
 	// TEMPORARY Ports
 	var SwitchPorts = [];
 	
-	for(c=0;c<=4;c++){
+	for(c=0;c<=24;c++){
 		SwitchPorts[c] = "fa0/" + c;
 	}
 	
@@ -82,28 +82,48 @@
 	CnvsWorkspace.onmousedown = EvtMouseDown;
 	CnvsWorkspace.onmouseup = EvtMouseUp;
 	// CnvsWorkspace.oncontextmenu = PortPicker;
-	
+
+
+		
 	function AddToWorkspace(arg){
+		
 		var NewDeviceIcon = new Image();
-		var RefDevice = DeviceTypes[SearchDeviceTypeIdFromElementId(arg.id)];
-		RefDevice.count++;
-		var TempDevice = JSON.parse(JSON.stringify(RefDevice));
-		TempDevice.name = TempDevice.name + " " + RefDevice.count;
-		NewDeviceIcon.src = TempDevice.image;
+		// var RefDevice = DeviceTypes[SearchDeviceTypeIdFromElementId(arg.id)];
+		// RefDevice.count++;
+		// var TempDevice = JSON.parse(JSON.stringify(RefDevice));
+		
+		// NEW BOII
+		// TempDevice.name = arg.name;
+		
+		if(arg.name.includes("Router")){
+			imageSource = "" + staticlink + "production/images/Router.png";
+			deviceHeight = 38;
+			deviceWidth = 64;
+		} else if(arg.name.includes("Switch")){
+			imageSource = "" + staticlink + "production/images/Switch.png";
+			deviceHeight = 38;
+			deviceWidth = 64;
+		} else if(arg.name.includes("Terminal")){
+			imageSource = "" + staticlink + "production/images/Terminal.png";
+			deviceHeight = 54;
+			deviceWidth = 62;
+		}
+		
+		NewDeviceIcon.src = imageSource;
 		var PosX = 0;
 		var PosY = 0;
 		NewDeviceIcon.onload = function(){
 			Workspace.drawImage(NewDeviceIcon, PosX, PosY);
-			Workspace.fillText(TempDevice.name, PosX + TempDevice.width / 2, PosY + TempDevice.height + 20);
+			Workspace.fillText(arg.name, PosX + deviceWidth / 2, PosY + deviceHeight + 20);
 		}
-		var NewDevice = { object:NewDeviceIcon, x:PosX, y:PosY, height:TempDevice.height, width:TempDevice.width, name:TempDevice.name};
+		var NewDevice = { object:NewDeviceIcon, x:PosX, y:PosY, height:deviceHeight, width:deviceWidth, name:arg.name};
 		
 		Devices.push(NewDevice);
 		
-		for(var nCtr=0; nCtr < Cables.length; nCtr++){
-			console.log("Cable " + (nCtr+1) + " is " + Cables[nCtr].name);
-		}
 		
+		var i = document.getElementById(arg.name);
+		i.draggable = false;
+		i.onclick=false;
 		
 	}
 	
@@ -326,11 +346,15 @@
 		WorkspaceRepaint();
 	}
 
+	tempname="";
 	function EvtOnDragStart(arg){
 		DraggedDevice = arg;
 		DraggedDevicePosX = event.clientX - DraggedDevice.getBoundingClientRect().left;
 		DraggedDevicePosY = event.clientY - DraggedDevice.getBoundingClientRect().top;
 		IsDropping = true;
+		
+		tempname=arg.name;
+		
 	}
 	
 	function EvtOnClick(arg){
@@ -384,7 +408,10 @@
 	
 	function PortPicker(deviceType, deviceId){
 		
-		deviceType = (Devices[deviceId].name).substring(0,(Devices[deviceId].name).indexOf(' '));	
+		deviceType = (Devices[deviceId].name).substring(0,(Devices[deviceId].name).indexOf(' '));
+		
+		
+		
 		var options="";
 		$("#menu-ports ul").empty();
 		
@@ -444,7 +471,7 @@
 			var seconddevice;
 				
 			seconddevice = String(Devices[SearchTopDeviceIdOnMousePosition(MouseX,MouseY)].name)
-			seconddevice = seconddevice.substr(0,seconddevice.indexOf(' '));
+			seconddevice = seconddevice.substr(0,seconddevice.indexOf('-'));
 		
 			secondx=MouseX-DraggingDevicePtX+ConnectAid(seconddevice,1);
 			secondy=MouseY-DraggingDevicePtY+ConnectAid(seconddevice,2);
@@ -498,6 +525,9 @@
 			 
 			  addCable(firstx,firsty,secondx,secondy,firstd,secondd, tempStartPort, tempEndPort);
 			 
+			
+			 
+			 
 			console.log(Cables[0].s)
 			// console.log("counter: " +counter);
 			//	 counter++;
@@ -540,6 +570,10 @@
 			var NewCable = {startpointx: firstxpoint, startpointy: firstypoint, endpointx: secondxpoint, endpointy: secondypoint, startdevice: Devices[firstdevice].name, enddevice: Devices[seconddevice].name, startport:firstport, endport:secondport, name:TempCable.name};
 			Cables.push(NewCable);
 			
+			$.ajax({url: "http://127.0.0.1:8000/connectDevices?srcDevice=" + Devices[firstdevice].name + "&endDevice=" + Devices[seconddevice].name + "&startPort=" + firstport + "&endPort=" + secondport,
+				});
+			
+			
 			console.log(firstxpoint);
 			console.log(firstypoint);
 		
@@ -550,15 +584,33 @@
 		if(IsDropping == true){
 			IsDropping = false;
 			var NewDeviceIcon = new Image();
-			var RefDevice = DeviceTypes[SearchDeviceTypeIdFromElementId(DraggedDevice.id)];
-			RefDevice.count++;
-			var TempDevice = JSON.parse(JSON.stringify(RefDevice));
-			TempDevice.name = TempDevice.name + " " + RefDevice.count;
-			NewDeviceIcon.src = TempDevice.image;
+			// var RefDevice = DeviceTypes[SearchDeviceTypeIdFromElementId(DraggedDevice.id)];
+			// RefDevice.count++;
+			// var TempDevice = JSON.parse(JSON.stringify(RefDevice));	
+
+			// BOII
+			deviceName = JSON.parse(JSON.stringify(tempname));
+		
+			if(deviceName.includes("Router")){
+				imageSource = "" + staticlink + "production/images/Router.png";
+				deviceHeight = 38;
+				deviceWidth = 64;
+			} else if(deviceName.includes("Switch")){
+				imageSource = "" + staticlink + "production/images/Switch.png";
+				deviceHeight = 38;
+				deviceWidth = 64;
+			} else if(deviceName.includes("Terminal")){
+				imageSource = "" + staticlink + "production/images/Terminal.png";
+				deviceHeight = 54;
+				deviceWidth = 62;
+			}
+		
+			
+			NewDeviceIcon.src = imageSource;
+			
+			NewDeviceIcon.src = imageSource;
 			var PosX = arg.clientX - CnvsDimension.left - DraggedDevicePosX;
 			var PosY = arg.clientY - CnvsDimension.top - DraggedDevicePosY;
-			
-			
 			
 			if(PosX<0){
 				PosX=PosX-PosX+2;
@@ -569,21 +621,26 @@
 			if(PosY<0){
 				PosY=PosY-PosY+2;
 			}
-			if(PosY>(canvas.height-TempDevice.height-25)){
+			if(PosY>(canvas.height-deviceHeight-25)){
 				PosY=PosY-(PosY-(canvas.height-TempDevice.height-25));
 			} 
 			
 			NewDeviceIcon.onload = function(){
 				Workspace.drawImage(NewDeviceIcon, PosX, PosY);
-				Workspace.fillText(TempDevice.name, PosX + TempDevice.width / 2, PosY + TempDevice.height + 20);
+				Workspace.fillText(deviceName, PosX + deviceWidth / 2, PosY + deviceHeight + 20);
 			}
 			
-			var NewDevice = { object:NewDeviceIcon, x:PosX, y:PosY, height:TempDevice.height, width:TempDevice.width, name:TempDevice.name};
+			var NewDevice = { object:NewDeviceIcon, x:PosX, y:PosY, height:deviceHeight, width:deviceWidth, name:deviceName};
 			Devices.push(NewDevice);
 			
-			
+			tempname="";
 			CableChoice="";
 			counter=2;
+			
+			
+			var i = document.getElementById(deviceName);
+			i.draggable = false;
+			i.onclick = false;	
 			
 			//console.log("checker: " + MouseX +","+MouseY);  // << FOR CHECKING COORDINATES
 			
@@ -665,6 +722,12 @@
 	}
 
 	function WorkspaceRepaint(arg){
+		
+		
+		for(var nCtr = 0; nCtr < Devices.length; nCtr++){
+			Workspace.drawImage(Devices[nCtr].object, Devices[nCtr].x, Devices[nCtr].y);
+			Workspace.fillText(Devices[nCtr].name, Devices[nCtr].x + Devices[nCtr].width / 2, Devices[nCtr].y + Devices[nCtr].height + 20);
+		}
 	
 		for(var nCtr = 0; nCtr < Cables.length; nCtr++){
 			 context.beginPath();
@@ -714,10 +777,7 @@
 			 }	
 		}
 	
-		for(var nCtr = 0; nCtr < Devices.length; nCtr++){
-			Workspace.drawImage(Devices[nCtr].object, Devices[nCtr].x, Devices[nCtr].y);
-			Workspace.fillText(Devices[nCtr].name, Devices[nCtr].x + Devices[nCtr].width / 2, Devices[nCtr].y + Devices[nCtr].height + 20);
-		}
+		
 		
 	}
 	
@@ -758,6 +818,11 @@
 						nCtr--;
 					}								
 				} 
+				// NEW BOIII
+				var i = document.getElementById(Devices[LastTouchedDevice].name);
+				i.draggable = true;
+				i.onclick = function onclick(event) { AddToWorkspace(this) };
+				
 				
 				WorkspaceRemove();
 				Devices.splice(LastTouchedDevice, 1);

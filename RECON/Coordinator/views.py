@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.core.validators import validate_email
 from . import forms
 from .forms import SignUpForm
 from .models import Group, Profile, Device, GroupToDevice, SaveTopology, SaveDev, SaveConn, Log
@@ -46,72 +47,135 @@ def userPage(request):
 	
 # serial reader/sender start
 strBuilder1 = ""
-# readState = False
-# serialPort = serial.Serial("COM4", 9600)
-# varCurr = ""
-# varPrev = ""
-		
-# def Sender1():
-	# global serialPort
+strBuilder2 = ""
+strBuilder3 = ""
+# serialPort1 = serial.Serial("COM3", 9600)
+# serialPort2 = serial.Serial("COM4", 9600)
+# serialPort3 = serial.Serial("COM5", 9600)
 	
-	# while True:
-		# serialPort.flushInput()
-		# text = input("") + "\n"
-		# serialPort.write(text.encode('utf-8'))
-		# bytes_to_read = serialPort.inWaiting()
-		# sleep(.2)
-	
+# Serial port 1	
+
 # class Receiver1(Thread):
-		# def __init__(self, serialPort): 
+		# def __init__(self, serialPort1): 
 			# Thread.__init__(self) 
-			# self.serialPort = serialPort 
+			# self.serialPort = serialPort1
 		# def run(self):
-			# global serialPort
+			# global serialPort1
 			# global strBuilder1
 			# text = "" 
 			# while (text != "exitReceiverThread\n"): 
-				# text = serialPort.readline()
+				# text = serialPort1.readline()
 				# strBuilder1 += text.decode() + "\n"
 				# print("serial output: " + text.decode())
 			
 			# self.serialPort.close()
 			
-# receive = Receiver1(serialPort) 
+# receive = Receiver1(serialPort1) 
 # receive.start()
 
-# sSend1 = Thread(target=Sender1)
-# sSend1.start()
+# Serial port 2
+
+# class Receiver2(Thread):
+		# def __init__(self, serialPort2): 
+			# Thread.__init__(self) 
+			# self.serialPort = serialPort2
+		# def run(self):
+			# global serialPort2
+			# global strBuilder2
+			# text = "" 
+			# while (text != "exitReceiverThread\n"): 
+				# text = serialPort2.readline()
+				# strBuilder2 += text.decode() + "\n"
+				# print("serial output: " + text.decode())
+			
+			# self.serialPort.close()
+			
+# receive2 = Receiver2(serialPort2) 
+# receive2.start()
+
 
 def getSerialOutput1(request):
 	global strBuilder1
 	
 	JSONer = {}
-	JSONer['routerConfig'] = strBuilder1
+	JSONer['config'] = strBuilder1
 	return HttpResponse(json.dumps(JSONer))
 	
-def sendSerial1(request):
+def getSerialOutput2(request):
+	global strBuilder2
+	
+	JSONer = {}
+	JSONer['config'] = strBuilder2
+	return HttpResponse(json.dumps(JSONer))
+	
+def inputSend(request):
 	JSONer = {}
 	parsedData = urlparse.urlparse(request.get_full_path())
-	text = (urlparse.parse_qs(parsedData.query)['routerInput'][0])
+	text = (urlparse.parse_qs(parsedData.query)['input'][0])
+	deviceID = (urlparse.parse_qs(parsedData.query)['deviceId'][0])
+	
+	device = Device.objects.filter(id = deviceID)[0]
 	
 	audit = Log()
-	audit.device = "Router"
+	audit.device = device
 	audit.user = request.user
 	audit.action = text
-	audit.save()	
+	audit.save()
 	
 	text += "\n"
+	print("Device: " + deviceID)
 	
-	# serialPort.flushInput()
-	# serialPort.write(text.encode('utf-8'))
-	# bytes_to_read = serialPort.inWaiting()
-	print(text)
+	# if deviceID == '4':
+		# print("this code runs")
+		# serialPort1.flushInput()
+		# serialPort1.write(text.encode('utf-8'))
+		# bytes_to_read = serialPort.inWaiting()
+		
+	# if deviceID == '5':
+		# serialPort2.flushInput()
+		# serialPort2.write(text.encode('utf-8'))
+		# bytes_to_read = serialPort.inWaiting()
+		# print("Input: " + text)
 	
 	print("Audited " + audit.action + " @ time " + str(audit.timestamp))
 	return HttpResponseRedirect(json.dumps(JSONer))
 
 	
 # serial reader/sender end	
+	
+@login_required(login_url="/login")
+def connectDevices(request):
+	JSONer = {}
+	parsedData = urlparse.urlparse(request.get_full_path())
+	srcDevice = (urlparse.parse_qs(parsedData.query)['srcDevice'][0])
+	endDevice = (urlparse.parse_qs(parsedData.query)['endDevice'][0])
+	srcPort = (urlparse.parse_qs(parsedData.query)['srcPort'][0])
+	endPort = (urlparse.parse_qs(parsedData.query)['endPort'][0])
+	
+	
+	# if srcDevice == "Switch 1":
+		# text = "enable\nconfigure terminal\ninterface " + srcPort + "\nswitchport mode access\nswitchport access vlan 2020\nexit"
+		# serialPort.flushInput()
+		# serialPort.write(text.encode('utf-8'))
+		# bytes_to_read = serialPort.inWaiting()
+		
+		# text = "enable\nconfigure terminal\ninterface " + endPort + "\nswitchport mode access\nswitchport access vlan 2020\nexit"
+		# serialPort2.flushInput()
+		# serialPort2.write(text.encode('utf-8'))
+		# bytes_to_read = serialPort2.inWaiting()	
+	
+	# if endDevice == "Switch 1":
+		# text = "enable\nconfigure terminal\ninterface " + endPort + "\nswitchport mode access\nswitchport access vlan 2020\nexit"
+		# serialPort.flushInput()
+		# serialPort.write(text.encode('utf-8'))
+		# bytes_to_read = serialPort.inWaiting()
+		
+		# text = "enable\nconfigure terminal\ninterface " + srcPort + "\nswitchport mode access\nswitchport access vlan 2020\nexit"
+		# serialPort2.flushInput()
+		# serialPort2.write(text.encode('utf-8'))
+		# bytes_to_read = serialPort2.inWaiting()
+	
+	return HttpResponse(json.dumps(JSONer), context)	
 	
 @login_required(login_url="/login")	
 def reserveDevice(request):
@@ -173,9 +237,10 @@ def loadTopology(request):
 	JSONer = {}
 	parsedData = urlparse.urlparse(request.get_full_path())
 	topologyID = (urlparse.parse_qs(parsedData.query)['topologyID'][0])
+	load = (urlparse.parse_qs(parsedData.query)['newload'][0])
 	
 	loadThisTopology = SaveTopology.objects.filter(id=topologyID)[0]
-	print("Loaded " + loadThisTopology.name)
+	print("loaded")
 	
 	groupTopologies = SaveTopology.objects.filter(group = currentUser.profile.group)
 	users = User.objects.all()
@@ -190,6 +255,7 @@ def loadTopology(request):
 		'current_user': currentUser,
 		'topologies': groupTopologies,
 		'currTopology':loadThisTopology.name,
+		'currTopologyID':topologyID,
 		'loadDevices': loadDevices,
 		'connections': loadConnections,
 		'grouptodevice':grouptodevice,
@@ -197,6 +263,7 @@ def loadTopology(request):
 		'groups':groups,
 		'users':users,
 		'today':today,
+		'load':load,
 	}
 	return render(request, 'user.html', context)
 	
@@ -234,11 +301,14 @@ def saveDevice(request):
 	devName = (urlparse.parse_qs(parsedData.query)['deviceName'][0])
 	x = (urlparse.parse_qs(parsedData.query)['x'][0])
 	y = (urlparse.parse_qs(parsedData.query)['y'][0])
-	
+	deviceID = Device.objects.filter(name = devName)[0]
+	deviceID = deviceID.id
+	gtd = GroupToDevice.objects.filter(device = deviceID)[0]
 	print("Save " + devName + " x/y=" + x + y + " to " + savedTopology.name)
 
 	newSaveDev = SaveDev()
 	newSaveDev.saveTopology = savedTopology
+	newSaveDev.GroupToDevice = gtd
 	newSaveDev.deviceName = devName
 	newSaveDev.xCord = float(x)
 	newSaveDev.yCord = float(y)
@@ -306,6 +376,7 @@ def adminPage(request):
 	devicesort= Device.objects.all().order_by('name')
 	today=datetime.datetime.now().date()
 	valid = True
+	error_msg1 = ""
 	
 	context = {
 	'groups':groups,
@@ -317,7 +388,8 @@ def adminPage(request):
 	'grouptodevice' : grouptodevice,
 	'devices':devices,
 	'devicesort':devicesort,
-	'valid':valid
+	'valid':valid,
+	'error_msg1':error_msg1,
 	}
 	return render(request, 'admin.html', context)
 	
@@ -325,15 +397,105 @@ def adminPage(request):
 def createUser(request):
 	JSONer = {}
 	parsedData = urlparse.urlparse(request.get_full_path())
-	userName = (urlparse.parse_qs(parsedData.query)['userName'][0])
-	firstName = (urlparse.parse_qs(parsedData.query)['firstName'][0])
-	lastName = (urlparse.parse_qs(parsedData.query)['lastName'][0])
-	email = (urlparse.parse_qs(parsedData.query)['email'][0])
-	password = (urlparse.parse_qs(parsedData.query)['password'][0])
-	employeeID = (urlparse.parse_qs(parsedData.query)['employeeID'][0])
+	signupformisvalid = True
+	signupUsererr = ""
+	signupIDerr = ""
+	signupEmailerr = ""
+	signupPasserr = ""
+	signupPasserr2 = ""
+	signupFirstnameerr = ""
+	signupLastnameerr = ""
+	employeeID = ""
+	firstName = ""
+	lastName = ""
+	email = ""
+	password = ""
+	password2 = ""
+	userName = ""
+	try:
+		employeeID = (urlparse.parse_qs(parsedData.query)['employeeID'][0])
+	except KeyError:
+		signupformisvalid = False
+		signupIDerr = "This field is required!"
+	try:
+		firstName = (urlparse.parse_qs(parsedData.query)['firstName'][0])
+	except KeyError:
+		signupformisvalid = False
+		signupFirstnameerr = "This field is required!"
+	try:
+		lastName = (urlparse.parse_qs(parsedData.query)['lastName'][0])
+	except KeyError:
+		signupformisvalid = False
+		signupLastnameerr = "This field is required!"
+	try:
+		userName = (urlparse.parse_qs(parsedData.query)['userName'][0])
+	except KeyError:
+		signupformisvalid = False
+		signupUsererr = "This field is required!"
+	try:
+		email = (urlparse.parse_qs(parsedData.query)['email'][0])
+	except KeyError:
+		signupformisvalid = False
+		signupEmailerr = "This field is required!"
+	try:
+		password = (urlparse.parse_qs(parsedData.query)['password'][0])
+	except KeyError:
+		signupformisvalid = False
+		signupPasserr = "This field is required!"
+	try:
+		password2 = (urlparse.parse_qs(parsedData.query)['password2'][0])
+	except KeyError:
+		signupformisvalid = False
+		signupPasserr2 = "This field is required!"
+		
 	groupName = (urlparse.parse_qs(parsedData.query)['groupName'][0])
-	
 	newGroup = Group.objects.filter(name=groupName)[0]
+	
+	print(employeeID)
+	
+	if(User.objects.filter(username = userName).count() > 0 ):
+		signupUsererr = "Username is taken"
+		signupformisvalid = False
+		
+	if(Profile.objects.filter(employeeID = employeeID).count() > 0 ):
+		signupIDerr = "Employee ID is taken"
+		signupformisvalid = False
+	
+	if(User.objects.filter(email = email).count() > 0 ):
+		signupEmailerr = "Email is taken"
+		signupformisvalid = False
+		
+	if(password != password2):
+		signupPasserr2 = "Passwords do not match"
+		signupformisvalid = False
+	
+	try: 
+		validate_email(email)	
+	except:
+		if not signupEmailerr:
+			signupformisvalid = False
+			signupEmailerr = "Email is invalid!"
+		
+	context = {
+		'signupformisvalid':signupformisvalid,
+		'signupUsererr':signupUsererr,
+		'signupIDerr':signupIDerr,
+		'signupEmailerr':signupEmailerr,
+		'signupPasserr':signupPasserr,
+		'signupPasserr2':signupPasserr2,
+	}
+	
+	if signupformisvalid == False:
+		JSONer['signupformisvalid'] =  signupformisvalid
+		JSONer['signupUsererr'] = signupUsererr
+		JSONer['signupIDerr'] = signupIDerr
+		JSONer['signupEmailerr'] = signupEmailerr
+		JSONer['signupPasserr'] = signupPasserr
+		JSONer['signupPasserr2'] = signupPasserr2
+		JSONer['signupFirstnameerr'] = signupFirstnameerr
+		JSONer['signupLastnameerr'] = signupLastnameerr
+		
+		return HttpResponse(json.dumps(JSONer), context)
 	
 	hashedPass = make_password(password)
 	
@@ -352,11 +514,8 @@ def createUser(request):
 	newUser.profile.group = newGroup
 	newUser.profile.save()
 	newUser.save()
-	
-	
-	
+	messages.success(request,"User created!")
 	return HttpResponse(json.dumps(JSONer))
-
 
 @login_required(login_url="/login")	
 def createGroup(request):
@@ -364,29 +523,80 @@ def createGroup(request):
 	parsedData = urlparse.urlparse(request.get_full_path())
 	name = (urlparse.parse_qs(parsedData.query)['groupName'][0])
 	
+	groupnameisvalid = True
+	groupnameerrormessage = ""
+	
+	if(Group.objects.filter(name = name).count() > 0 ):
+		groupnameerrormessage = "Group name is taken"
+		groupnameisvalid = False
+		
+	if(name == ""):
+		groupnameerrormessage = "Group name is required"
+		groupnameisvalid = False
+		
+	context = {
+		'groupnameisvalid':groupnameisvalid,
+		'groupnameerrormessage':groupnameerrormessage,
+	}
+	
+	if groupnameisvalid == False:
+		JSONer['groupnameisvalid'] =  groupnameisvalid
+		JSONer['groupnameerrormessage'] = groupnameerrormessage
+		
+		return HttpResponse(json.dumps(JSONer), context)
+	messages.success(request,"Group successfully created!")
 	grp = Group()
 	grp.name = name
 	grp.save()
 	
-	return HttpResponse(json.dumps(JSONer))
-	
+	return HttpResponse(json.dumps(JSONer), context)
+
 @login_required(login_url="/login")	
 def approvedRes(request):		
 	JSONer = {}
+	ctr = 0
 	parsedData = urlparse.urlparse(request.get_full_path())
 	print("check")
 	print((urlparse.parse_qs(parsedData.query)['grouptodeviceid'][0]))
 	pkid = (urlparse.parse_qs(parsedData.query)['grouptodeviceid'][0])
 	print(pkid)
+	success = True
+	context = {
+	'success':success,
+	}
 	
 	if GroupToDevice.objects.filter(id=pkid).count() > 0:
 		print(pkid)
 	
 		grouptodeviceID = GroupToDevice.objects.filter(id=pkid)[0]
-		grouptodeviceID.type = "AP"
-		print(grouptodeviceID.type)
-		grouptodeviceID.save(force_update=True)
-		messages.success(request,"Device reservation approved!")
+		deviceid = grouptodeviceID.device.id
+		comparedate = grouptodeviceID.startDateTime
+		comparedate2 = grouptodeviceID.endDateTime
+
+		while ctr < GroupToDevice.objects.filter(device=deviceid).filter(type="AP").count() and success == True:
+			arr1=GroupToDevice.objects.filter(device=deviceid).filter(type="AP").values_list('startDateTime', flat=True)
+			#arr1[ctr].strftime("%Y-%m-%d")
+			arr2=GroupToDevice.objects.filter(device=deviceid).filter(type="AP").values_list('endDateTime', flat=True)
+
+			
+			if (comparedate >= arr1[ctr] and comparedate <= arr2[ctr]) or (comparedate2 >= arr1[ctr] and comparedate2 <= arr2[ctr]) or (arr1[ctr]  >= comparedate and arr1[ctr] <= comparedate2) or (arr2[ctr] >= comparedate and arr2[ctr] <= comparedate2):
+			 	print("false")
+			 	success = False
+			else:
+			 	print("true")
+			 	success = True
+			ctr = ctr+1
+
+		if success == True:
+			grouptodeviceID.type = "AP"
+			print(grouptodeviceID.type)
+			grouptodeviceID.save(force_update=True)
+			messages.success(request,"Device reservation approved!")
+		else:
+			grouptodeviceID.type = "DC"
+			grouptodeviceID.save(force_update=True)
+			messages.error(request,"The device is already reserved on that day, device reservation removed!")
+
 	return HttpResponse(json.dumps(JSONer))	
 
 def declinedRes(request):		
@@ -533,41 +743,97 @@ def editModal(request):
 
 	JSONer = {}
 	valid = True
-	parsedData = urlparse.urlparse(request.get_full_path())
-	pkid = (urlparse.parse_qs(parsedData.query)['pkid'][0])
-	idnum = (urlparse.parse_qs(parsedData.query)['id-num'][0])
-	firstname = (urlparse.parse_qs(parsedData.query)['first-name'][0])
-	lastname = (urlparse.parse_qs(parsedData.query)['last-name'][0])
-	username = (urlparse.parse_qs(parsedData.query)['username'][0])
-	email = (urlparse.parse_qs(parsedData.query)['email'][0])
-	error_msg1 = "empty"
-	error_msg2 = "empty"
+	error_id = ""
+	error_first = ""
+	error_last = ""
+	error_user = ""
+	error_email = ""
+	username = ""
+	firstname = ""
+	lastname = ""
+	email = ""
+	idnum = ""
+	
+
+
 	context = {
 	'valid':valid,
-	'error_msg1':error_msg1,
-	'error_msg2':error_msg2,
-
+	'error_id':error_id,
+	'error_first':error_first,
+	'error_last':error_last,
+	'error_user':error_user,
+	'error_email':error_email,
 	}
+
+	parsedData = urlparse.urlparse(request.get_full_path())
+	
+	pkid = (urlparse.parse_qs(parsedData.query)['pkid'][0])
+	try:
+		idnum = (urlparse.parse_qs(parsedData.query)['id-num'][0])
+	except KeyError:
+		valid = False
+		error_id = "This field is required!"
+	try:
+		firstname = (urlparse.parse_qs(parsedData.query)['first-name'][0])
+	except KeyError:
+		valid = False
+		error_first = "This field is required!"
+	try:
+		lastname = (urlparse.parse_qs(parsedData.query)['last-name'][0])
+	except KeyError:
+		valid = False
+		error_last = "This field is required!"
+	try:
+		username = (urlparse.parse_qs(parsedData.query)['username'][0])
+	except KeyError:
+		valid = False
+		error_user = "This field is required!"
+	try:
+		email = (urlparse.parse_qs(parsedData.query)['email'][0])
+	except KeyError:
+		valid = False
+		error_email = "This field is required!"
+
+
+
 	
 
 	if User.objects.filter(id=pkid).count() > 0:
 		
+
 		if Profile.objects.filter(Q(employeeID=idnum) & ~Q(user_id=pkid)).count() > 0:
 			valid = False
-			error_msg1 = "id is taken"
+			error_id = "id is taken"
 			print("id is already taken!")
 		if User.objects.filter(Q(username = username) & ~Q(id=pkid)).count() > 0:
 			valid = False
-			error_msg2="username is taken"
+			error_user ="username is taken"
 			print("username is taken")
-			messages.error(request,'Username is taken!',extra_tags="sameuser")
-		if User.objects.filter(Q(email = email) & ~Q(id=pkid)).count() > 0:
+			#messages.error(request,'Username is taken!',extra_tags="sameuser")
+		try: 
+			validate_email(email)
+			if User.objects.filter(Q(email = email) & ~Q(id=pkid)).count() > 0:
+				valid = False
+				error_email = "email is already taken!"
+				print("email is already taken!")
+		except:
 			valid = False
-			print("email is already taken!")
+			if not error_email:
+				error_email = "email is invalid!"
+		
+		
+		
 		if valid == False:
-			response = HttpResponse(status=401)
-			response['Content-Length'] = len(response.content)
-			return response
+		 	
+		 	JSONer['valid'] = valid
+		 	JSONer['error_id'] = error_id
+		 	JSONer['error_first'] = error_first
+		 	JSONer['error_last'] = error_last
+		 	JSONer['error_user'] = error_user
+		 	JSONer['error_email'] = error_email
+		 	
+		 	return HttpResponse(json.dumps(JSONer),context)
+
 		else:
 			userID = User.objects.filter(id=pkid)[0]
 			userID.profile.employeeID = idnum
@@ -575,6 +841,7 @@ def editModal(request):
 			userID.last_name = lastname
 			userID.username = username
 			userID.email = email
+			
 			userID.save()
 			messages.success(request,"Successfully updated account!")
 		return HttpResponse(json.dumps(JSONer),context)
@@ -598,4 +865,3 @@ def editGrp(request):
 		userID.save(force_update=True)
 		messages.success(request,"User successfully reassigned!")
 	return HttpResponse(json.dumps(JSONer))	
-
