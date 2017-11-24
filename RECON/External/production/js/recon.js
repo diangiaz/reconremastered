@@ -571,14 +571,9 @@
 			var NewCable = {startpointx: firstxpoint, startpointy: firstypoint, endpointx: secondxpoint, endpointy: secondypoint, startdevice: Devices[firstdevice].name, enddevice: Devices[seconddevice].name, startport:firstport, endport:secondport, name:TempCable.name};
 			Cables.push(NewCable);
 			
-			
-		if((Devices[firstdevice].name == "Router 1" && Devices[seconddevice].name == "Switch 1") && (firstport == "fa0/1" && secondport == "fa0/1")){
-				$.ajax({url: "http://127.0.0.1:8000/connectDevices",
-				});
-			}else if((Devices[firstdevice].name == "Switch 1" && Devices[seconddevice].name == "Router 1") && (firstport == "fa0/1" && secondport == "fa0/1")){
-				$.ajax({url: "http://127.0.0.1:8000/connectDevices",
-				});
-			}			
+			$.ajax({url: "http://127.0.0.1:8000/connectDevices?srcDevice=" + Devices[firstdevice].name + "&endDevice=" + Devices[seconddevice].name + "&srcPort=" + firstport + "&endPort=" + secondport,
+				});	
+				
 	}
 		
 	function EvtOnDrop(arg) {
@@ -831,25 +826,25 @@
 				WorkspaceRemove();
 				Devices.splice(LastTouchedDevice, 1);
 				WorkspaceRepaint();
-			}
-			else{
 				
-					if((Cables[LastTouchedCable].startdevice == "Router 1" && Cables[LastTouchedCable].enddevice == "Switch 1") && (Cables[LastTouchedCable].startport == "fa0/1" || Cables[LastTouchedCable].endport == "fa0/1")){
-						$.ajax({url: "http://127.0.0.1:8000/disconnectDevices",
-						});
-					} else if((Cables[LastTouchedCable].startdevice == "Switch 1" && Cables[LastTouchedCable].enddevice == "Router 1") && (Cables[LastTouchedCable].startport == "fa0/1" || Cables[LastTouchedCable].endport == "fa0/1"))
-						$.ajax({url: "http://127.0.0.1:8000/disconnectDevices",
-						});
-					}
+				document.getElementById('dialogbox').style.display = "none";
+				document.getElementById('dialogoverlay').style.display = "none";
+		
+			} else {
+			
+			console.log("Disconnected")
+			$.ajax({url: "http://127.0.0.1:8000/disconnectDevices?srcDevice=" + Cables[LastTouchedCable].startdevice + "&endDevice=" + Cables[LastTouchedCable].enddevice + "&srcPort=" + Cables[LastTouchedCable].startport + "&endPort=" + Cables[LastTouchedCable].endport,
+			});	
 					
 			WorkspaceRemove();
-				Cables.splice(LastTouchedCable,1);
-				WorkspaceRepaint();
+			Cables.splice(LastTouchedCable,1);
+			WorkspaceRepaint();
 					
 			document.getElementById('dialogbox').style.display = "none";
 			document.getElementById('dialogoverlay').style.display = "none";
 		
 		}
+	}
 	}
 	
 	var Confirm = new CustomConfirm();

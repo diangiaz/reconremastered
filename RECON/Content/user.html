@@ -486,35 +486,29 @@
     </script>
 	
 	<!-- Receiver Scripts Start -->
+	{% for gtd in grouptodevice %}	
+		{% ifequal current_user.profile.group.id gtd.group.id %}
+		{% ifequal gtd.type 'AP' %}
+		{% if gtd.startDateTime <= today and gtd.endDateTime >= today %}
 	<script>
-		setInterval(function(){reloader1();},1000);
-    
-		function reloader1(){
-			$.ajax({url: 'http://127.0.0.1:8000/getouts2', 
+		setInterval(function(){reloader{{gtd.device.id}}();},1050);
+        
+		function reloader{{gtd.device.id}}(){
+			$.ajax({url: 'http://127.0.0.1:8000/getouts', 
 				success: function(result){
 					var res = JSON.parse(result);
-					document.getElementById('configTextArea 1').innerHTML = res['config'];              
+					document.getElementById('configTextArea {{gtd.device.id}}').innerHTML = res['config{{gtd.device.id}}'];              
 				}
 			});
-			var textarea = document.getElementById('configTextArea 1');
+			var textarea = document.getElementById('configTextArea {{gtd.device.id}}');
 			textarea.scrollTop = textarea.scrollHeight;
         }
     </script>
 	
-	<script>
-		setInterval(function(){reloader2();},1000);
-    
-		function reloader2(){
-			$.ajax({url: 'http://127.0.0.1:8000/getouts1', 
-				success: function(result){
-					var res = JSON.parse(result);
-					document.getElementById('configTextArea 3').innerHTML = res['config'];              
-				}
-			});
-			var textarea = document.getElementById('configTextArea 3');
-			textarea.scrollTop = textarea.scrollHeight;
-        }
-    </script>
+		{% endif %}
+		{% endifequal %}
+		{% endifequal %}
+	{% endfor %}
 	<!-- Receiver Scripts End -->
 	
 	<!-- Serial Sender Scripts Start -->
