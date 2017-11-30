@@ -125,6 +125,11 @@
 		i.draggable = false;
 		i.onclick=false;
 		
+		// var oi = (arg.id).substr((arg.id).indexOf(' ')+1);
+		// var o = document.getElementById("devTab-" + oi);
+		// o.href = "#devicePanel-"+arg.name;
+		// console.log("#devicePanel-"+arg.name);
+	
 	}
 	
 	function remove(){		

@@ -1,0 +1,56 @@
+old serial receiver
+# def serialReceiver1():
+	# global readState
+	# global serialPort
+	# global strBuilder1
+	# global varCurr
+	# global varPrev
+	
+	# while True:
+		# varPrev = varCurr
+		# serialRead = serialPort.read()
+		# varCurr = serialRead.decode()
+	
+		# if readState == False:
+			# readState = True
+			# strBuilder = ""
+	
+		# elif readState == True:
+			# text = serialPort.readline()
+			# strBuilder1 += text.decode() + "\n"
+			# print("serial output: " + text.decode())
+
+			
+# sRead1 = Thread(target=serialReceiver1)
+# sRead1.start()
+
+user create form view
+
+	# if request.method == 'POST':
+		# form = SignUpForm(request.POST)
+		# if form.is_valid() and User.objects.all().filter(username__iexact=form.cleaned_data.get('username')).count() == 0 and User.objects.all().filter(email__iexact=form.cleaned_data.get('email')).count() == 0 and Profile.objects.all().filter(employeeID__iexact=form.cleaned_data.get('employeeID')).count() == 0:
+		# user = form.save()
+		# user.refresh_from_db()
+		# user.profile.usertype = form.cleaned_data.get('usertype')
+		# user.profile.employeeID = form.cleaned_data.get('employeeID')
+		# user.profile.group = form.cleaned_data.get('group')
+		# print("usertype: " + form.cleaned_data.get('usertype'))
+		# user.profile.save()
+		# user.save()
+		# else:
+			# print('Error')
+			# print(User.objects.all().filter(username__iexact=form.cleaned_data.get('username')).count() == 0)
+			# print(User.objects.all().filter(email__iexact=form.cleaned_data.get('email')).count() == 0)
+			# print(Profile.objects.all().filter(employeeID__iexact=form.cleaned_data.get('employeeID')).count() == 0)
+	# return HttpResponseRedirect("/admin/")
+	
+	
+create group form view 
+
+# def createGroup(request):
+	# if request.method == 'POST':
+		# form = CreateGroupForm(request.POST)
+		# if form.is_valid() and (Group.objects.all().filter(name__iexact=form.cleaned_data.get('name')).count() == 0):
+			# post = form.save(commit=False)
+			# post.save()
+	# return HttpResponseRedirect("/admin/")

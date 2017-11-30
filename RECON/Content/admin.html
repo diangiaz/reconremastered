@@ -1101,14 +1101,14 @@
       
       format: 'YYYY-MM-DD',
       useCurrent: true,
-      minDate:new Date()
+      minDate: moment().millisecond(0).second(0).minute(0).hour(0)
     });
         
     $('#datetimepicker7').datetimepicker({
 
       format: 'YYYY-MM-DD',
       useCurrent: false,
-      minDate:new Date()
+      minDate: moment().millisecond(0).second(0).minute(0).hour(0)
     });
     
     $("#datetimepicker6").on("dp.change", function(e) {

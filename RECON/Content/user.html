@@ -429,19 +429,20 @@
     <script src="{% static '/build/js/custom.min.js' %}"></script>
 
      <!-- Initialize datetimepicker -->
-    <script>  
+    <script>
+	var datetoday = new Date();
      $('#datetimepicker6').datetimepicker({
 
       format: 'YYYY-MM-DD',
       useCurrent: true,
-      minDate:moment()
+      minDate: moment().millisecond(0).second(0).minute(0).hour(0)
     });
         
     $('#datetimepicker7').datetimepicker({
       
       format: 'YYYY-MM-DD',
       useCurrent: false,
-      minDate:moment()
+      minDate: moment().millisecond(0).second(0).minute(0).hour(0)
     });
     
     $("#datetimepicker6").on("dp.change", function(e) {

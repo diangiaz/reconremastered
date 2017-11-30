@@ -24,8 +24,8 @@ savedTopology = SaveTopology()
 @login_required(login_url="/login")
 def userPage(request):
 	currentUser = request.user
-	# if currentUser.profile.usertype == 'admin':
-		# return HttpResponseRedirect("/admin/")
+	if currentUser.profile.usertype == 'admin':
+		return HttpResponseRedirect("/admin/")
 
 	groupTopologies = SaveTopology.objects.filter(group = currentUser.profile.group)
 	users = User.objects.all()
@@ -155,6 +155,7 @@ def connectDevices(request):
 	
 	if ((srcDevice == "Router 1" and endDevice == "Switch 1") and (srcPort == "fa0/1" and endPort == "fa0/1")) or ((srcDevice == "Switch 1" and endDevice == "Router 1") and (srcPort == "fa0/1" and endPort == "fa0/1")):
 		text = "enable\nconfigure terminal\ninterface range fa0/1, fa0/2\nswitchport mode access\nswitchport access vlan 5\nexit"
+		print(text)
 		print("Connected switch 1 and router 1")
 		mainSwitchPort.flushInput()
 		mainSwitchPort.write(text.encode('utf-8'))
@@ -172,7 +173,8 @@ def disconnectDevices(request):
 	endPort = (urlparse.parse_qs(parsedData.query)['endPort'][0])
 	
 	if ((srcDevice == "Router 1" and endDevice == "Switch 1") and (srcPort == "fa0/1" and endPort == "fa0/1")) or ((srcDevice == "Switch 1" and endDevice == "Router 1") and (srcPort == "fa0/1" and endPort == "fa0/1")):
-		text = "enable\nconfigure terminal\ninterface range fa0/1, fa0/2\nswitchport mode access\nswitchport access vlan 1\nexit"
+		text = "enable\nconfigure terminal\ninterface fa0/1\nswitchport mode access\nswitchport access vlan 5\nexit\ninterface fa0/2\nswitchport mode access\nswitchport access vlan 6\nexit"
+		print(text)
 		print("Disconnected switch 1 and router 1")
 		mainSwitchPort.flushInput()
 		mainSwitchPort.write(text.encode('utf-8'))
