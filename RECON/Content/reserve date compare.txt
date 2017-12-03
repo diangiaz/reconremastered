@@ -1,9 +1,0 @@
-var s1 = user input
-var e1 = user input
-
-
-foreach(db startdate as s2 and db end date as e2)
-if ((s1 >= s2 && s1 <= e2) || (e1 >= s2 && e1 <= e2) || (s2  >= s1 && s2 <= e1) || (e2 >= s1 && e2 <= e1))
-	return false
-else
-	return true

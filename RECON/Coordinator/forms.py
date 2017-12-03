@@ -1,10 +1,9 @@
 import re
 from django import forms
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
-from .models import EMPLOYEE_TYPE_CHOICES, Group, Profile, GroupToDevice
+from .models import EMPLOYEE_TYPE_CHOICES, Group, Profile
 
 class LoginForm(AuthenticationForm):
     username = forms.CharField(label="Username", max_length=30, 
@@ -27,17 +26,3 @@ class SignUpForm(UserCreationForm):
 	class Meta:
 		model = User
 		fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2', 'employeeID', 'usertype', 'group',)
-
-class ReserveForm(forms.ModelForm):
-	
-	class Meta:
-		model = GroupToDevice
-		fields = ('group','device','startDateTime','endDateTime','type')
-
-
-class CreateGroupForm(forms.ModelForm):
-
-	class Meta:
-		model = Group
-		fields = ('name',)
-

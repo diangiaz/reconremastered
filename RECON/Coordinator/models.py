@@ -8,14 +8,15 @@ EMPLOYEE_TYPE_CHOICES = (
 		('admin', 'Admin'),
 		('employee', 'Employee'),
 	)
-
+	
 class Group(models.Model):
 	name = models.CharField(
-		unique=True, max_length=50,)
+	unique=True,
+	max_length=50,
+	)
 		
 	def __str__(self):
 		return self.name
-
 
 class Profile(models.Model):
 	user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -28,7 +29,8 @@ class Profile(models.Model):
 	group = models.ForeignKey(
 		Group,
 		on_delete = models.CASCADE,	
-		default = 1,
+		null = True,
+		blank = True,
 	)
 	
 	def __str__(self):
@@ -36,14 +38,14 @@ class Profile(models.Model):
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        Profile.objects.create(user=instance)
+	if created:
+		Profile.objects.create(user=instance)
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
-
-	
+		
+post_save.connect(create_user_profile, sender=User)	
 	
 class Device(models.Model):
 	ROUTER = 'Router'
@@ -61,11 +63,8 @@ class Device(models.Model):
 		choices=DEVICE_TYPE_CHOICES
 	)
 	name = models.CharField(
-		unique=True,
 		max_length=25,
 	)
-
-
 	def __str__(self):
 		return self.name
 
@@ -93,7 +92,6 @@ class Port(models.Model):
 		on_delete=models.CASCADE,
 	)
 	
-
 class GroupToDevice(models.Model):
 	RESERVE = 'RS'
 	APPROVE = 'AP'
@@ -124,17 +122,6 @@ class GroupToDevice(models.Model):
 	type = models.CharField(
 		max_length = 2,
 		choices = TYPE_CHOICES,
-	)
-
-	
-class UserToGroup(models.Model):
-	user = models.ForeignKey(
-		User,
-		on_delete=models.CASCADE,
-	)
-	group = models.ForeignKey(
-		Group,
-		on_delete=models.CASCADE,
 	)
 
 class Connection(models.Model):
@@ -185,49 +172,88 @@ class SaveTopology(models.Model):
 	name = models.CharField(
 		max_length = 40
 	)
+	def __str__(self):
+		return self.name
 
 class SaveConn(models.Model):
-	CONSOLE = 'Console'
-	SERIAL = 'Serial'
-	STRAIGHT = 'Straight'
-	CONNECTION_TYPE_CHOICES = (
-		(CONSOLE, 'Console'),
-		(SERIAL, 'Serial'),
-		(STRAIGHT, 'Straight'),
+	saveTopology = models.ForeignKey(
+		SaveTopology,
+		on_delete=models.CASCADE,
 	)
-	srcDevID = models.IntegerField(
+	connectionName = models.CharField(
+		max_length=25,
 	)
-	srcDevPort = models.IntegerField(
+	srcDevice = models.CharField(
+		max_length=25,
 	)
-	destDevID = models.IntegerField(
+	srcPort = models.CharField(
+		max_length=25,
 	)
-	destDevPort = models.IntegerField(
+	endDevice = models.CharField(
+		max_length=25,
+	)
+	endPort = models.CharField(
+		max_length=25,
 	)
 	cableType = models.CharField(
-		max_length=10,
-		choices=CONNECTION_TYPE_CHOICES,
+		max_length=25,
 	)
+	startX = models.FloatField(
+		default = 0,
+	)
+	startY = models.FloatField(
+		default = 0,
+	)
+	endX = models.FloatField(
+		default = 0,
+	)
+	endY = models.FloatField(
+		default = 0,
+	)
+	def __str__(self):
+		return self.connectionName + " between " + self.srcDevice + " and " + self.endDevice + " of " + self.saveTopology.name
 
 class SaveDev(models.Model):
-	xCord = models.IntegerField(
+	saveTopology = models.ForeignKey(
+		SaveTopology,
+		on_delete=models.CASCADE,
 	)
-	yCord = models.IntegerField(
+	GroupToDevice = models.ForeignKey(
+		GroupToDevice,
+		on_delete=models.CASCADE,
 	)
-	devID = models.IntegerField(
+	deviceName = models.CharField(
+		max_length = 40,
 	)
+	xCord = models.FloatField(
+		default = 0,
+		null = True,
+	)
+	yCord = models.FloatField(
+		default = 0,
+		null = True,
+	)
+	def __str__(self):
+		return self.deviceName + " of " + self.saveTopology.name
 
 class Log(models.Model):
 	device = models.ForeignKey(
 		Device,
-		on_delete=models.CASCADE,
+		on_delete=models.CASCADE
 	)
-	group = models.ForeignKey(
-		Group,
+	user = models.ForeignKey(
+		User,
 		on_delete=models.CASCADE,
 	)
 	timestamp = models.DateTimeField(
-		auto_now_add=True, blank=True
+		auto_now_add=True, 
+		blank=True,
 	)
+	action = models.CharField(
+		max_length = 50,
+	)
+	def __str__(self):
+		return self.user.username + "(" + str(self.timestamp) + "): " + self.action
 	
 	
 	
