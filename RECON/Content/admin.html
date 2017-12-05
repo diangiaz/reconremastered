@@ -53,24 +53,24 @@
                   <div class="buttonPadding"> 
                     <span data-toggle="tooltip" data-placement="bottom" title="Home">  
                     <!-- <span data-toggle="modal" data-target="#">   -->
-                      <button class="btn btn-default" id="navButton" type="button" onclick="toggleVisibility('divHome')"><i class="fa fa-home"></i></button>
+                      <button class="btn btn-default" id="navButton" type="button" onclick="toggleVisibility('divHome')" style="margin-right:10px"><i class="fa fa-home"></i></button>
                     </span>
                     <span data-toggle="tooltip" data-placement="bottom" title="Create Account">
                     <!-- <span data-toggle="modal" data-target="#createAcct">   -->
-                      <button class="btn btn-default" id="navButton" type="button" onclick="toggleVisibility('divCreate')"><i class="fa fa-user"></i></button>
+                      <button class="btn btn-default" id="navButton" type="button" onclick="toggleVisibility('divCreate')" style="margin-right:10px"><i class="fa fa-user"></i></button>
                     </span>
                     <span data-toggle="modal" data-target="#createGroup">
-                      <button class="btn btn-default" id="navButton" type="button" data-toggle="tooltip" data-placement="bottom" title="Create Group"><i class="fa fa-users"></i></button>
+                      <button class="btn btn-default" id="navButton" type="button" data-toggle="tooltip" data-placement="bottom" title="Create Group" style="margin-right:10px"><i class="fa fa-users"></i></button>
                     </span>
                     <span data-toggle="tooltip" data-placement="bottom" title="Audit Logs">
                     <!-- <span data-toggle="modal" data-target="#auditLogs"> -->
-                      <button class="btn btn-default" id="navButton" type="button" onclick="toggleVisibility('divAudit')"><i class="fa fa-list"></i></button>
+                      <button class="btn btn-default" id="navButton" type="button" onclick="toggleVisibility('divAudit')" style="margin-right:10px"><i class="fa fa-list"></i></button>
                     </span>
                     <span data-toggle="modal" data-target="#allocateModal-{{current_user.id}}">
-                      <button class="btn btn-default" id="navButton" type="button" data-toggle="tooltip" data-placement="bottom" title="Allocate Device"><i class="fa fa-cogs"></i></button>
+                      <button class="btn btn-default" id="navButton" type="button" data-toggle="tooltip" data-placement="bottom" title="Allocate Device" style="margin-right:10px"><i class="fa fa-cogs"></i></button>
                     </span>
                     <span data-toggle="modal" data-target="#approveRes-{{user.id}}">
-                      <button class="btn btn-default" id="navButton" type="button" data-toggle="tooltip" data-placement="bottom" title="Reservations"><i class="fa fa-exclamation-circle"></i></button>
+                      <button class="btn btn-default" id="navButton" type="button" data-toggle="tooltip" data-placement="bottom" title="Reservations" style="margin-right:10px"><i class="fa fa-exclamation-circle"></i></button>
                     </span>
                   </div>                  
                 </div>
@@ -150,8 +150,8 @@
                          <table id="datatable" class="table table-striped table-bordered projects dt-responsive" style="border:0; width: 100%">
                           <thead>
                             <tr>
-                              <th style="text-align: center; width:10%; font-weight: 700">Group</th>
-                              <th style="text-align: center; width:10%; font-weight: 700">Member</th>
+                              <th style="text-align: center; width:5%; font-weight: 700">Group</th>
+                              <th style="text-align: center; width:5%; font-weight: 700">Member</th>
                               <th style="text-align: center; width:10%; font-weight: 700">Router</th>
                               <th style="text-align: center; width:10%; font-weight: 700">Switch</th>
                               <th style="text-align: center; width:10%; font-weight: 700">Terminal</th>
@@ -161,16 +161,12 @@
                             
                           {% for groups in groups %}
                             
-                            <tr>
-                              
-                              <td>
-                                
+                            <tr>                              
+                              <td>                                
                                 <a href="#editGrp-{{groups.id}}" data-toggle="modal"><strong>{{ groups.name }}</strong></a>
                                 
                                 <br />
                           
-                                
-                              
                               </td>
 
                               <td>
@@ -189,7 +185,7 @@
                             {% for gtd in grouptodevice %}
                              {% ifequal gtd.group.id groups.id %}
                               {% ifequal gtd.type 'AP' %}
-                               {% if gtd.startDateTime >= today %}
+                               {% if gtd.endDateTime >= today %}
                                {% ifequal gtd.device.type 'Router' %}
                                 <ul class="allocatedDev-list">
                                   <li style="padding-left: 0">                                 
@@ -211,7 +207,7 @@
                             {% for gtd in grouptodevice %}
                              {% ifequal gtd.group.id groups.id %}
                               {% ifequal gtd.type 'AP' %}
-                              {% if gtd.startDateTime >= today %}
+                              {% if gtd.endDateTime >= today %}
                                {% ifequal gtd.device.type 'Switch' %}
                                 <ul class="allocatedDev-list">
                                   <li style="padding-left: 0">                                 
@@ -233,7 +229,7 @@
                             {% for gtd in grouptodevice %}
                              {% ifequal gtd.group.id groups.id %}
                               {% ifequal gtd.type 'AP' %}
-                              {% if gtd.startDateTime >= today %}
+                              {% if gtd.endDateTime >= today %}
                                {% ifequal gtd.device.type 'Terminal' %}
                                 <ul class="allocatedDev-list">
                                   <li style="padding-left: 0">                                 
@@ -359,90 +355,87 @@
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel" style="padding:10px 17px;">
                   <div class="x_title">
-                    <h2>Employee Information</h2>
-					<form method="post" action="/admin/createuser">
-                    <div class="clearfix"></div>
+                    <h2>Employee Information</h2>                    
+					
+					<div class="clearfix"></div>
                   </div>
                   <div class="x_content">
                     <br />
                     <div class="col-md-8 col-sm-8 col-md-offset-2 col-xs-12">
                       <div class="form-horizontal form-label-left">
-                        <!-- <div class="form-group">
+                        <div class="form-group">
                           <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-                            <input id="employeeID" type="number" class="form-control has-feedback-left" placeholder="Employee ID *" required="required">
+                            <input id="createEmployeeID" type="number" class="form-control has-feedback-left" placeholder="Employee ID *" required="required">
+							<font id="error-employee-id"></font>
                             <span class="fa fa-hashtag form-control-feedback left" aria-hidden="true"></span>
                           </div>
 
                           <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-                            <input type="email" class="form-control has-feedback" id="userEmail" placeholder="Email *" required="required" data-validate-linked="email">
+                            <input id="createEmail" type="mail" class="form-control has-feedback"  placeholder="Email *" required="required" data-validate-linked="email">
+							<font id="error-employee-email"></font>
                             <span class="fa fa-envelope form-control-feedback right" aria-hidden="true"></span>
                           </div>                                                  
                         </div>
 
                         <div class="form-group">                        
                           <div class="col-md-6 col-sm-6 col-xs-12 item form-group has-feedback">
-                            <input id="firstName" type="text" class="form-control has-feedback-left" placeholder="First Name *" required="required">
+                            <input id="createFirstName" type="text" class="form-control has-feedback-left" placeholder="First Name *" required="required">
+							<font id="error-employee-first-name"></font>
                             <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+							
                           </div>
 
                           <div class="col-md-6 col-sm-6 col-xs-12 item form-group has-feedback">
-                            <input id="firstName" type="text" class="form-control has-feedback" placeholder="Last Name *" required="required">
+                            <input id="createLastName" type="text" class="form-control has-feedback" placeholder="Last Name *" required="required">
+							<font id="error-employee-last-name"></font>
                             <span class="fa fa-user form-control-feedback right" aria-hidden="true"></span>
                           </div>  
                         </div>
 
                         <div class="form-group">
                           <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-                            <input type="text" class="form-control has-feedback-left" id="username" placeholder="Username *" required="required">
-                            <span class="fa fa-at form-control-feedback left" aria-hidden="true"></span>
+                            <input id="createUserName" type="text" class="form-control has-feedback-left" placeholder="Username *" required="required">
+							<font id="error-employee-username"></font>
+						   <span class="fa fa-at form-control-feedback left" aria-hidden="true"></span>
                           </div>
 
                           <div class="col-md-6 col-sm-6 col-xs-12">
-                            <select id="employeeLocation" class="form-control" required>
-                            <option value="">User Group: *</option>
-                            <option value="man">Group 1</option>
-                            <option value="user1">Group 2</option>
-                            <option value="user2">Group 3</option>
+                            <select id="createUserGroup" class="form-control" required>
+							
+							{% for group in groups %}
+							
+                            <option value="{{group.name}}">{{group.name}}</option>
+							
+							{% endfor %}
+							
+							
                             </select>
                           </div> 
                         </div>
 
                         <div class="form-group">
                           <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-                            <input type="password" class="form-control has-feedback-left" id="password" name="password" data-validate-length="6,8" placeholder="Password *" required="required">
-                            <span class="fa fa-lock form-control-feedback left" aria-hidden="true"></span>
+                            <input type="password" class="form-control has-feedback-left" id="createPassword" name="password" data-validate-length="6,8" placeholder="Password *" required="required">
+                            <font id="error-employee-password"></font>
+							<span class="fa fa-lock form-control-feedback left" aria-hidden="true"></span>
                           </div>
 
                           <div class="col-md-6 col-sm-6 col-xs-12 item form-group has-feedback">
-                            <input type="password" class="form-control" id="password2" name="password2" data-validate-linked="password" placeholder="Repeat Password *" required="required">
+                            <input type="password" class="form-control" id="createPassword2" name="password2" data-validate-linked="password" placeholder="Repeat Password *" required="required">
+							<font id="error-employee-password2"></font>
                             <span class="fa fa-lock form-control-feedback right" aria-hidden="true"></span>
                           </div>
-                        </div>                -->       
-
-                        {% csrf_token %}
-                        {% for field in signupForm %}
-                        <p>
-                          {{ field.label_tag }}<br>
-                          {{ field }}
-                          {% if field.help_text %}
-                          <small style="color: grey">{{ field.help_text }}</small>
-                          {% endif %}
-                          {% for error in field.errors %}
-                          <p style="color: red">{{ error }}</p>
-                          {% endfor %}
-                        </p>
-                        {% endfor %}
+                        </div>     	
 
                         <div class="ln_solid"></div>
                         <div class="form-group">
                           <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-4">
-                            <button class="btn btn-primary">Cancel</button>
-                            <button type="submit" class="btn btn-success" name="createUser">Submit</button>
+                            <button class="btn btn-primary" onclick="clearUserFields()">Cancel</button>
+                            <button onclick="createUser()" type="submit" class="btn btn-success" name="createUser">Submit</button>
                           </div>
                         </div>
                       </div>
                     </div>
-					</form>
                   </div>
                 </div>
               </div>
@@ -459,20 +452,22 @@
                     <!-- USERS & DEVICES LIST -->
                     <div class="udList-position">
                       <div class="x_title">
-                        <h4 style="margin: 0">Groups</h4>
+                        <h4 style="margin: 0">Users</h4>
                         <div class="clearfix"></div>
                       </div>
                       <div class="x_content">
                         <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0">
                           <ul class="list-unstyled top_profiles scroll-view">
-                            {% for group in groups %}
+                            {% for user in users %}
+                             {% ifnotequal user.profile.usertype "admin" %}
                             <li>
                               <div class="radio">
                                 <label style="padding-left: 0">
-                                  <input type="radio" class="flat" name="radioList"> {{group.name}}
+                                  <input type="radio" class="flat" name="radioList"> {{user.username}}
                                 </label>
                               </div>
                             </li>
+                              {% endifnotequal %}
                             {% endfor %}
                           </ul>
                         </div>
@@ -508,13 +503,20 @@
                             <thead>
                               <tr>
                                 <th style="font-weight: 700;width: 20%">Device</th>
-                                <th style="font-weight: 700;width: 20%">Group</th>
+                                <th style="font-weight: 700;width: 20%">User</th>
                                 <th style="font-weight: 700;width: 20%">Timestamp</th>
                                 <th style="font-weight: 700;width: 40%">Command</th>                  
                               </tr>
                             </thead>
                             <tbody>
-
+                              {% for logs in log %}
+                              <tr>
+                                <th style="font-weight: 700;width: 20%">{{logs.device.name}}</th>
+                                <th style="font-weight: 700;width: 20%">{{logs.user}}</th>
+                                <th style="font-weight: 700;width: 20%">{{logs.timestamp}}</th>
+                                <th style="font-weight: 700;width: 40%">{{logs.action}}</th>                  
+                              </tr>
+                              {% endfor %}
                             </tbody>
                           </table>                            
                         </div>
@@ -528,7 +530,7 @@
             </div>
 
             <div id="createGroup" class="modal fade" role="dialog" aria-hidden="true" style="padding-top: 100px">
-			<form action="/admin/creategroup" method="post">
+			
               <div class="modal-dialog">
                 <div class="modal-content">
                   <div class="form-horizontal form-label-left input_mask">
@@ -538,28 +540,26 @@
                       <h3 class="modal-title" id="myModalLabel">Create Group</h3>
                     </div>
                     <div class="modal-body">
-                      <!-- <div class="form-group"> -->
-                        <!-- <label class="control-label col-md-3 col-sm-3 col-xs-12" for="group-name">Group Name -->
-                        <!-- </label> -->
-                        <!-- <div class="col-md-6 col-sm-6 col-xs-12"> -->
-                          <!-- <input type="text" id="group-name" name="group-name" class="form-control"> -->
-                        <!-- </div> -->
-                      <!-- </div> -->
-					  
-					  {% csrf_token %}
-						{{ newgroupForm.as_p }}
+                      <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="group-name">Group Name
+                        </label>
+                       <div class="col-md-6 col-sm-6 col-xs-12"> 
+                         <input type="text" id="group-name" name="group-name" class="form-control">
+						 <font id="error-group-name"></font>
+                       </div>
+                      </div>
 					  
 					  
                     <div class="modal-footer">
                       <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                      <button type="submit" class="btn btn-primary" name="createGroup">Add</button>
+                      <button onClick="createGroup()" class="btn btn-primary" name="createGroup">Add</button>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
             <!-- end APPROVE -->
-			</form>
+			
           </div>
         </div>
         <!-- /page content -->
@@ -620,9 +620,9 @@
                   </thead>
                   <tbody>
                   {% for grouptodevice in grouptodevice %}
-                    {% ifequal grouptodevice.type 'RS' %}
+                    {% ifequal grouptodevice.type 'RS' %} 
                      {% if grouptodevice.startDateTime >= today and grouptodevice.endDateTime >= today %}
-                    <tr>
+                    <tr> 
                       <input type="hidden" name="grouptodeviceid" id="grouptodeviceid" class="form-control" value="{{ grouptodevice.id }}"> 
                       <td value ="{{grouptodevice.group.name}}" style="vertical-align: unset;">{{ grouptodevice.group.name }}</td>
                       <td value ="{{grouptodevice.device.name}}" style="vertical-align: unset;">{{ grouptodevice.device.name }}</td>
@@ -653,7 +653,7 @@
                   <tbody>
                   {% for grouptodevice in grouptodevice %}
                     {% ifequal grouptodevice.type 'AP' %}
-                     {% if grouptodevice.startDateTime >= today %}
+                     {% if grouptodevice.startDateTime >= today and grouptodevice.endDateTime >= today %}
                     <tr>
                       <input type="hidden" name="grouptodeviceid" id="grouptodeviceid" class="form-control" value="{{ grouptodevice.id }}"> 
                       <td value ="{{grouptodevice.group.name}}" style="vertical-align: unset;">{{ grouptodevice.group.name }}</td>
@@ -690,7 +690,7 @@
         <div class="modal-content">
           <div class="form-horizontal form-label-left input_mask">
             <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close" required><span aria-hidden="true">×</span>
               </button>
               <h3 class="modal-title" id="myModalLabel">Edit {{ user.username }}</h3>
             </div>
@@ -701,7 +701,8 @@
                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="id-num">ID Number
                 </label>
                 <div class="col-md-8 col-sm-6 col-xs-12">
-                  <input type="number" name="id-num" id="id-num-{{ user.id }}" class="form-control" value="{{ user.profile.employeeID }}"> 
+                  <input type="number" name="id-num" id="id-num-{{ user.id }}" class="form-control" value="{{ user.profile.employeeID }}" required>
+                  <strong><font style="color: #F00000;" id="error-id-num-{{ user.id }}"></font></strong> 
                 </div>
                 
               </div>
@@ -709,33 +710,26 @@
                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">First Name
                 </label>
                 <div class="col-md-8 col-sm-6 col-xs-12">
-                  <input type="text" id="first-name-{{ user.id }}" name="first-name" class="form-control" value="{{ user.first_name }}">
+                  <input type="text" id="first-name-{{ user.id }}" name="first-name" class="form-control" value="{{ user.first_name }}" required>
+                  <font id="error-first-name-{{ user.id }}"></font>
                 </div>
               </div>
               <div class="form-group">
                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Last Name
                 </label>
                 <div class="col-md-8 col-sm-6 col-xs-12">
-                  <input type="text" id="last-name-{{ user.id }}" name="last-name" class="form-control" value="{{ user.last_name }}">
+                  <input type="text" id="last-name-{{ user.id }}" name="last-name" class="form-control" value="{{ user.last_name }}" required>
+                  <font id="error-last-name-{{ user.id }}"></font>
                 </div>
               </div>
               <div class="form-group">
                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="user-name">Username
                 </label>
                 <div class="col-md-8 col-sm-6 col-xs-12">
-                  <input type="text" id="user-name-{{ user.id }}" name="user-name" class="form-control" value="{{ user.username }}">
+                  <input type="text" id="user-name-{{ user.id }}" name="user-name" class="form-control" value="{{ user.username }}" required>
+                  <font id="error-user-name-{{ user.id }}"></font>
                 </div>
-                <!-- {% if messages %}
-                  <ul class="messages">
-                      {% for message in messages %}
-                      {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
-                      <div>
-                      <p{% if message.tags %} class ="{{message.tags}}"{% endif %}><b>{% if "sameuser" in message.tags %}{{message}}{% endif %}</b></p>
-                  </div>
-                      {% endif %}
-                      {% endfor %}
-                  </ul>
-                  {% endif %} -->
+               
 
                   
               </div>
@@ -745,7 +739,8 @@
               <div class="form-group">
                 <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Email</label>
                 <div class="col-md-8 col-sm-6 col-xs-12">
-                  <input id="email-{{ user.id }}" class="form-control" type="text" name="email" value="{{ user.email }}">
+                  <input id="email-{{ user.id }}" class="form-control" type="email" name="email" value="{{ user.email }}" required>
+                  <font id="error-email-{{ user.id }}"></font>
                 </div>
               </div>
             </div>
@@ -796,8 +791,9 @@
                   
                   {% for user in users %}
                     {% ifnotequal user.profile.group.id groups.id %}
+                     {% ifnotequal user.profile.usertype 'admin' %}
                   <option id="userGroup-{{ user.id }}" value="{{user.id}}">{{user.username}}</option>
-                  
+                      {% endifnotequal %}
                      {% endifnotequal %}
                   {% endfor %}
                   </select>
@@ -856,9 +852,11 @@
                         {% for grouptodevice in grouptodevice %}
                           {% ifequal grouptodevice.device.id devices.id %}
                             {% ifequal grouptodevice.type 'AP' %}
-                             {% if grouptodevice.startDateTime >= today %}
+                             
+                              {% if grouptodevice.endDateTime >= today %}
                               {{grouptodevice.startDateTime}} - {{grouptodevice.endDateTime}} <br>
-                             {% endif %}
+                              {% endif %}
+                          
                             {% endifequal %} 
                               
                           {% endifequal %}
@@ -930,19 +928,19 @@
       var visibleDivId = null;
 
       function toggleVisibility(divId) {
-        if(visibleDivId === divId) {
+        if(visibleDivId == divId) {
           visibleDivId = null;
         } else {
           visibleDivId = divId;
+          hideNonVisibleDivs();
         }
-        hideNonVisibleDivs();
       }
       function hideNonVisibleDivs() {
         var i, divId, div;
         for(i = 0; i < divs.length; i++) {
           divId = divs[i];
           div = document.getElementById(divId);
-          if(visibleDivId === divId) {
+          if(visibleDivId == divId) {
             div.style.display = "block";
           } else {
             div.style.display = "none";
@@ -1112,14 +1110,14 @@
       
       format: 'YYYY-MM-DD',
       useCurrent: true,
-      minDate:new Date()
+      minDate: moment().millisecond(0).second(0).minute(0).hour(0)
     });
         
     $('#datetimepicker7').datetimepicker({
 
       format: 'YYYY-MM-DD',
       useCurrent: false,
-      minDate:new Date()
+      minDate: moment().millisecond(0).second(0).minute(0).hour(0)
     });
     
     $("#datetimepicker6").on("dp.change", function(e) {
@@ -1142,21 +1140,37 @@
           var lastname = document.getElementById('last-name-' + id).value;
           var username = document.getElementById('user-name-' + id).value;
           var email = document.getElementById('email-' + id).value;
+          var error = "";
             $.ajax({url: '/editModal/?pkid='+ id + '&id-num=' + employeeid + '&first-name=' + firstname + '&last-name=' + lastname + '&username=' + username + '&email=' + email, 
                 success: function(data){
+                  var res = JSON.parse(data);
+                  //document.getElementById('routerConfig').innerHTML = res['routerConfig']; 
+                  var valid = "{{valid}}";
+                  if (res['valid'] == false){
+                    //var error = "{{error_msg2}}".replace(/&quot;/g,"\"");
+                    document.getElementById("error-id-num-" + id).innerHTML = res['error_id']
+                    document.getElementById("error-user-name-" + id).innerHTML = res['error_user']
+                    document.getElementById("error-email-" + id).innerHTML = res['error_email']
+                    document.getElementById("error-first-name-" + id).innerHTML = res['error_first']
+                    document.getElementById("error-last-name-" + id).innerHTML = res['error_last']
+                                        
+                  }
+                  else{
                   window.location.reload();
-
+                  }
                   // $("#testRefresh").replaceWith($("#testRefresh",$(data)));
                   // window.location.reload();
 
                 },
                  error: function(data) { 
-                    alert("invalid!");
+                  
                 }    
                 // error:function(data){
                 //   alert("invalid!");
                 // }
             });
+           
+
         }
     </script>
 
@@ -1191,7 +1205,74 @@
             });
         }
     </script>
-
+	<!-- Create Group and User scripts Start -->
+		<script>
+			function createGroup(){
+				var groupName = document.getElementById("group-name").value;
+				$.ajax({url: 'http://127.0.0.1:8000/createGroup?groupName=' + groupName,
+					success: function(data){
+						var res = JSON.parse(data);
+							var groupnameisvalid = "{{groupnameisvalid}}";
+							if (res['groupnameisvalid'] == false){
+								document.getElementById("error-group-name").innerHTML = res['groupnameerrormessage'];							
+							} else {
+							
+							document.getElementById("group-name").value = "";	
+							window.location.reload();
+							}					
+					},});
+				}
+	
+			function clearUserFields(){
+				document.getElementById("createFirstName").value = "";
+				document.getElementById("createLastName").value = "";
+				document.getElementById("createUserName").value = "";
+				document.getElementById("createEmployeeID").value = "";
+				document.getElementById("createEmail").value = "";
+				document.getElementById("createPassword").value = "";
+				document.getElementById("createPassword2").value = "";
+			}
+			
+			function createUser(){
+				var firstName = document.getElementById("createFirstName").value;
+				var lastName = document.getElementById("createLastName").value;
+				var userName = document.getElementById("createUserName").value;
+				var employeeID = document.getElementById("createEmployeeID").value;
+				var password = document.getElementById("createPassword").value;
+				var password2 = document.getElementById("createPassword2").value;
+				var email = document.getElementById("createEmail").value;
+				var groupName = document.getElementById("createUserGroup").value;
+					
+				$.ajax({url: "http://127.0.0.1:8000/createUser?firstName=" + firstName + "&lastName=" + lastName + "&userName=" + userName + "&employeeID=" + employeeID + "&email=" + email + "&groupName=" + groupName + "&password=" + password + "&password2=" + password2,
+					success: function(data){
+						var res = JSON.parse(data);
+							var signupformisvalid = "{{signupformisvalid}}";
+							if (res['signupformisvalid'] == false){
+								document.getElementById("error-employee-id").innerHTML = res['signupIDerr'];							
+								document.getElementById("error-employee-username").innerHTML = res['signupUsererr'];							
+								document.getElementById("error-employee-email").innerHTML = res['signupEmailerr'];							
+								document.getElementById("error-employee-password").innerHTML = res['signupPasserr'];							
+								document.getElementById("error-employee-password2").innerHTML = res['signupPasserr2'];
+								document.getElementById("error-employee-first-name").innerHTML = res['signupFirstnameerr'];
+								document.getElementById("error-employee-last-name").innerHTML = res['signupLastnameerr'];
+							} else {	
+								window.location.reload();
+								document.getElementById("createFirstName").value = "";
+								document.getElementById("createLastName").value = "";
+								document.getElementById("createUserName").value = "";
+								document.getElementById("createEmployeeID").value = "";
+								document.getElementById("createEmail").value = "";
+								document.getElementById("createUserGroup").value = "";
+								document.getElementById("createPassword").value = "";
+								document.getElementById("createPassword2").value = "";
+								
+							}					
+					},
+				});
+				
+			}
+		</script>
+	<!-- Create Group and user script end -->
     <!-- Calendar -->
     <!-- <script src="js/jquery-1.11.1.min.js"></script> -->
     <script src="{% static '/production/js/underscore-min.js' %}"></script>
