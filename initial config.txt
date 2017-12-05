@@ -27,16 +27,20 @@ enable
 conf t
 int fa0/1
 switchport mode access
-switchport access vlan 1
+switchport access vlan 101
 int fa0/2
 switchport mode access
-switchport access vlan 2
+switchport access vlan 102
 int fa0/3
 switchport mode access
-switchport access vlan 3
+switchport access vlan 103
 int fa0/4
 switchport mode access
-switchport access vlan 4
+switchport access vlan 104
+
+int vlan 1
+no shut
+ip add 192.168.1.2 255.255.255.0
 
 
 router 1 

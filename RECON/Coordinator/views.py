@@ -163,7 +163,6 @@ def connectDevices(request):
 	vlan2 = "10" + port2.split("/",1)[1]
 	
 	text = "\renable\nconfigure terminal\ninterface range " + port1 +", " + port2 +"\nswitchport mode access\nswitchport access vlan " + vlan1 + "\nexit"	
-	print(text)
 	print("connected devices")
 	mainSwitchPort.flushInput()
 	mainSwitchPort.write(text.encode('utf-8'))
