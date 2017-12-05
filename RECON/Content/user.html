@@ -178,7 +178,7 @@
 							                        					 {% endifequal %}
 				           								  				 {% ifequal gtd.device.type 'Switch' %}
 							                        				<td class="deviceCell">
-																		<img class="deviceIcons" name="{{gtd.device.name}}" id="{{gtd.device.name}}" src="{% static '/production/images/switchIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Switch {{gtd.device.id}}">
+																		<img class="deviceIcons" name="{{gtd.device.name}}" id="{{gtd.device.name}}" src="{% static '/production/images/switchIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Switch">
 																	</td>
 																		 {% endifequal %}
 				           								  				 {% ifequal gtd.device.type 'Terminal' %}
@@ -492,17 +492,18 @@
 		{% ifequal gtd.type 'AP' %}
 		{% if gtd.startDateTime <= today and gtd.endDateTime >= today %}
 	<script>
-		setInterval(function(){reloader{{gtd.device.id}}();},1050);
+		setInterval(function(){reloader{{gtd.device.id}}();},1000);
         
 		function reloader{{gtd.device.id}}(){
-			$.ajax({url: 'http://127.0.0.1:8000/getouts', 
+			// if(document.getElementById('configTextArea {{gtd.device.id}}').innerHTML != res['config{{gtd.device.id}}']
+			var textarea = document.getElementById('configTextArea {{gtd.device.id}}'); 
+			textarea.scrollTop = textarea.scrollHeight;
+			$.ajax({url: 'http://127.0.0.1:8000/getouts',
 				success: function(result){
 					var res = JSON.parse(result);
-					document.getElementById('configTextArea {{gtd.device.id}}').innerHTML = res['config{{gtd.device.id}}'];              
+					document.getElementById('configTextArea {{gtd.device.id}}').innerHTML = res['config{{gtd.device.id}}'];
 				}
 			});
-			var textarea = document.getElementById('configTextArea {{gtd.device.id}}');
-			textarea.scrollTop = textarea.scrollHeight;
         }
     </script>
 	
@@ -523,18 +524,27 @@
 					if (e.keyCode == 13){
 						inputSend{{gtd.device.id}}();
 						}
+				var textarea = document.getElementById('configTextArea {{gtd.device.id}}');
+				textarea.scrollTop = textarea.scrollHeight;
 				});
 				
 				function inputSend{{gtd.device.id}}(){
 					var textarea = document.getElementById('configTextArea {{gtd.device.id}}');
 					textarea.scrollTop = textarea.scrollHeight;
 					
-					var command = document.getElementById("deviceInput {{gtd.device.id}}").value;
-					$.ajax({url: 'http://127.0.0.1:8000/inputSend?input=' + command + '&deviceId={{gtd.device.id}}',
+					var command = document.getElementById("deviceInput {{gtd.device.id}}");
+					var cmd = command.value;
+					if (!cmd){
+						cmd = "return"	
+						console.log("Command is empty")
+					}
+					
+					$.ajax({url: "http://127.0.0.1:8000/inputSend?input=" + cmd + "&deviceId={{gtd.device.id}}",
 					});
+					
 					document.getElementById("deviceInput {{gtd.device.id}}").value = "";
 					
-					console.log("Input: " + command)
+					console.log("Input: " + cmd)
 					
 					textarea.scrollTop = textarea.scrollHeight;
 				}

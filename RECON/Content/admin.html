@@ -452,20 +452,22 @@
                     <!-- USERS & DEVICES LIST -->
                     <div class="udList-position">
                       <div class="x_title">
-                        <h4 style="margin: 0">Groups</h4>
+                        <h4 style="margin: 0">Users</h4>
                         <div class="clearfix"></div>
                       </div>
                       <div class="x_content">
                         <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0">
                           <ul class="list-unstyled top_profiles scroll-view">
-                            {% for group in groups %}
+                            {% for user in users %}
+                             {% ifnotequal user.profile.usertype "admin" %}
                             <li>
                               <div class="radio">
                                 <label style="padding-left: 0">
-                                  <input type="radio" class="flat" name="radioList"> {{group.name}}
+                                  <input type="radio" class="flat" name="radioList"> {{user.username}}
                                 </label>
                               </div>
                             </li>
+                              {% endifnotequal %}
                             {% endfor %}
                           </ul>
                         </div>
@@ -501,13 +503,20 @@
                             <thead>
                               <tr>
                                 <th style="font-weight: 700;width: 20%">Device</th>
-                                <th style="font-weight: 700;width: 20%">Group</th>
+                                <th style="font-weight: 700;width: 20%">User</th>
                                 <th style="font-weight: 700;width: 20%">Timestamp</th>
                                 <th style="font-weight: 700;width: 40%">Command</th>                  
                               </tr>
                             </thead>
                             <tbody>
-
+                              {% for logs in log %}
+                              <tr>
+                                <th style="font-weight: 700;width: 20%">{{logs.device.name}}</th>
+                                <th style="font-weight: 700;width: 20%">{{logs.user}}</th>
+                                <th style="font-weight: 700;width: 20%">{{logs.timestamp}}</th>
+                                <th style="font-weight: 700;width: 40%">{{logs.action}}</th>                  
+                              </tr>
+                              {% endfor %}
                             </tbody>
                           </table>                            
                         </div>

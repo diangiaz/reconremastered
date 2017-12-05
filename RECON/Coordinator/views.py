@@ -51,8 +51,6 @@ strBuilder2 = ""
 mainSwitchPort = serial.Serial("COM4", 9600)
 routerPort = serial.Serial("COM5", 9600)
 switchPort = serial.Serial("COM3", 9600)
-	
-# Serial port (Router)
 
 class Receiver1(Thread):
 		def __init__(self, routerPort): 
@@ -114,27 +112,21 @@ def inputSend(request):
 	audit.action = text
 	audit.save()
 	
+	if (text == "return"):
+		text = "\r"
+	
 	text += "\n"
 	print("Device: " + deviceID)
+	print ("Input: " + text)
 	
 	# REMEMBER TO CHANGE THIS
 	
 	if deviceID == '1':
-		if text == "\n":
-			routerPort.flushInput()
-			routerPort.write("\r\n".encode('utf-8'))
-			bytes_to_read = routerPort.inWaiting()
-		else:
 			routerPort.flushInput()
 			routerPort.write(text.encode('utf-8'))
 			bytes_to_read = routerPort.inWaiting()
 			
 	if deviceID == '2':
-		if text == "\n":
-			switchPort.flushInput()
-			switchPort.write("\r\n".encode('utf-8'))
-			bytes_to_read = switchPort.inWaiting()
-		else:
 			switchPort.flushInput()
 			switchPort.write(text.encode('utf-8'))
 			bytes_to_read = switchPort.inWaiting()
@@ -153,13 +145,29 @@ def connectDevices(request):
 	srcPort = (urlparse.parse_qs(parsedData.query)['srcPort'][0])
 	endPort = (urlparse.parse_qs(parsedData.query)['endPort'][0])
 	
-	if ((srcDevice == "Router 1" and endDevice == "Switch 1") and (srcPort == "fa0/1" and endPort == "fa0/1")) or ((srcDevice == "Switch 1" and endDevice == "Router 1") and (srcPort == "fa0/1" and endPort == "fa0/1")):
-		text = "enable\nconfigure terminal\ninterface range fa0/1, fa0/2\nswitchport mode access\nswitchport access vlan 5\nexit"
-		print(text)
-		print("Connected switch 1 and router 1")
-		mainSwitchPort.flushInput()
-		mainSwitchPort.write(text.encode('utf-8'))
-		bytes_to_read = mainSwitchPort.inWaiting()
+	if (srcDevice == "Switch 1"):
+		port1 = srcPort
+		if (endPort == "fa0/0"):
+			port2 = "fa0/5"
+		if (endPort == "fa0/1"):
+			port2 = "fa0/6"
+	
+	if (endDevice == "Switch 1"):
+		port1 = endPort
+		if (srcPort =="fa0/0"):
+			port2 = "fa0/5"
+		if (srcPort == "fa0/1"):
+			port2 = "fa0/6"
+
+	vlan1 = "10" + port1.split("/",1)[1]
+	vlan2 = "10" + port2.split("/",1)[1]
+	
+	text = "\renable\nconfigure terminal\ninterface range " + port1 +", " + port2 +"\nswitchport mode access\nswitchport access vlan " + vlan1 + "\nexit"	
+	print(text)
+	print("connected devices")
+	mainSwitchPort.flushInput()
+	mainSwitchPort.write(text.encode('utf-8'))
+	bytes_to_read = mainSwitchPort.inWaiting()
 	
 	return HttpResponse(json.dumps(JSONer))
 	
@@ -172,16 +180,32 @@ def disconnectDevices(request):
 	srcPort = (urlparse.parse_qs(parsedData.query)['srcPort'][0])
 	endPort = (urlparse.parse_qs(parsedData.query)['endPort'][0])
 	
-	if ((srcDevice == "Router 1" and endDevice == "Switch 1") and (srcPort == "fa0/1" and endPort == "fa0/1")) or ((srcDevice == "Switch 1" and endDevice == "Router 1") and (srcPort == "fa0/1" and endPort == "fa0/1")):
-		text = "enable\nconfigure terminal\ninterface fa0/1\nswitchport mode access\nswitchport access vlan 5\nexit\ninterface fa0/2\nswitchport mode access\nswitchport access vlan 6\nexit"
-		print(text)
-		print("Disconnected switch 1 and router 1")
-		mainSwitchPort.flushInput()
-		mainSwitchPort.write(text.encode('utf-8'))
-		bytes_to_read = mainSwitchPort.inWaiting()
+	if (srcDevice == "Switch 1"):
+		port1 = srcPort
+		if (endPort == "fa0/0"):
+			port2 = "fa0/5"
+		if (endPort == "fa0/1"):
+			port2 = "fa0/6"
 	
-	return HttpResponse(json.dumps(JSONer))	
+	if (endDevice == "Switch 1"):
+		port1 = endPort
+		if (srcPort =="fa0/0"):
+			port2 = "fa0/5"
+		if (srcPort == "fa0/1"):
+			port2 = "fa0/6"
+
+	vlan1 = "10" + port1.split("/",1)[1]
+	vlan2 = "10" + port2.split("/",1)[1]
 	
+	text = "\renable\nconfigure terminal\ninterface " + port1 +"\nswitchport mode access\nswitchport access vlan " + vlan1 + "\nexit"	
+	text += "\renable\nconfigure terminal\ninterface " + port2 +"\nswitchport mode access\nswitchport access vlan " + vlan2 + "\nexit"	
+	print(text)
+	print("Disconnected")
+	mainSwitchPort.flushInput()
+	mainSwitchPort.write(text.encode('utf-8'))
+	bytes_to_read = mainSwitchPort.inWaiting()	
+	
+	return HttpResponse(json.dumps(JSONer))
 @login_required(login_url="/login")	
 def reserveDevice(request):
 	ctr = 0
@@ -380,10 +404,12 @@ def adminPage(request):
 	test = Group.objects.all()
 	devicesort= Device.objects.all().order_by('name')
 	today=datetime.datetime.now().date()
+	log = Log.objects.all()
 	valid = True
 	error_msg1 = ""
 	
 	context = {
+	'log':log,
 	'groups':groups,
 	'test':test,
 	'today':today,

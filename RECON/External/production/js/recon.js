@@ -39,18 +39,13 @@
 	// TEMPORARY Ports
 	var SwitchPorts = [];
 	
-	for(c=1;c<=24;c++){
+	for(c=1;c<=4;c++){
 		SwitchPorts[c] = "fa0/" + c;
 	}
 	
 	var RouterPorts = [];
-	RouterPorts[0] = "Console";
-	RouterPorts[1] = "fa0/0";
-	RouterPorts[2] = "fa0/1";
-	
-	for(c=0;c<=1;c++){
-		RouterPorts[c+3] = "s0/0/" + c;
-	}
+	RouterPorts[0] = "fa0/0";
+	RouterPorts[1] = "fa0/1";
 	
 	var TerminalPorts = [];
 	TerminalPorts[0] = "fa0";
@@ -294,8 +289,6 @@
 		}
 	}
 	
-	
-
 	function EvtMouseUp(arg){
 		if(IsDragging){
 			IsDragging = false;
@@ -578,7 +571,6 @@
 			
 			$.ajax({url: "http://127.0.0.1:8000/connectDevices?srcDevice=" + Devices[firstdevice].name + "&endDevice=" + Devices[seconddevice].name + "&srcPort=" + firstport + "&endPort=" + secondport,
 				});	
-				
 	}
 		
 	function EvtOnDrop(arg) {
