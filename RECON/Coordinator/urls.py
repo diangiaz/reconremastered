@@ -8,11 +8,19 @@ urlpatterns = [
 	url(r'^logout/$', authViews.logout, {'template_name': 'logout.html', 'next_page': views.adminPage}, name='logout'),
 	url(r'^user/$', views.userPage, name='userPage'),
 	url(r'^admin/$', views.adminPage, name='adminPage'),
+<<<<<<< HEAD
 	url(r'^getouts$', views.getSerialOutput, name='serialout'),
 	url(r'^createUser$', views.createUser, name='createuser'),
 	url(r'^createGroup$', views.createGroup, name='creategroup'),
 	url(r'^user/reserveDevice$', views.reserveDevice, name='reserveDevice'),
 	url(r'^inputSend$', views.inputSend, name='inputSend'),
+=======
+	#url(r'^getouts$', views.getSerialOutput, name='serialout'),
+	url(r'^createUser$', views.createUser, name='createuser'),
+	url(r'^createGroup$', views.createGroup, name='creategroup'),
+	url(r'^user/reserveDevice$', views.reserveDevice, name='reserveDevice'),
+	#url(r'^inputSend$', views.inputSend, name='inputSend'),
+>>>>>>> cebbb2d497098c17f8c5ee61ee54118e396e8452
 	url(r'^connectDevices$', views.connectDevices, name='connectDevices'),
 	url(r'^disconnectDevices$', views.disconnectDevices, name='connectDevices'),
 	url(r'^loadTopology$', views.loadTopology, name='loadTopology'),

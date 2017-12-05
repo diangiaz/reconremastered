@@ -20,6 +20,7 @@ import urllib.parse as urlparse
 
 # Create your views here.
 savedTopology = SaveTopology()
+<<<<<<< HEAD
 
 @login_required(login_url="/login")
 def userPage(request):
@@ -142,6 +143,130 @@ def inputSend(request):
 	print("Audited " + audit.action + " @ time " + str(audit.timestamp))
 	return HttpResponseRedirect(json.dumps(JSONer))
 
+=======
+
+@login_required(login_url="/login")
+def userPage(request):
+	currentUser = request.user
+	if currentUser.profile.usertype == 'admin':
+		return HttpResponseRedirect("/admin/")
+
+	groupTopologies = SaveTopology.objects.filter(group = currentUser.profile.group)
+	users = User.objects.all()
+	groups = Group.objects.all()
+	devices = Device.objects.all()
+	grouptodevice = GroupToDevice.objects.all()
+	today=datetime.datetime.now().date()
+
+	context = {
+		'current_user': currentUser,
+		'topologies': groupTopologies,
+		'grouptodevice':grouptodevice,
+		'devices':devices,
+		'groups':groups,
+		'users':users,
+		'today':today
+	}
+	return render(request, 'user.html', context)
+	
+# # serial reader/sender start
+# strBuilder1 = ""
+# strBuilder2 = ""
+# mainSwitchPort = serial.Serial("COM4", 9600)
+# routerPort = serial.Serial("COM5", 9600)
+# switchPort = serial.Serial("COM3", 9600)
+	
+# # Serial port (Router)
+
+# class Receiver1(Thread):
+# 		def __init__(self, routerPort): 
+# 			Thread.__init__(self) 
+# 			self.serialPort = routerPort
+# 		def run(self):
+# 			global routerPort
+# 			global strBuilder1
+# 			text = "" 
+# 			while (text != "exitReceiverThread\n"): 
+# 				text = routerPort.readline()
+# 				strBuilder1 += text.decode() + "\n"
+# 				print("Router output is" + strBuilder1)
+			
+# 			self.serialPort.close()
+			
+# receive = Receiver1(routerPort) 
+# receive.start()
+
+# # Serial port 2 (Switch)
+
+# class Receiver2(Thread):
+# 		def __init__(self, switchPort): 
+# 			Thread.__init__(self) 
+# 			self.serialPort = switchPort
+# 		def run(self):
+# 			global switchPort
+# 			global strBuilder2
+# 			text = "" 
+# 			while (text != "exitReceiverThread\n"): 
+# 				text = switchPort.readline()
+# 				strBuilder2 += text.decode() + "\n"
+# 				print("Switch output is" + strBuilder2)
+			
+# 			self.serialPort.close()
+			
+# receive2 = Receiver2(switchPort) 
+# receive2.start()
+
+# def getSerialOutput(request):
+# 	global strBuilder1
+	
+# 	JSONer = {}
+# 	JSONer['config1'] = strBuilder1
+# 	JSONer['config2'] = strBuilder2
+# 	return HttpResponse(json.dumps(JSONer))
+	
+# def inputSend(request):
+# 	JSONer = {}
+# 	parsedData = urlparse.urlparse(request.get_full_path())
+# 	text = (urlparse.parse_qs(parsedData.query)['input'][0])
+# 	deviceID = (urlparse.parse_qs(parsedData.query)['deviceId'][0])
+	
+# 	device = Device.objects.filter(id = deviceID)[0]
+	
+# 	audit = Log()
+# 	audit.device = device
+# 	audit.user = request.user
+# 	audit.action = text
+# 	audit.save()
+	
+# 	text += "\n"
+# 	print("Device: " + deviceID)
+	
+# 	# REMEMBER TO CHANGE THIS
+	
+# 	if deviceID == '1':
+# 		if text == "\n":
+# 			routerPort.flushInput()
+# 			routerPort.write("\r\n".encode('utf-8'))
+# 			bytes_to_read = routerPort.inWaiting()
+# 		else:
+# 			routerPort.flushInput()
+# 			routerPort.write(text.encode('utf-8'))
+# 			bytes_to_read = routerPort.inWaiting()
+			
+# 	if deviceID == '2':
+# 		if text == "\n":
+# 			switchPort.flushInput()
+# 			switchPort.write("\r\n".encode('utf-8'))
+# 			bytes_to_read = switchPort.inWaiting()
+# 		else:
+# 			switchPort.flushInput()
+# 			switchPort.write(text.encode('utf-8'))
+# 			bytes_to_read = switchPort.inWaiting()
+	
+# 	print("Audited " + audit.action + " @ time " + str(audit.timestamp))
+# 	return HttpResponseRedirect(json.dumps(JSONer))
+
+>>>>>>> cebbb2d497098c17f8c5ee61ee54118e396e8452
 # serial reader/sender end	
 	
 @login_required(login_url="/login")
@@ -529,10 +654,17 @@ def createGroup(request):
 	JSONer = {}
 	parsedData = urlparse.urlparse(request.get_full_path())
 	name = (urlparse.parse_qs(parsedData.query)['groupName'][0])
+<<<<<<< HEAD
 	
 	groupnameisvalid = True
 	groupnameerrormessage = ""
 	
+=======
+	
+	groupnameisvalid = True
+	groupnameerrormessage = ""
+	
+>>>>>>> cebbb2d497098c17f8c5ee61ee54118e396e8452
 	if(Group.objects.filter(name = name).count() > 0 ):
 		groupnameerrormessage = "Group name is taken"
 		groupnameisvalid = False
