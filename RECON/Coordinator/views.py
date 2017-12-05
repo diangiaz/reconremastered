@@ -106,11 +106,12 @@ def inputSend(request):
 	
 	device = Device.objects.filter(id = deviceID)[0]
 	
-	audit = Log()
-	audit.device = device
-	audit.user = request.user
-	audit.action = text
-	audit.save()
+	if (text != "" | text != "return"):	
+		audit = Log()
+		audit.device = device
+		audit.user = request.user
+		audit.action = text
+		audit.save()
 	
 	if (text == "return"):
 		text = "\r"

@@ -37,7 +37,6 @@ switchport access vlan 103
 int fa0/4
 switchport mode access
 switchport access vlan 104
-
 int vlan 1
 no shut
 ip add 192.168.1.2 255.255.255.0
