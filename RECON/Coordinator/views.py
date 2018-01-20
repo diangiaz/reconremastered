@@ -48,47 +48,47 @@ def userPage(request):
 # serial reader/sender start
 strBuilder1 = ""
 strBuilder2 = ""
-mainSwitchPort = serial.Serial("COM4", 9600)
-routerPort = serial.Serial("COM5", 9600)
-switchPort = serial.Serial("COM3", 9600)
+# mainSwitchPort = serial.Serial("COM4", 9600)
+# routerPort = serial.Serial("COM5", 9600)
+# switchPort = serial.Serial("COM3", 9600)
 
-class Receiver1(Thread):
-		def __init__(self, routerPort): 
-			Thread.__init__(self) 
-			self.serialPort = routerPort
-		def run(self):
-			global routerPort
-			global strBuilder1
-			text = "" 
-			while (text != "exitReceiverThread\n"): 
-				text = routerPort.readline()
-				strBuilder1 += text.decode() + "\n"
-				print("Router output is" + strBuilder1)
+# class Receiver1(Thread):
+		# def __init__(self, routerPort): 
+			# Thread.__init__(self) 
+			# self.serialPort = routerPort
+		# def run(self):
+			# global routerPort
+			# global strBuilder1
+			# text = "" 
+			# while (text != "exitReceiverThread\n"): 
+				# text = routerPort.readline()
+				# strBuilder1 += text.decode() + "\n"
+				# print("Router output is" + strBuilder1)
 			
-			self.serialPort.close()
+			# self.serialPort.close()
 			
-receive = Receiver1(routerPort) 
-receive.start()
+# receive = Receiver1(routerPort) 
+# receive.start()
 
 # Serial port 2 (Switch)
 
-class Receiver2(Thread):
-		def __init__(self, switchPort): 
-			Thread.__init__(self) 
-			self.serialPort = switchPort
-		def run(self):
-			global switchPort
-			global strBuilder2
-			text = "" 
-			while (text != "exitReceiverThread\n"): 
-				text = switchPort.readline()
-				strBuilder2 += text.decode() + "\n"
-				print("Switch output is" + strBuilder2)
+# class Receiver2(Thread):
+		# def __init__(self, switchPort): 
+			# Thread.__init__(self) 
+			# self.serialPort = switchPort
+		# def run(self):
+			# global switchPort
+			# global strBuilder2
+			# text = "" 
+			# while (text != "exitReceiverThread\n"): 
+				# text = switchPort.readline()
+				# strBuilder2 += text.decode() + "\n"
+				# print("Switch output is" + strBuilder2)
 			
-			self.serialPort.close()
+			# self.serialPort.close()
 			
-receive2 = Receiver2(switchPort) 
-receive2.start()
+# receive2 = Receiver2(switchPort) 
+# receive2.start()
 
 def getSerialOutput(request):
 	global strBuilder1
@@ -106,12 +106,16 @@ def inputSend(request):
 	
 	device = Device.objects.filter(id = deviceID)[0]
 	
-	if (text != "" | text != "return"):	
+	print("input received")
+	print("input is " + text)
+	
+	if (text != "return"):	
 		audit = Log()
 		audit.device = device
 		audit.user = request.user
 		audit.action = text
 		audit.save()
+		print("Audited " + audit.action + " @ time " + str(audit.timestamp))
 	
 	if (text == "return"):
 		text = "\r"
@@ -122,17 +126,16 @@ def inputSend(request):
 	
 	# REMEMBER TO CHANGE THIS
 	
-	if deviceID == '1':
-			routerPort.flushInput()
-			routerPort.write(text.encode('utf-8'))
-			bytes_to_read = routerPort.inWaiting()
+	# if deviceID == '1':
+			# routerPort.flushInput()
+			# routerPort.write(text.encode('utf-8'))
+			# bytes_to_read = routerPort.inWaiting()
 			
-	if deviceID == '2':
-			switchPort.flushInput()
-			switchPort.write(text.encode('utf-8'))
-			bytes_to_read = switchPort.inWaiting()
+	# if deviceID == '2':
+			# switchPort.flushInput()
+			# switchPort.write(text.encode('utf-8'))
+			# bytes_to_read = switchPort.inWaiting()
 	
-	print("Audited " + audit.action + " @ time " + str(audit.timestamp))
 	return HttpResponseRedirect(json.dumps(JSONer))
 
 # serial reader/sender end	
@@ -163,11 +166,11 @@ def connectDevices(request):
 	vlan1 = "10" + port1.split("/",1)[1]
 	vlan2 = "10" + port2.split("/",1)[1]
 	
-	text = "\renable\nconfigure terminal\ninterface range " + port1 +", " + port2 +"\nswitchport mode access\nswitchport access vlan " + vlan1 + "\nexit"	
-	print("connected devices")
-	mainSwitchPort.flushInput()
-	mainSwitchPort.write(text.encode('utf-8'))
-	bytes_to_read = mainSwitchPort.inWaiting()
+	# text = "\renable\nconfigure terminal\ninterface range " + port1 +", " + port2 +"\nswitchport mode access\nswitchport access vlan " + vlan1 + "\nexit"	
+	# print("connected devices")
+	# mainSwitchPort.flushInput()
+	# mainSwitchPort.write(text.encode('utf-8'))
+	# bytes_to_read = mainSwitchPort.inWaiting()
 	
 	return HttpResponse(json.dumps(JSONer))
 	
@@ -201,9 +204,9 @@ def disconnectDevices(request):
 	text += "\renable\nconfigure terminal\ninterface " + port2 +"\nswitchport mode access\nswitchport access vlan " + vlan2 + "\nexit"	
 	print(text)
 	print("Disconnected")
-	mainSwitchPort.flushInput()
-	mainSwitchPort.write(text.encode('utf-8'))
-	bytes_to_read = mainSwitchPort.inWaiting()	
+	# mainSwitchPort.flushInput()
+	# mainSwitchPort.write(text.encode('utf-8'))
+	# bytes_to_read = mainSwitchPort.inWaiting()	
 	
 	return HttpResponse(json.dumps(JSONer))
 @login_required(login_url="/login")	
