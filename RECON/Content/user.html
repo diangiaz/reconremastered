@@ -1,0 +1,675 @@
+{% load static %}
+
+<!DOCTYPE html>
+<link rel="shortcut icon" type="image/png" href="{% static '/production/images/recon.ico' %}">
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title> Home | RECON Remastered</title>
+
+    <!-- Bootstrap -->
+    <link href="{% static '/vendors/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="{% static '/vendors/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
+    <!-- NProgress -->
+    <link href="{% static '/vendors/nprogress/nprogress.css' %}" rel="stylesheet">
+    <!-- iCheck -->
+    <link href="{% static '/vendors/iCheck/skins/flat/green.css' %}" rel="stylesheet">
+    <!-- More Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <!-- bootstrap-daterangepicker -->
+    <link href="{% static '/vendors/bootstrap-daterangepicker/daterangepicker.css' %}" rel="stylesheet">
+    <!-- bootstrap-datetimepicker -->
+    <link href="{% static '/vendors/bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css' %}" rel="stylesheet">
+
+    <!-- Custom Theme Style -->
+    <link href="{% static '/build/css/custom.min.css' %}" rel="stylesheet">
+	
+	<script>
+		var staticlink = {% static '' %};
+	</script>
+  </head>
+
+  <body class="nav-md">
+    <div class="container body">
+      <div class="main_container">
+
+        <!-- top navigation -->
+        <div class="top_nav">
+          <div class="nav_menu">
+            <nav>
+              <div class="nav toggle">
+              	<div class="site_logo">
+              		<img src="{% static '/production/images/logo4-sm.png' %}" class="nav-img-logo2" id="reconLogo2">
+              		<img src="{% static '/production/images/logo4.png' %}" class="nav-img-logo" id="reconLogo">
+	                <div class="buttonPadding">
+										<span data-toggle="modal" data-target="#saveWork">	
+											<button class="btn btn-default" type="button" data-toggle="tooltip" data-placement="bottom" title="Save Topology" style="margin-right:10px"><i class="fa fa-save"></i></button>
+										</span>
+										<span data-toggle="modal" data-target="#loadFile">
+			                <button class="btn btn-default" type="button" data-toggle="tooltip" data-placement="bottom" title="Open File" style="margin-right:10px"><i class="fa fa-download"></i></button>
+			              </span>
+										<span data-toggle="modal" data-target="#reserveDevice-{{current_user.profile.group.id}}">
+		                	<button class="btn btn-default" type="button" data-toggle="tooltip" data-placement="bottom" title="Reserve Device" style="margin-right:10px"><i class="fa fa-calendar"></i></button>
+		                </span>
+									</div>              		
+              	</div>
+
+              	<ul class="nav-logout" >
+									<li> {{ current_user.username }}
+	              	<a data-toggle="tooltip" data-placement="top" title="Logout" href="/logout/">               
+		                <span id="signout" class="fa fa-sign-out"></span>
+		              </a>
+		              </li>
+	              </ul>
+              </div>
+            </nav>
+          </div>
+        </div>
+        <!-- /top navigation -->
+
+        <!-- page content -->
+        <div class="right_col" role="main">
+        	<div class="">
+	      		<div class="clearfix"></div>
+	      		 {% if messages %}
+                  <ul class="messages">
+                      {% for message in messages %}
+                      {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                      
+                      <div class="x_content bs-example-popovers">
+                   <div class="alert alert-success alert-dismissible fade in" role="alert">
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span>
+                      </button>
+                      <strong>{{message}}</strong>
+                   </div>
+                  </div>
+                      
+                      {% endif %}
+                      {% endfor %}
+                  </ul>
+                  {% endif %}
+
+                  {% if messages %}
+                  <ul class="messages">
+                      {% for message in messages %}
+                      {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                      
+                      <div class="x_content bs-example-popovers" style="margin-top: 10px">
+                    <div class="alert alert-danger alert-dismissible fade in" role="alert">
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span>
+                      </button>
+                      <i class="fa fa-times-circle pull-left" style="font-size: 35px"></i>
+                      <div class="media-body" >
+                        <strong>ERROR!</strong>
+                        <br>
+                        {{message}}
+                      </div>
+                    </div>
+                  </div>
+                      
+                      {% endif %}
+                      {% endfor %}
+                  </ul>
+                  {% endif %}
+		        <div class="row">
+							<div class="col-md-12 col-sm-12 col-xs-12">
+								<div class="x_panel" style="padding-top: 5px;padding-bottom: 5px;">
+									<div class="x_content" id="Content">								
+										<div class="canvas-position">                    
+											<div id="DivWorkspace" style="border: 1px solid #e5e5e5; overflow: auto; background-color: #fff;">
+												<canvas id="Workspace" style="background-color: #fff;" ondrop="EvtOnDrop(event)" ondragover="EvtOnDragOver(event)" onclick="EvtOnDraw(event)"></canvas>
+											</div>
+										</div>
+										<div class="tab-position">
+						                  <div class="x_content" style="padding: 0; height: 300px;">
+						                    <div class="col-xs-3" style="padding-left: 0;">
+						                      <!-- required for floating -->
+						                      <!-- Nav tabs -->
+						                      <ul class="nav nav-tabs tabs-left" style="height: 450px; border:0;">
+						                        <li class="active"><a href="#devicesPanel" data-toggle="tab" id="devicesTab">Devices</a>
+						                        </li>
+
+						                        {% for gtd in grouptodevice %}
+						                         {% ifequal current_user.profile.group.id gtd.group.id %}
+						                          {% ifequal gtd.type 'AP' %}
+												  {% if gtd.startDateTime <= today and gtd.endDateTime >= today %}
+						                           {% ifequal gtd.device.type 'Router' %}
+						                        <li><a href="#devicePanel-{{gtd.device.id}}" data-toggle="tab" id="devTab-{{gtd.device.id}}">{{gtd.device.name}}</a>
+						                        </li>
+						                           {% endifequal %}
+						                           {% ifequal gtd.device.type 'Switch' %}
+						                        <li><a href="#devicePanel-{{gtd.device.id}}" data-toggle="tab" id="devTab-{{gtd.device.id}}">{{gtd.device.name}}</a>
+						                        </li>
+						                           {% endifequal %}
+						                           {% ifequal gtd.device.type 'Terminal' %}
+						                        <li><a href="#devicePanel-{{gtd.device.id}}" data-toggle="tab" id="devTab-{{gtd.device.id}}">{{gtd.device.name}}</a>
+						                        </li>
+						                           {% endifequal %}
+												   {% endif %}
+						                          {% endifequal %}
+						                         {% endifequal %}
+						                        {% endfor %}
+						                      </ul>
+						                    </div>
+
+						                    <div class="col-xs-9" style="padding: 0;"> 
+						                      <div class="tab-content">
+						                        <div class="tab-pane active" id="devicesPanel">
+						                        	<div class="x_content">
+						                        		<table>
+							                        		<tbody>
+							                        		
+										                     
+							                        			<tr>
+							                        			   {% for gtd in grouptodevice %}	
+							                        				{% ifequal current_user.profile.group.id gtd.group.id %}
+												                       {% ifequal gtd.type 'AP' %}
+																	    {% if gtd.startDateTime <= today and gtd.endDateTime >= today %}
+												                         {% ifequal gtd.device.type 'Router' %}
+							                        				<td class="deviceCell">
+							                        					<img class="deviceIcons" name="{{gtd.device.name}}" id="{{gtd.device.name}}" src="{% static '/production/images/routerIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Router">
+							                        				</td>
+							                        					 {% endifequal %}
+				           								  				 {% ifequal gtd.device.type 'Switch' %}
+							                        				<td class="deviceCell">
+																		<img class="deviceIcons" name="{{gtd.device.name}}" id="{{gtd.device.name}}" src="{% static '/production/images/switchIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Switch">
+																	</td>
+																		 {% endifequal %}
+				           								  				 {% ifequal gtd.device.type 'Terminal' %}
+																	<td class="deviceCell">
+																		<img class="deviceIcons" name="{{gtd.device.name}}" id="{{gtd.device.name}}" src="{% static '/production/images/terminalIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Terminal">
+																	</td>
+																	{% endifequal %}
+																	{% endif %}
+										                          {% endifequal %}
+										                         {% endifequal %}
+										                        {% endfor %}
+							                        			</tr>
+							                        			
+							                        		</tbody>
+							                        	</table>
+						                        	</div>
+						                        	<div class="x_content">
+						                        		<ul class="cable-list" style="padding-left:0">
+															<li><img class="deviceIcons" id="CableLan" src="{% static '/production/images/lan.png' %}" draggable="false" onclick="EvtOnClick(this)" data-toggle="tooltip" data-placement="bottom" title="LAN"></li>
+															<li><img class="deviceIcons" id="CableWan" src="{% static '/production/images/wan.png' %}" draggable="false" onclick="EvtOnClick(this)" data-toggle="tooltip" data-placement="bottom" title="WAN"></li>
+															<li><img class="deviceIcons" id="CableConsole" src="{% static '/production/images/console.png' %}" draggable="false" onclick="EvtOnClick(this)" data-toggle="tooltip" data-placement="bottom" title="Console"></li>
+															<li><img class="deviceIcons" id="CableConsole" src="{% static '/production/images/delete.png' %}" draggable="false" onclick="remove();" data-toggle="tooltip" data-placement="bottom" title="Delete device"></li>
+														</ul>
+						                        	</div>
+						                        	
+						                        </div>
+												
+												{% for gtd in grouptodevice %}	
+							                     {% ifequal current_user.profile.group.id gtd.group.id %}
+												  {% ifequal gtd.type 'AP' %}
+												   {% if gtd.startDateTime <= today and gtd.endDateTime >= today %}
+						                        <div class="tab-pane" id="devicePanel-{{gtd.device.id}}">
+						                        	<textarea class="config" id="configTextArea {{gtd.device.id}}" readonly></textarea>
+					                        	  <div class="form-group command-group">
+					                        	  	<div class="col-sm-12 input-group">
+								                        	<input type="text" class="form-control" placeholder="Input command here" required="required" style="padding:5px;" id="deviceInput {{gtd.device.id}}">
+									                        <span class="input-group-btn">
+									                        	<button type="button" class="btn btn-info" onclick=inputSend{{gtd.device.id}}()>Add</button>
+									                        </span>
+								                        </div>
+								                      </div>
+						                        </div>
+												    {% endif %}
+												   {% endifequal %}
+												  {% endifequal %}
+												 {% endfor %}
+						                      </div>
+						                    </div>                   
+						                  </div>								
+										</div>
+
+										<div id="menu-ports"> 
+											<ul class="custom-menu">
+											   <li data-action="first">First thing</li>
+											</ul>
+										</div>	
+
+									</div>
+								</div>
+							</div>
+		        </div>
+        	</div>
+        </div>
+        <!-- /page content -->
+      </div>
+    </div>
+
+    <!-- CONFIRM DELETE -->
+    <div id="dialogoverlay">
+			<div id="dialogbox">
+			  <div class="modal-content">
+					<div id="dialogboxhead"></div>
+					<div id="dialogboxbody"></div>
+					<div id="dialogboxfoot"></div>
+			  </div>
+			</div>
+		</div>
+		<!-- CONFIRM DELETE -->
+
+    <!--start SAVE -->
+    <div id="saveWork" class="modal fade" role="dialog" aria-hidden="true" style="padding-top: 100px">
+      <div class="modal-dialog">
+        <div class="modal-content">
+        	<div class="modal-header" style="height: 50px;">
+        		<h3 style="display: inline;"><i class="fa fa-edit"></i> Save As</h3>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
+            </button>            
+          </div>
+          <div class="modal-body">
+            <div class="form-horizontal form-label-left">
+            	<div class="form-group">
+	              <label class="control-label col-md-3" for="filename">File name: 
+	              </label>
+	              <div class="col-md-7">
+	              	<input type="text" id="saveTopologyInput" class="form-control">
+	              </div>
+            	</div>
+            </div>
+          </div>              
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary" onClick="saveTopology()">Save</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end SAVE -->
+
+    <!--start LOAD -->
+    <div id="loadFile" class="modal fade" role="dialog" aria-hidden="true" style="padding-top: 100px">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header" style="height: 50px;">
+            <h3 style="display: inline;"><i class="fa fa-download"></i> Open</h3>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
+            </button>  
+          </div>
+          <div class="modal-body">
+            <div class="form-horizontal form-label-left">
+            	<div class="form-group">
+	              <label class="control-label col-md-3" for="filename">File name: 
+	              </label>
+	              <div class="col-md-7">
+	              	<select id="topologyID" class="select2_single form-control" tabindex="-1">
+					{% for topology in topologies %}
+						<option value = {{ topology.pk }}>{{ topology.name }}</option>
+					{% endfor %}
+                  </select>
+	              </div>
+            	</div>
+            </div>
+          </div>              
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary" onClick="loadTopology()">Open</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end LOAD -->
+    {% for groups in groups %}
+    <!--start RESERVE -->
+    <div id="reserveDevice-{{current_user.profile.group.id}}" class="modal fade" role="dialog" aria-hidden="true" style="padding-top: 90px">
+      {% csrf_token %}
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 style="display: inline;"><i class="fa fa-calendar"></i> Reservation Form</h3>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
+            </button>  
+          </div>
+          <div class="modal-body" style="padding-bottom: 0">
+            <div class="form-horizontal form-label-left">
+              <div class="x_content" style="margin-top:0;padding-bottom:10px">
+              	<h2>Available devices:</h2>
+              	<div style="width: 100%;float: left;height: 215px;overflow:auto;" id="availableDevices" data-target-id="datesRes">
+		              <table class="table-width table table-striped jambo_table" style="width: 100%">
+		                <thead>
+		                  <tr>
+		                    <th>Device</th>
+		                    <th style="width: 70%">Dates Reserved</th>
+		                  </tr>
+		                </thead>
+		                <tbody>
+		                {% for devices in devices %}
+		                  <tr>
+		                    <td class="a-center ">
+		                    	<div class="radio">
+		                        <label style="padding-left: 0">
+		                          <input type="radio" id="deviceList-{{devices.id}}" class="flat" name="deviceList" value="{{devices.id}}"> {{devices.name}}
+		                        </label>
+		                      </div>
+		                    </td>
+		                    <td>
+		                    {% for grouptodevice in grouptodevice %}
+		                    	{% ifequal grouptodevice.device.id devices.id %}
+		                    		{% ifequal grouptodevice.type 'AP' %}
+		                    		 {% if grouptodevice.startDateTime >= today and grouptodevice.endDateTime >= today %}
+		                    			{{grouptodevice.startDateTime}} - {{grouptodevice.endDateTime}} <br>
+		                    		 {% endif %}
+		                    		{% endifequal %} 
+		                    	  
+		                    	{% endifequal %}
+
+		                    {% endfor %}
+		                    </td>
+		                  </tr>
+		                 {% endfor %}
+		                </tbody>
+		              </table>
+		             </div>
+	              
+              </div>
+
+              <div class="form-group">
+                <div class="col-md-6 col-sm-6 col-xs-12" style="padding-right: 0">
+              		<label class="control-label col-md-3" style="width: 17%" for="datetimepicker6">Date</label>
+                  <div class='input-group date' id='datetimepicker6'>
+                    <span class="input-group-addon">
+                      <span class="fa fa-calendar-o"></span>
+                    </span>
+                    <input type='text' class="form-control" name='start-date' id='start-date' />
+                    <!-- <span class="input-group-addon">to</span> -->
+                  </div>
+                </div>   
+
+                <div class="col-md-6 col-sm-6 col-xs-12" style="padding-left: 0">
+                	<label class="control-label col-md-3" style="width: 12%" for="datetimepicker7">to</label>
+                  <div class='input-group date' id='datetimepicker7'>
+                    <input type='text' class="form-control" name='end-date' id='end-date' />
+                    <span class="input-group-addon">
+                      <span class="fa fa-calendar-o"></span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>              
+          <div class="modal-footer">
+            <button type="submit" onClick="reserveDeviceAjax({{current_user.id}},{{current_user.profile.group.id}})"  class="btn btn-primary">Reserve</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+     
+    </div>
+    <!-- end RESERVE -->
+    {% endfor %}
+    <!-- jQuery -->
+    <script src="{% static '/vendors/jquery/dist/jquery.min.js' %}"></script>
+    <!-- Bootstrap -->
+    <script src="{% static '/vendors/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+    <!-- FastClick -->
+    <script src="{% static '/vendors/fastclick/lib/fastclick.js' %}"></script>
+    <!-- NProgress -->
+    <script src="{% static '/vendors/nprogress/nprogress.js' %}"></script>
+    <!-- validator -->
+    <script src="{% static '/vendors/validator/validator.js' %}"></script>
+    <!-- iCheck -->
+    <script src="{% static '/vendors/iCheck/icheck.min.js' %}"></script>
+    <!-- bootstrap-daterangepicker -->
+    <script src="{% static '/vendors/moment/min/moment.min.js' %}"></script>
+    <script src="{% static '/vendors/bootstrap-daterangepicker/daterangepicker.js' %}"></script>
+    <!-- bootstrap-datetimepicker -->    
+    <script src="{% static '/vendors/bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js' %}"></script>
+    
+    <!-- Custom Theme Scripts -->
+    <script src="{% static '/build/js/custom.min.js' %}"></script>
+
+     <!-- Initialize datetimepicker -->
+    <script>
+	var datetoday = new Date();
+     $('#datetimepicker6').datetimepicker({
+
+      format: 'YYYY-MM-DD',
+      useCurrent: true,
+      minDate: moment().millisecond(0).second(0).minute(0).hour(0)
+    });
+        
+    $('#datetimepicker7').datetimepicker({
+      
+      format: 'YYYY-MM-DD',
+      useCurrent: false,
+      minDate: moment().millisecond(0).second(0).minute(0).hour(0)
+    });
+    
+    $("#datetimepicker6").on("dp.change", function(e) {
+        $('#datetimepicker7').data("DateTimePicker").minDate(e.date);
+    });
+    
+    $("#datetimepicker7").on("dp.change", function(e) {
+        $('#datetimepicker6').data("DateTimePicker").maxDate(e.date);
+    });
+    </script>
+
+    <!-- RECON REMASTERED Script -->
+    <script src="{% static '/production/js/recon.js' %}"></script>
+    <script> $('input[name="deviceList"]').first().prop('checked', true) </script>
+    <script>
+        function reserveDeviceAjax(userid,groupid){
+          	var startDate = document.getElementById('start-date').value;
+          	var endDate = document.getElementById('end-date').value;
+          	var deviceid;
+          	var radios = document.getElementsByName('deviceList');
+           	for (var i = 0, length = radios.length; i < length; i++) {
+    			if (radios[i].checked) {
+    				deviceid = radios[i].value;
+    				
+    				
+        			break;
+   				}
+			}
+			
+          	console.log(startDate)
+          	console.log(endDate)
+          	console.log(userid)
+          	console.log(groupid)
+          	console.log(deviceid)
+            $.ajax({url: 'http://127.0.0.1:8000/user/reserveDevice?pkid='+ userid + "&groupid=" + groupid + "&deviceList=" + deviceid + "&start-date=" + startDate + "&end-date=" + endDate,
+                success: function(result){
+                  window.location.reload();
+                  // insert success message here
+                }
+            });
+        }
+    </script>
+	
+	<!-- Receiver Scripts Start -->
+	{% for gtd in grouptodevice %}	
+		{% ifequal current_user.profile.group.id gtd.group.id %}
+		{% ifequal gtd.type 'AP' %}
+		{% if gtd.startDateTime <= today and gtd.endDateTime >= today %}
+	<script>
+		setInterval(function(){reloader{{gtd.device.id}}();},1000);
+        
+		function reloader{{gtd.device.id}}(){
+			// if(document.getElementById('configTextArea {{gtd.device.id}}').innerHTML != res['config{{gtd.device.id}}']
+			var textarea = document.getElementById('configTextArea {{gtd.device.id}}'); 
+			textarea.scrollTop = textarea.scrollHeight;
+			$.ajax({url: 'http://127.0.0.1:8000/getouts',
+				success: function(result){
+					var res = JSON.parse(result);
+					document.getElementById('configTextArea {{gtd.device.id}}').innerHTML = res['config{{gtd.device.id}}'];
+				}
+			});
+        }
+    </script>
+	
+		{% endif %}
+		{% endifequal %}
+		{% endifequal %}
+	{% endfor %}
+	<!-- Receiver Scripts End -->
+	
+	<!-- Serial Sender Scripts Start -->
+	{% for gtd in grouptodevice %}	
+		{% ifequal current_user.profile.group.id gtd.group.id %}
+		{% ifequal gtd.type 'AP' %}
+		{% if gtd.startDateTime <= today and gtd.endDateTime >= today %}
+			<script>
+				var inputField = document.getElementById("deviceInput {{gtd.device.id}}");
+				inputField.addEventListener("keydown", function (e) {
+					if (e.keyCode == 13){
+						inputSend{{gtd.device.id}}();
+						}
+				var textarea = document.getElementById('configTextArea {{gtd.device.id}}');
+				textarea.scrollTop = textarea.scrollHeight;
+				});
+				
+				function inputSend{{gtd.device.id}}(){
+					var textarea = document.getElementById('configTextArea {{gtd.device.id}}');
+					textarea.scrollTop = textarea.scrollHeight;
+					
+					var command = document.getElementById("deviceInput {{gtd.device.id}}");
+					var cmd = command.value;
+					if (!cmd){
+						cmd = "return"	
+						console.log("Command is empty")
+					}
+					
+					$.ajax({url: "http://127.0.0.1:8000/inputSend?input=" + cmd + "&deviceId={{gtd.device.id}}",
+					});
+					
+					document.getElementById("deviceInput {{gtd.device.id}}").value = "";
+					
+					console.log("Input: " + cmd)
+					
+					textarea.scrollTop = textarea.scrollHeight;
+				}
+			</script>
+		{% endif %}
+		{% endifequal %}
+		{% endifequal %}
+	{% endfor %}
+	
+	<!-- Serial Sender Scripts End -->
+	
+	<!-- Save/Load Functions Start -->
+	<script>
+		function loadTopology(){
+			var topologyID = document.getElementById('topologyID').value;
+			window.location = "http://127.0.0.1:8000/loadTopology?topologyID=" + topologyID + "&newload=1";
+		}
+		
+		function saveTopology(){
+			var topologyName = document.getElementById('saveTopologyInput').value;
+			$.ajax({url: "http://127.0.0.1:8000/saveTopology?topologyName=" + topologyName,
+				});
+			window.setTimeout(saveDevices, 200);
+			window.setTimeout(saveConnections, 200);
+		}
+		
+		function saveDevices(){
+			var deviceArrayLength = Devices.length;
+			for (var ctr = 0; ctr < deviceArrayLength; ctr++) {		
+				$.ajax({url: "http://127.0.0.1:8000/saveDevice?deviceName=" + Devices[ctr].name + "&x=" + Devices[ctr].x + "&y=" + Devices[ctr].y,
+				});
+			}
+			console.log("Saved Devices")
+		}
+		
+		function saveConnections(){
+			var connectionsArrayLength = Cables.length;
+			for (var ctr = 0; ctr < connectionsArrayLength; ctr++) {		
+				$.ajax({url: "http://127.0.0.1:8000/saveConnection?startX=" + Cables[ctr].startpointx + "&startY=" + Cables[ctr].startpointy + "&endX=" + Cables[ctr].endpointx + "&endY=" + Cables[ctr].endpointy + "&srcDevice=" + Cables[ctr].startdevice + "&endDevice=" + Cables[ctr].enddevice + "&srcPort=" + Cables[ctr].startport + "&endPort=" + Cables[ctr].endport + "&connectionName=" + Cables[ctr].name,
+				});
+			}
+			console.log("Saved Connections")
+		}
+	</script>
+	<!-- Save/Load Functions End -->
+
+	<!-- Canvass Loader -->		
+	<script>
+		if ("{{currTopology}}" != "")
+			console.log("Loaded {{ currTopology }}");
+		document.getElementById("saveTopologyInput").value="{{ currTopology }}";
+	</script>
+	
+	{% for device in loadDevices %}
+	<script>
+		var loaddeviceImage = new Image();
+		var loaddeviceName = "{{ device.deviceName }}";
+		var loaddeviceHeight;
+		var loaddeviceWidth;
+		var loadPosX = {{ device.xCord }};
+		var loadPosY = {{ device.yCord}};
+		if(loaddeviceName.includes("Router")){
+			loaddeviceImage.src = "{% static '/production/images/Router.png' %}";
+			loaddeviceHeight = 38;
+			loaddeviceWidth = 64;
+		} else if(loaddeviceName.includes("Switch")){
+			loaddeviceImage.src = "{% static '/production/images/Switch.png' %}";
+			loaddeviceHeight = 38;
+			loaddeviceWidth = 64;
+		} else if(loaddeviceName.includes("Terminal")){
+			loaddeviceImage.src = "{% static '/production/images/Terminal.png' %}";
+			loaddeviceHeight = 54;
+			loaddeviceWidth = 62;
+		}
+		
+		
+		var loadedDevice = { object:loaddeviceImage, x:loadPosX, y:loadPosY, height:loaddeviceHeight, width:loaddeviceWidth, name:loaddeviceName};
+		
+		Devices.push(loadedDevice);	
+		
+		var i = document.getElementById(loaddeviceName);
+		i.draggable = false;
+		i.onclick = false;	
+		
+		WorkspaceRepaint();
+		
+		
+		
+	</script>
+	{% endfor %}
+	
+	{% for connection in connections %}
+	<script>
+		var name = "{{ connection.connectionName }}";
+		var srcDevice = "{{ connection.srcDevice }}";
+		var endDevice = "{{ connection.endDevice }}";
+		var srcPort = "{{ connection.srcPort }}";
+		var endPort = "{{ connection.endPort }}";
+		var cableType = {{ connection.cableType }};
+		var startX = {{ connection.startX }};
+		var startY = {{ connection.startY }};
+		var endX = {{ connection.endX }};
+		var endY = {{ connection.endY }};
+		
+		var loadCable = {startpointx: startX, startpointy: startY, endpointx: endX, endpointy: endY, startdevice: srcDevice, enddevice: endDevice, startport:srcPort, endport:endPort, name:name};
+		Cables.push(loadCable);
+		
+		console.log("Saved a cable")
+		
+		WorkspaceRepaint();
+	</script>
+	{% endfor %}
+	
+	<script>
+		var load = "{{load}}";
+		if (load == "")
+			loadInt = 0;
+		else if (load == "1")
+			loadInt = 1;
+		else if (load == "0")
+			loadInt = 0;
+			
+		if (loadInt == 1)
+			window.location = "http://127.0.0.1:8000/loadTopology?topologyID={{currTopologyID}}&newload=0";
+	</script>
+	<!-- Canvass Loader End -->	
+  </body>
+</html>

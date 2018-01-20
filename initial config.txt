@@ -1,0 +1,50 @@
+main switch
+
+enable
+conf t
+int fa0/1
+switchport mode access
+switchport access vlan 1
+int fa0/2
+switchport mode access
+switchport access vlan 2
+int fa0/3
+switchport mode access
+switchport access vlan 3
+int fa0/4
+switchport mode access
+switchport access vlan 4
+int fa0/5
+switchport mode access
+switchport access vlan 5
+int fa0/6
+switchport mode access
+switchport access vlan 6
+
+
+switch 1
+enable
+conf t
+int fa0/1
+switchport mode access
+switchport access vlan 101
+int fa0/2
+switchport mode access
+switchport access vlan 102
+int fa0/3
+switchport mode access
+switchport access vlan 103
+int fa0/4
+switchport mode access
+switchport access vlan 104
+int vlan 1
+no shut
+ip add 192.168.1.2 255.255.255.0
+
+
+router 1 
+enable
+conf t
+int fa0/0
+ip add 192.168.1.1 255.255.255.0
+no shut

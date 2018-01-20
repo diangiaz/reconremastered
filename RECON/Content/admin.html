@@ -1,0 +1,1284 @@
+{% load static %}
+<!DOCTYPE html>
+<link rel="shortcut icon" type="image/png" href="{% static '/images/recon.ico' %}">
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Home | RECON Remastered</title>
+
+    <!--Calender-->
+    <link rel="stylesheet" href="{% static '/production/css/clndr.css' %}" type="text/css"/>
+    <link href="{% static '/production/css/style.css' %}" rel="stylesheet" type="text/css"/>
+    <!-- Bootstrap -->
+    <link href="{% static '/vendors/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="{% static '/vendors/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
+    <!-- NProgress -->
+    <link href="{% static '/vendors/nprogress/nprogress.css' %}" rel="stylesheet">
+    <!-- iCheck -->
+    <link href="{% static '/vendors/iCheck/skins/flat/green.css' %}" rel="stylesheet">
+    <!-- bootstrap-wysiwyg -->
+    <link href="{% static '/vendors/google-code-prettify/bin/prettify.min.css' %}" rel="stylesheet">
+    <!-- bootstrap-daterangepicker -->
+    <link href="{% static '/vendors/bootstrap-daterangepicker/daterangepicker.css' %}" rel="stylesheet">
+    <!-- bootstrap-datetimepicker -->
+    <link href="{% static '/vendors/bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css' %}" rel="stylesheet">
+    <!-- Datatables -->
+    <link href="{% static '/vendors/datatables.net-bs/css/dataTables.bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static '/vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static '/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css' %}" rel="stylesheet">
+    
+
+    <!-- Custom Theme Style -->
+    <link href="{% static '/build/css/custom.min.css' %}" rel="stylesheet">
+  </head>
+
+  <body class="nav-md">
+    <div class="container body">
+      <div class="main_container">        
+
+        <!-- top navigation -->
+        <div class="top_nav">
+          <div class="nav_menu">
+            <nav>
+              <div class="nav toggle">
+                <div class="site_logo" id="navButtons">
+                  <img src="{% static '/production/images/logo4-sm.png' %}" class="nav-img-logo2" id="reconLogo2">
+                  <img src="{% static '/production/images/logo4.png' %}" class="nav-img-logo" id="reconLogo">
+                  <div class="buttonPadding"> 
+                    <span data-toggle="tooltip" data-placement="bottom" title="Home">  
+                    <!-- <span data-toggle="modal" data-target="#">   -->
+                      <button class="btn btn-default" id="navButton" type="button" onclick="toggleVisibility('divHome')" style="margin-right:10px"><i class="fa fa-home"></i></button>
+                    </span>
+                    <span data-toggle="tooltip" data-placement="bottom" title="Create Account">
+                    <!-- <span data-toggle="modal" data-target="#createAcct">   -->
+                      <button class="btn btn-default" id="navButton" type="button" onclick="toggleVisibility('divCreate')" style="margin-right:10px"><i class="fa fa-user"></i></button>
+                    </span>
+                    <span data-toggle="modal" data-target="#createGroup">
+                      <button class="btn btn-default" id="navButton" type="button" data-toggle="tooltip" data-placement="bottom" title="Create Group" style="margin-right:10px"><i class="fa fa-users"></i></button>
+                    </span>
+                    <span data-toggle="tooltip" data-placement="bottom" title="Audit Logs">
+                    <!-- <span data-toggle="modal" data-target="#auditLogs"> -->
+                      <button class="btn btn-default" id="navButton" type="button" onclick="toggleVisibility('divAudit')" style="margin-right:10px"><i class="fa fa-list"></i></button>
+                    </span>
+                    <span data-toggle="modal" data-target="#allocateModal-{{current_user.id}}">
+                      <button class="btn btn-default" id="navButton" type="button" data-toggle="tooltip" data-placement="bottom" title="Allocate Device" style="margin-right:10px"><i class="fa fa-cogs"></i></button>
+                    </span>
+                    <span data-toggle="modal" data-target="#approveRes-{{user.id}}">
+                      <button class="btn btn-default" id="navButton" type="button" data-toggle="tooltip" data-placement="bottom" title="Reservations" style="margin-right:10px"><i class="fa fa-exclamation-circle"></i></button>
+                    </span>
+                  </div>                  
+                </div>
+
+                <ul class="nav-logout" >
+                  <li> {{ current_user.username }}
+                    <a data-toggle="tooltip" data-placement="top" title="Logout" href="/logout/">               
+                      <span id="signout" class="fa fa-sign-out"></span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </nav>
+          </div>
+        </div>
+        <!-- /top navigation -->
+
+        <!-- page content -->
+        <div class="right_col" role="main">
+          <div class="">
+            <div class="clearfix"></div>
+
+            <div class="row" id="divHome">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel" style="padding:10px 17px;">
+                  <div class="x_title">
+                    <h2>Manage Groups and Devices</h2>
+                    <div class="clearfix"></div>
+
+                  </div>
+                 {% if messages %}
+                  <ul class="messages">
+                      {% for message in messages %}
+                      {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                      
+                      <div class="x_content bs-example-popovers">
+                   <div class="alert alert-success alert-dismissible fade in" role="alert">
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span>
+                      </button>
+                      <strong>{{message}}</strong>
+                   </div>
+                  </div>
+                      
+                      {% endif %}
+                      {% endfor %}
+                  </ul>
+                  {% endif %}
+
+                  {% if messages %}
+                  <ul class="messages">
+                      {% for message in messages %}
+                      {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                      
+                      <div class="x_content bs-example-popovers" style="margin-top: 10px">
+                    <div class="alert alert-danger alert-dismissible fade in" role="alert">
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span>
+                      </button>
+                      <i class="fa fa-times-circle pull-left" style="font-size: 35px"></i>
+                      <div class="media-body" >
+                        <strong>ERROR!</strong>
+                        <br>
+                        {{message}}
+                      </div>
+                    </div>
+                  </div>
+                      
+                      {% endif %}
+                      {% endfor %}
+                  </ul>
+                  {% endif %}
+                  
+              
+                   
+                  
+                  <div class="x_content">
+                    <div class="col-md-9" style="padding-left: 0;width: 80%" id="testRefresh">
+                         <table id="datatable" class="table table-striped table-bordered projects dt-responsive" style="border:0; width: 100%">
+                          <thead>
+                            <tr>
+                              <th style="text-align: center; width:5%; font-weight: 700">Group</th>
+                              <th style="text-align: center; width:5%; font-weight: 700">Member</th>
+                              <th style="text-align: center; width:10%; font-weight: 700">Router</th>
+                              <th style="text-align: center; width:10%; font-weight: 700">Switch</th>
+                              <th style="text-align: center; width:10%; font-weight: 700">Terminal</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            
+                          {% for groups in groups %}
+                            
+                            <tr>                              
+                              <td>                                
+                                <a href="#editGrp-{{groups.id}}" data-toggle="modal"><strong>{{ groups.name }}</strong></a>
+                                
+                                <br />
+                          
+                              </td>
+
+                              <td>
+                              <ul class="list-unstyled">
+                              {% for user in users %}
+                                {% ifequal user.profile.group.id groups.id %}
+                                <li><a href="#editAcct-{{user.id}}" data-toggle="modal">{{user.username}}</a></li>
+                                
+                                {% endifequal %}
+                              {% endfor %}
+                              </ul>
+                            </td>
+                            
+
+                            <td>
+                            {% for gtd in grouptodevice %}
+                             {% ifequal gtd.group.id groups.id %}
+                              {% ifequal gtd.type 'AP' %}
+                               {% if gtd.endDateTime >= today %}
+                               {% ifequal gtd.device.type 'Router' %}
+                                <ul class="allocatedDev-list">
+                                  <li style="padding-left: 0">                                 
+                                    <a>
+                                      <img src="{% static 'production/images/routerAvatar.png' %}" class="avatar" alt="Avatar" style="margin-right: 6px">
+                                      <strong>{{gtd.device.name}}</strong>
+                                      <br/>
+                                      <small>{{ gtd.startDateTime }} - {{ gtd.endDateTime }}</small>
+                                    </a>
+                                  </li>
+                                </ul>
+                               {% endifequal %}
+                               {% endif %}
+                              {% endifequal %}                            
+                             {% endifequal %}
+                            {% endfor %}
+                            </td>
+                            <td>
+                            {% for gtd in grouptodevice %}
+                             {% ifequal gtd.group.id groups.id %}
+                              {% ifequal gtd.type 'AP' %}
+                              {% if gtd.endDateTime >= today %}
+                               {% ifequal gtd.device.type 'Switch' %}
+                                <ul class="allocatedDev-list">
+                                  <li style="padding-left: 0">                                 
+                                    <a>
+                                      <img src="{% static 'production/images/switchAvatar.png' %}" class="avatar" alt="Avatar" style="margin-right: 6px">
+                                      <strong>{{gtd.device.name}}</strong>
+                                      <br/>
+                                      <small>{{ gtd.startDateTime }} - {{ gtd.endDateTime }}</small>
+                                    </a>
+                                  </li>
+                                </ul>
+                               {% endifequal %}
+                               {% endif %}
+                              {% endifequal %}
+                             {% endifequal %}                             
+                            {% endfor %}
+                            </td>
+                            <td>
+                            {% for gtd in grouptodevice %}
+                             {% ifequal gtd.group.id groups.id %}
+                              {% ifequal gtd.type 'AP' %}
+                              {% if gtd.endDateTime >= today %}
+                               {% ifequal gtd.device.type 'Terminal' %}
+                                <ul class="allocatedDev-list">
+                                  <li style="padding-left: 0">                                 
+                                    <a>
+                                      <img src="{% static 'production/images/terminalAvatar.png' %}" class="avatar" alt="Avatar" style="margin-right: 6px">
+                                      <strong>{{gtd.device.name}}</strong>
+                                      <br/>
+                                      <small>{{ gtd.startDateTime }} - {{ gtd.endDateTime }}</small>
+                                    </a>
+                                  </li>
+                                </ul>
+                               {% endifequal %}
+                               {% endif %}
+                              {% endifequal %}
+                             {% endifequal %}
+                            {% endfor %}
+                            </td>        
+                            </tr>
+                         
+                          {% endfor %}
+
+                            
+
+                          </tbody>
+                          
+                        </table>                      
+                    </div>
+
+                    <div class="col-md-3 mail_view" style="width: 20%;padding-right: 0">
+                      <div class="calnder">
+                        <div class="column_right_grid calender">
+                          <div class="cal1">
+                            <div class="clndr">
+                              <div class="clndr-controls">
+                                <div class="clndr-control-button">
+                                  <p class="clndr-previous-button"></p>
+                                </div>
+                                <div class="month"></div>
+                                <div class="clndr-control-button rightalign">
+                                  <p class="clndr-next-button"></p>
+                                </div>
+                              </div>
+                              <table class="clndr-table">
+                                <thead>
+                                  <tr class="header-days">
+                                    <td class="header-day">SUN</td>
+                                    <td class="header-day">MON</td>
+                                    <td class="header-day">TUE</td>
+                                    <td class="header-day">WED</td>
+                                    <td class="header-day">THU</td>
+                                    <td class="header-day">FRI</td>
+                                    <td class="header-day">SAT</td>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr>
+                                    <td class="day past adjacent-month last-month calendar-day-2015-04-26"><div class="day-contents">26</div></td>
+                                    <td class="day past adjacent-month last-month calendar-day-2015-04-27"><div class="day-contents">27</div></td>
+                                    <td class="day past adjacent-month last-month calendar-day-2015-04-28"><div class="day-contents">28</div></td>
+                                    <td class="day past adjacent-month last-month calendar-day-2015-04-29"><div class="day-contents">29</div></td>
+                                    <td class="day past adjacent-month last-month calendar-day-2015-04-30"><div class="day-contents">30</div></td>
+                                    <td class="day past calendar-day-2015-05-01"><div class="day-contents">1</div></td>
+                                    <td class="day past calendar-day-2015-05-02"><div class="day-contents">2</div></td>
+                                  </tr>
+                                  <tr>
+                                    <td class="day past calendar-day-2015-05-03"><div class="day-contents">3</div></td>
+                                    <td class="day past calendar-day-2015-05-04"><div class="day-contents">4</div></td>
+                                    <td class="day past calendar-day-2015-05-05"><div class="day-contents">5</div></td>
+                                    <td class="day past calendar-day-2015-05-06"><div class="day-contents">6</div></td>
+                                    <td class="day past calendar-day-2015-05-07"><div class="day-contents">7</div></td>
+                                    <td class="day past calendar-day-2015-05-08"><div class="day-contents">8</div></td>
+                                    <td class="day past calendar-day-2015-05-09"><div class="day-contents">9</div></td>
+                                  </tr>
+                                  <tr>
+                                    <td class="day past event calendar-day-2015-05-10"><div class="day-contents">10</div></td>
+                                    <td class="day past event calendar-day-2015-05-11"><div class="day-contents">11</div></td>
+                                    <td class="day past event calendar-day-2015-05-12"><div class="day-contents">12</div></td>
+                                    <td class="day past event calendar-day-2015-05-13"><div class="day-contents">13</div></td>
+                                    <td class="day today event calendar-day-2015-05-14"><div class="day-contents">14</div></td>
+                                    <td class="day calendar-day-2015-05-15"><div class="day-contents">15</div></td>
+                                    <td class="day calendar-day-2015-05-16"><div class="day-contents">16</div></td>
+                                  </tr>
+                                  <tr>
+                                    <td class="day calendar-day-2015-05-17"><div class="day-contents">17</div></td>
+                                    <td class="day calendar-day-2015-05-18"><div class="day-contents">18</div></td>
+                                    <td class="day calendar-day-2015-05-19"><div class="day-contents">19</div></td>
+                                    <td class="day calendar-day-2015-05-20"><div class="day-contents">20</div></td>
+                                    <td class="day event calendar-day-2015-05-21"><div class="day-contents">21</div></td>
+                                    <td class="day event calendar-day-2015-05-22"><div class="day-contents">22</div></td>
+                                    <td class="day event calendar-day-2015-05-23"><div class="day-contents">23</div></td>
+                                  </tr>
+                                  <tr>
+                                    <td class="day calendar-day-2015-05-24"><div class="day-contents">24</div></td>
+                                    <td class="day calendar-day-2015-05-25"><div class="day-contents">25</div></td>
+                                    <td class="day calendar-day-2015-05-26"><div class="day-contents">26</div></td>
+                                    <td class="day calendar-day-2015-05-27"><div class="day-contents">27</div></td>
+                                    <td class="day calendar-day-2015-05-28"><div class="day-contents">28</div></td>
+                                    <td class="day calendar-day-2015-05-29"><div class="day-contents">29</div></td>
+                                    <td class="day calendar-day-2015-05-30"><div class="day-contents">30</div></td>
+                                  </tr>
+                                  <tr>
+                                    <td class="day calendar-day-2015-05-31"><div class="day-contents">31</div></td>
+                                    <td class="day adjacent-month next-month calendar-day-2015-06-01"><div class="day-contents">1</div></td>
+                                    <td class="day adjacent-month next-month calendar-day-2015-06-02"><div class="day-contents">2</div></td>
+                                    <td class="day adjacent-month next-month calendar-day-2015-06-03"><div class="day-contents">3</div></td>
+                                    <td class="day adjacent-month next-month calendar-day-2015-06-04"><div class="day-contents">4</div></td>
+                                    <td class="day adjacent-month next-month calendar-day-2015-06-05"><div class="day-contents">5</div></td>
+                                    <td class="day adjacent-month next-month calendar-day-2015-06-06"><div class="day-contents">6</div></td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row" id="divCreate" style="display: none;">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel" style="padding:10px 17px;">
+                  <div class="x_title">
+                    <h2>Employee Information</h2>                    
+					
+					<div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <br />
+                    <div class="col-md-8 col-sm-8 col-md-offset-2 col-xs-12">
+                      <div class="form-horizontal form-label-left">
+                        <div class="form-group">
+                          <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+                            <input id="createEmployeeID" type="number" class="form-control has-feedback-left" placeholder="Employee ID *" required="required">
+							<font id="error-employee-id"></font>
+                            <span class="fa fa-hashtag form-control-feedback left" aria-hidden="true"></span>
+                          </div>
+
+                          <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+                            <input id="createEmail" type="mail" class="form-control has-feedback"  placeholder="Email *" required="required" data-validate-linked="email">
+							<font id="error-employee-email"></font>
+                            <span class="fa fa-envelope form-control-feedback right" aria-hidden="true"></span>
+                          </div>                                                  
+                        </div>
+
+                        <div class="form-group">                        
+                          <div class="col-md-6 col-sm-6 col-xs-12 item form-group has-feedback">
+                            <input id="createFirstName" type="text" class="form-control has-feedback-left" placeholder="First Name *" required="required">
+							<font id="error-employee-first-name"></font>
+                            <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+							
+                          </div>
+
+                          <div class="col-md-6 col-sm-6 col-xs-12 item form-group has-feedback">
+                            <input id="createLastName" type="text" class="form-control has-feedback" placeholder="Last Name *" required="required">
+							<font id="error-employee-last-name"></font>
+                            <span class="fa fa-user form-control-feedback right" aria-hidden="true"></span>
+                          </div>  
+                        </div>
+
+                        <div class="form-group">
+                          <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+                            <input id="createUserName" type="text" class="form-control has-feedback-left" placeholder="Username *" required="required">
+							<font id="error-employee-username"></font>
+						   <span class="fa fa-at form-control-feedback left" aria-hidden="true"></span>
+                          </div>
+
+                          <div class="col-md-6 col-sm-6 col-xs-12">
+                            <select id="createUserGroup" class="form-control" required>
+							
+							{% for group in groups %}
+							
+                            <option value="{{group.name}}">{{group.name}}</option>
+							
+							{% endfor %}
+							
+							
+                            </select>
+                          </div> 
+                        </div>
+
+                        <div class="form-group">
+                          <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+                            <input type="password" class="form-control has-feedback-left" id="createPassword" name="password" data-validate-length="6,8" placeholder="Password *" required="required">
+                            <font id="error-employee-password"></font>
+							<span class="fa fa-lock form-control-feedback left" aria-hidden="true"></span>
+                          </div>
+
+                          <div class="col-md-6 col-sm-6 col-xs-12 item form-group has-feedback">
+                            <input type="password" class="form-control" id="createPassword2" name="password2" data-validate-linked="password" placeholder="Repeat Password *" required="required">
+							<font id="error-employee-password2"></font>
+                            <span class="fa fa-lock form-control-feedback right" aria-hidden="true"></span>
+                          </div>
+                        </div>     	
+
+                        <div class="ln_solid"></div>
+                        <div class="form-group">
+                          <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-4">
+                            <button class="btn btn-primary" onclick="clearUserFields()">Cancel</button>
+                            <button onclick="createUser()" type="submit" class="btn btn-success" name="createUser">Submit</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row" id="divAudit" style="display: none;">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel" style="padding:10px 17px;">
+                  <div class="x_title">
+                    <h2>Audit Logs</h2>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <!-- USERS & DEVICES LIST -->
+                    <div class="udList-position">
+                      <div class="x_title">
+                        <h4 style="margin: 0">Users</h4>
+                        <div class="clearfix"></div>
+                      </div>
+                      <div class="x_content">
+                        <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0">
+                          <ul class="list-unstyled top_profiles scroll-view">
+                            {% for user in users %}
+                             {% ifnotequal user.profile.usertype "admin" %}
+                            <li>
+                              <div class="radio">
+                                <label style="padding-left: 0">
+                                  <input type="radio" class="flat" name="radioList"> {{user.username}}
+                                </label>
+                              </div>
+                            </li>
+                              {% endifnotequal %}
+                            {% endfor %}
+                          </ul>
+                        </div>
+                      </div>
+                      <div class="x_content">
+                        <div class="x_title">
+                          <h4 style="margin: 0">Devices</h4>
+                          <div class="clearfix"></div>
+                        </div>
+                        <div class="col-md-12 col-sm-12 col-xs-12"  style="padding-left: 0">
+                          <ul class="list-unstyled top_profiles" style="column-count: 3">
+                            {% for device in devicesort %}
+                            <li>
+                              <div class="radio">
+                                <label style="padding-left: 0">
+                                  <input type="radio" class="flat" name="radioList"> {{device.name}}
+                                </label>
+                              </div>
+                            </li>
+                            {% endfor %}
+                          </ul>
+
+                        </div>
+                      </div>
+                    </div>
+                    <!-- USERS & DEVICES LIST -->
+
+                    <!-- TABLE -->
+                    <div class="table-position">
+                      <div class="x_panel">
+                        <div class="x_content" style="width: 100%">
+                          <table id="datatable-responsive" class="table table-striped jambo_table table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                            <thead>
+                              <tr>
+                                <th style="font-weight: 700;width: 20%">Device</th>
+                                <th style="font-weight: 700;width: 20%">User</th>
+                                <th style="font-weight: 700;width: 20%">Timestamp</th>
+                                <th style="font-weight: 700;width: 40%">Command</th>                  
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {% for logs in log %}
+                              <tr>
+                                <th style="font-weight: 700;width: 20%">{{logs.device.name}}</th>
+                                <th style="font-weight: 700;width: 20%">{{logs.user}}</th>
+                                <th style="font-weight: 700;width: 20%">{{logs.timestamp}}</th>
+                                <th style="font-weight: 700;width: 40%">{{logs.action}}</th>                  
+                              </tr>
+                              {% endfor %}
+                            </tbody>
+                          </table>                            
+                        </div>
+                      </div>
+                    </div>
+                    <!-- TABLE -->
+                                         
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="createGroup" class="modal fade" role="dialog" aria-hidden="true" style="padding-top: 100px">
+			
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="form-horizontal form-label-left input_mask">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
+                      </button>
+                      <h3 class="modal-title" id="myModalLabel">Create Group</h3>
+                    </div>
+                    <div class="modal-body">
+                      <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="group-name">Group Name
+                        </label>
+                       <div class="col-md-6 col-sm-6 col-xs-12"> 
+                         <input type="text" id="group-name" name="group-name" class="form-control">
+						 <font id="error-group-name"></font>
+                       </div>
+                      </div>
+					  
+					  
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                      <button onClick="createGroup()" class="btn btn-primary" name="createGroup">Add</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- end APPROVE -->
+			
+          </div>
+        </div>
+        <!-- /page content -->
+      </div>
+    </div>
+
+    <!--start APPROVE RESERVATIONS -->
+    
+    <div id="approveRes-{{user.id}}" class="modal fade" role="dialog" aria-hidden="true" style="padding-top: 100px">
+     {% csrf_token %}
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
+            </button>
+
+            <h3 style="display: inline;"><i class="fa fa-exclamation-circle"></i> Reservations</h3>
+          </div>
+          <div class="modal-body">
+            <div class="form-horizontal form-label-left">
+              <!-- <table class="table-width table table-striped table-bordered jambo_table" style="width: 100%">
+                <thead>
+                
+                  <tr>
+                    <th style="font-weight: 700;width: 25%">Group</th>
+                    <th style="font-weight: 700;width: 30%">Device</th>
+                    <th style="font-weight: 700;width: 30%">Date</th>
+                    <th style="width: 14%"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for grouptodevice in grouptodevice %}
+                  {% ifequal grouptodevice.type 'RS' %}
+                  <tr>
+                    <input type="hidden" name="grouptodeviceid" id="grouptodeviceid" class="form-control" value="{{ grouptodevice.id }}"> 
+                    <td value ="{{grouptodevice.group.name}}" style="vertical-align: unset;">{{ grouptodevice.group.name }}</td>
+                    <td value ="{{grouptodevice.device.name}}" style="vertical-align: unset;">{{ grouptodevice.device.name }}</td>
+                    <td style="vertical-align: unset;">{{ grouptodevice.startDateTime }} - {{ grouptodevice.endDateTime }}</td>
+                    <td style="vertical-align: unset;">
+                      <a type="button" data-dismiss="modal" onClick="approvedAjax({{grouptodevice.id}})" class="btn btn-info btn-xs" data-toggle="tooltip" data-placement="bottom" title="Approve"><i class="fa fa-check"></i></a>
+                      <a type="button" data-dismiss="modal" onClick="declinedAjax({{grouptodevice.id}})" class="btn btn-danger btn-xs" data-toggle="tooltip" data-placement="bottom" title="Reject" style="padding: 1px 6px"><i class="fa fa-close"></i></a>
+                    </td>
+                  </tr>
+                  {% endifequal %}
+                {% endfor %}
+                </tbody>
+              </table> -->
+              <div style="width: 100%;height: 200px;overflow:auto;border-bottom: 1px solid #DBDBDB;">
+                <h5>Pending Reservations:</h5>
+                <table class="table-width table table-striped table-bordered jambo_table" style="width: 100%">
+                  <thead>                  
+                    <tr>
+                      <th style="font-weight: 700;width: 20%">Group</th>
+                      <th style="font-weight: 700;width: 20%">Device</th>
+                      <th style="font-weight: 700;width: 40%">Date</th>
+                      <th style="width: 14%"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {% for grouptodevice in grouptodevice %}
+                    {% ifequal grouptodevice.type 'RS' %} 
+                     {% if grouptodevice.startDateTime >= today and grouptodevice.endDateTime >= today %}
+                    <tr> 
+                      <input type="hidden" name="grouptodeviceid" id="grouptodeviceid" class="form-control" value="{{ grouptodevice.id }}"> 
+                      <td value ="{{grouptodevice.group.name}}" style="vertical-align: unset;">{{ grouptodevice.group.name }}</td>
+                      <td value ="{{grouptodevice.device.name}}" style="vertical-align: unset;">{{ grouptodevice.device.name }}</td>
+                      <td style="vertical-align: unset;">{{ grouptodevice.startDateTime }} - {{ grouptodevice.endDateTime }}</td>
+                      <td style="vertical-align: unset;">
+                        <a type="button" data-dismiss="modal" onClick="approvedAjax({{grouptodevice.id}})" class="btn btn-info btn-xs" data-toggle="tooltip" data-placement="bottom" title="Approve"><i class="fa fa-check"></i></a>
+                        <a type="button" data-dismiss="modal" onClick="declinedAjax({{grouptodevice.id}})" class="btn btn-danger btn-xs" data-toggle="tooltip" data-placement="bottom" title="Reject" style="padding: 1px 6px"><i class="fa fa-close"></i></a>
+                      </td>
+                    </tr>
+                     {% endif %}
+                    {% endifequal %}
+                  {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+              <div style="width: 100%;height: 200px;overflow:auto;" >
+                <h5>Approved Reservations:</h5>
+                <table class="table-width table table-striped table-bordered jambo_table" style="width: 100%">
+                  <thead>
+                  
+                    <tr>
+                      <th style="font-weight: 700;width: 20%">Group</th>
+                      <th style="font-weight: 700;width: 20%">Device</th>
+                      <th style="font-weight: 700;width: 40%">Date</th>
+                      <th style="width: 14%"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {% for grouptodevice in grouptodevice %}
+                    {% ifequal grouptodevice.type 'AP' %}
+                     {% if grouptodevice.startDateTime >= today and grouptodevice.endDateTime >= today %}
+                    <tr>
+                      <input type="hidden" name="grouptodeviceid" id="grouptodeviceid" class="form-control" value="{{ grouptodevice.id }}"> 
+                      <td value ="{{grouptodevice.group.name}}" style="vertical-align: unset;">{{ grouptodevice.group.name }}</td>
+                      <td value ="{{grouptodevice.device.name}}" style="vertical-align: unset;">{{ grouptodevice.device.name }}</td>
+                      <td style="vertical-align: unset;">{{ grouptodevice.startDateTime }} - {{ grouptodevice.endDateTime }}</td>
+                      <td style="vertical-align: unset;">
+                        
+                        <a type="button" data-dismiss="modal" onClick="deleteAjax({{grouptodevice.id}})" class="btn btn-danger btn-xs" data-toggle="tooltip" data-placement="bottom" title="Reject" style="padding: 1px 6px"><strong>Delete</strong></a>
+                      </td>
+                    </tr>
+                     {% endif %}
+                    {% endifequal %}
+                  {% endfor %}
+                  </tbody>
+                </table>
+              </div>   
+            </div>
+          </div>               
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- end APPROVE -->
+    {% for user in users %} 
+    <!--start EDIT MODAL -->
+    <div id="editAcct-{{user.id}}" class="modal fade" role="dialog" aria-hidden="true">
+     
+     
+      {% csrf_token %}
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="form-horizontal form-label-left input_mask">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close" required><span aria-hidden="true">×</span>
+              </button>
+              <h3 class="modal-title" id="myModalLabel">Edit {{ user.username }}</h3>
+            </div>
+
+                  <input type="hidden" name="pkid" id="pkid" class="form-control" value="{{ user.id }}"> 
+            <div class="modal-body">
+              <div class="form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="id-num">ID Number
+                </label>
+                <div class="col-md-8 col-sm-6 col-xs-12">
+                  <input type="number" name="id-num" id="id-num-{{ user.id }}" class="form-control" value="{{ user.profile.employeeID }}" required>
+                  <strong><font style="color: #F00000;" id="error-id-num-{{ user.id }}"></font></strong> 
+                </div>
+                
+              </div>
+              <div class="form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">First Name
+                </label>
+                <div class="col-md-8 col-sm-6 col-xs-12">
+                  <input type="text" id="first-name-{{ user.id }}" name="first-name" class="form-control" value="{{ user.first_name }}" required>
+                  <font id="error-first-name-{{ user.id }}"></font>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Last Name
+                </label>
+                <div class="col-md-8 col-sm-6 col-xs-12">
+                  <input type="text" id="last-name-{{ user.id }}" name="last-name" class="form-control" value="{{ user.last_name }}" required>
+                  <font id="error-last-name-{{ user.id }}"></font>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="user-name">Username
+                </label>
+                <div class="col-md-8 col-sm-6 col-xs-12">
+                  <input type="text" id="user-name-{{ user.id }}" name="user-name" class="form-control" value="{{ user.username }}" required>
+                  <font id="error-user-name-{{ user.id }}"></font>
+                </div>
+               
+
+                  
+              </div>
+               
+
+               
+              <div class="form-group">
+                <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Email</label>
+                <div class="col-md-8 col-sm-6 col-xs-12">
+                  <input id="email-{{ user.id }}" class="form-control" type="email" name="email" value="{{ user.email }}" required>
+                  <font id="error-email-{{ user.id }}"></font>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button type="submit" onClick="editAcctAjax({{ user.id }})" class="btn btn-primary">Save changes</button>
+            </div>
+          </div>
+        </div>
+       
+      </div>
+    </div>
+    {% endfor %}
+
+    <!-- end EDIT MODAL -->
+
+  	{% for groups in groups %}
+     
+    <!--start EDIT GROUP -->
+    <div id="editGrp-{{groups.id}}" class="modal fade" role="dialog" aria-hidden="true">
+     {% csrf_token %}
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="form-horizontal form-label-left input_mask">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
+              </button>
+              <h3 class="modal-title" id="myModalLabel">Edit {{groups.name}}</h3>
+            </div>
+            <div class="modal-body">
+              <h4>Current Members</h4>
+                <input type="hidden" name="groupid" id="groupid-{{groups.id}}" class="form-control" value="{{ groups.id }}"> 
+                <div class="pricing_features" style="padding: 10px 15px 0 15px">
+                  <ul class="list-unstyled" style="column-count: 3; margin-bottom: 0">
+                  	{% for user in users %}
+                  	 {% ifequal user.profile.group.name groups.name %}		 
+                      <li style="margin: 0 0 10px 0">{{user.username}}</li>
+                    		
+                      {% endifequal %}
+                    {% endfor %}
+                  </ul>
+                </div>
+              <div class="ln_solid"></div>
+              <div class="form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12">Add Members:</label>
+                <div class="col-md-8 col-sm-6 col-xs-12">
+                  <select name="employeeName" id="employeeLocation-{{groups.id}}" class="select2_single form-control" tabindex="-1">
+                  
+                  {% for user in users %}
+                    {% ifnotequal user.profile.group.id groups.id %}
+                     {% ifnotequal user.profile.usertype 'admin' %}
+                  <option id="userGroup-{{ user.id }}" value="{{user.id}}">{{user.username}}</option>
+                      {% endifnotequal %}
+                     {% endifnotequal %}
+                  {% endfor %}
+                  </select>
+
+                </div>
+              </div>
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button type="submit" data-dismiss="modal" onClick="editGrpAjax('employeeLocation-{{groups.id}}', {{groups.id}})" class="btn btn-primary">Save changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    {% endfor %}
+    <!-- end EDIT GROUP -->	
+    
+    <!--start ALLOCATE MODAL -->
+    <div id="allocateModal-{{current_user.id}}" class="modal fade" role="dialog" aria-hidden="true" style="padding-top: 90px">
+      {% csrf_token %}
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+
+             <input type="hidden" name="pkid" id="pkid" class="form-control" value="{{ current_user.id }}"> 
+            <h3 style="display: inline;"><i class="fa fa-calendar"></i> Reservation Form</h3>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
+            </button>  
+          </div>
+          <div class="modal-body" style="padding-bottom: 0">
+            <div class="form-horizontal form-label-left">
+              <div class="x_content" style="margin-top:0;padding-bottom:10px;border-bottom: 1px solid #DBDBDB;margin-bottom: 10px;">
+                <h2>Available devices:</h2>
+                <div style="width: 100%;float: left;height: 215px;overflow:auto;" id="availableDevices" data-target-id="datesRes">
+                  <table class="table-width table table-striped jambo_table" style="width: 100%">
+                    <thead>
+                      <tr>
+                        <th>Device</th>
+                        <th style="width: 70%">Dates Reserved</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    {% for devices in devices %}
+                      <tr>
+                        <td class="a-center ">
+                          <div class="radio">
+                            <label style="padding-left: 0">
+                              <input type="radio" id="deviceList-{{devices.id}}" class="flat" name="deviceList" value="{{devices.id}}"> {{devices.name}}
+                            </label>
+                          </div>
+                        </td>
+                        <td>
+                        {% for grouptodevice in grouptodevice %}
+                          {% ifequal grouptodevice.device.id devices.id %}
+                            {% ifequal grouptodevice.type 'AP' %}
+                             
+                              {% if grouptodevice.endDateTime >= today %}
+                              {{grouptodevice.startDateTime}} - {{grouptodevice.endDateTime}} <br>
+                              {% endif %}
+                          
+                            {% endifequal %} 
+                              
+                          {% endifequal %}
+
+                        {% endfor %}
+                        </td>
+                      </tr>
+                     {% endfor %}
+                    </tbody>
+                  </table>
+                 </div>
+                
+              </div>
+
+             <div class="form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12">Select Group:</label>
+                <div class="col-md-8 col-sm-6 col-xs-12">
+                  <select name="groupName" id="groupName-{{group.id}}" class="select2_single form-control" tabindex="-1">
+                  
+                  {% for group in groups %}
+                    
+                      <option id="userGroup-{{ group.id }}" value="{{group.id}}">{{group.name}}</option>
+                  
+                     
+                  {% endfor %}
+                  </select>
+
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="col-md-6 col-sm-6 col-xs-12" style="padding-right: 0">
+                  <label class="control-label col-md-3" style="width: 17%" for="datetimepicker6">Date</label>
+                  <div class='input-group date' id='datetimepicker6'>
+                    <span class="input-group-addon">
+                      <span class="fa fa-calendar-o"></span>
+                    </span>
+                    <input type='text' class="form-control" name='start-date' id='start-date' />
+                    <!-- <span class="input-group-addon">to</span> -->
+                  </div>
+                </div>   
+
+                <div class="col-md-6 col-sm-6 col-xs-12" style="padding-left: 0">
+                  <label class="control-label col-md-3" style="width: 12%" for="datetimepicker7">to</label>
+                  <div class='input-group date' id='datetimepicker7'>
+                    <input type='text' class="form-control" name='end-date' id='end-date' />
+                    <span class="input-group-addon">
+                      <span class="fa fa-calendar-o"></span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>              
+          <div class="modal-footer">
+
+            <button type="submit" onClick="allocateDeviceAjax({{current_user.id}},'groupName-{{group.id}}')"  class="btn btn-primary">Reserve</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+     
+    </div>
+    <!-- end RESERVE -->
+    
+    <!-- end ALLOCATE MODAL -->
+  
+    <script>
+      var divs = ["divCreate", "divHome", "divAudit"];
+      var visibleDivId = null;
+
+      function toggleVisibility(divId) {
+        if(visibleDivId == divId) {
+          visibleDivId = null;
+        } else {
+          visibleDivId = divId;
+          hideNonVisibleDivs();
+        }
+      }
+      function hideNonVisibleDivs() {
+        var i, divId, div;
+        for(i = 0; i < divs.length; i++) {
+          divId = divs[i];
+          div = document.getElementById(divId);
+          if(visibleDivId == divId) {
+            div.style.display = "block";
+          } else {
+            div.style.display = "none";
+          }
+        }
+      }
+    </script>
+
+    <script>
+      function enableRQty(arg){
+        var rtr = document.getElementById("routerBox");
+        var rtrQty = document.getElementById("routerQty");
+
+        if (rtr.checked == true){
+          rtrQty.disabled = false;
+        }
+        else{
+          rtrQty.disabled = true;
+          rtrQty.value = 0;
+        }
+      }
+
+      function enableSWQty(arg){  
+        var sw = document.getElementById("switchBox");
+        var swQty = document.getElementById("switchQty");
+
+        if (sw.checked == true){
+          swQty.disabled = false;
+        }
+        else{
+          swQty.disabled = true;
+          swQty.value = 0;
+        }
+      }
+
+      function enableSRQty(arg){
+        var server = document.getElementById("serverBox");
+        var svrQty = document.getElementById("serverQty");
+
+        if (server.checked == true){
+          svrQty.disabled = false;
+        }
+        else{
+          svrQty.disabled = true;
+          svrQty.value = 0;
+        }
+      }
+
+      function enableTQty(arg){
+        var terminal = document.getElementById("terminalBox");
+        var terQty = document.getElementById("terminalQty");
+        
+        if (terminal.checked == true){
+          terQty.disabled = false;
+        }
+        else{
+          terQty.disabled = true;
+          terQty.value = 0;
+        }
+      }
+    </script>
+
+   
+
+    <script>
+       function approvedAjax(id){
+        var pkid = id;
+        // var pkid = document.getElementById('grouptodeviceid').value;
+        console.log(pkid);
+        $.ajax({url: 'http://127.0.0.1:8000/approvedRes/?grouptodeviceid='+ pkid,
+                success: function(result){
+                
+                window.location.reload();
+                  // insert success message here
+                }
+            });
+       }
+    </script>
+
+    <script>
+       function declinedAjax(id){
+        var pkid = id
+        console.log(pkid);
+        $.ajax({url: 'http://127.0.0.1:8000/declinedRes/?grouptodeviceid='+ pkid,
+                success: function(result){
+                
+                window.location.reload();
+                  // insert success message here
+                }
+            });
+       }
+    </script>
+
+    <script>
+       function deleteAjax(id){
+        var pkid = id
+        console.log(pkid);
+        $.ajax({url: 'http://127.0.0.1:8000/deleteRes/?grouptodeviceid='+ pkid,
+                success: function(result){
+                
+                window.location.reload();
+                  // insert success message here
+                }
+            });
+       }
+    </script>
+
+    <script>
+        function editGrpAjax(id,groupid){
+          var newid = document.getElementById(id).options[document.getElementById(id).selectedIndex].value;
+          var newgroupid = document.getElementById('groupid-' + groupid).value;
+          console.log(newid);
+          console.log(groupid);
+            $.ajax({url: '/editGrp/?pkid='+ newid + "&groupid=" + newgroupid, 
+                success: function(result){
+                  
+                  window.location.reload();
+                  // insert success message here
+                }
+            });
+        }
+    </script>
+
+    <!-- jQuery -->
+    <script src="{% static '/vendors/jquery/dist/jquery.min.js' %}"></script>
+    <!-- Bootstrap -->
+    <script src="{% static '/vendors/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+    <!-- FastClick -->
+    <script src="{% static '/vendors/fastclick/lib/fastclick.js' %}"></script>
+    <!-- NProgress -->
+    <script src="{% static '/vendors/nprogress/nprogress.js' %}"></script>
+    <!-- bootstrap-progressbar -->
+    <script src="{% static '/vendors/bootstrap-progressbar/bootstrap-progressbar.min.js' %}"></script>
+    <!-- bootstrap-wysiwyg -->
+    <script src="{% static '/vendors/bootstrap-wysiwyg/js/bootstrap-wysiwyg.min.js' %}"></script>
+    <script src="{% static '/vendors/jquery.hotkeys/jquery.hotkeys.js' %}"></script>
+    <script src="{% static '/vendors/google-code-prettify/src/prettify.js' %}"></script>
+    <!-- jQuery Tags Input -->
+    <script src="{% static '/vendors/jquery.tagsinput/src/jquery.tagsinput.js' %}"></script>
+    <!-- Select2 -->
+    <script src="{% static '/vendors/select2/dist/js/select2.full.min.js' %}"></script>
+    <!-- Datatables -->
+    <script src="{% static '/vendors/datatables.net/js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static '/vendors/datatables.net/js/jquery.dataTables.js' %}"></script>
+    <script src="{% static '/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js' %}"></script>
+    <script src="{% static '/vendors/datatables.net-responsive/js/dataTables.responsive.min.js' %}"></script>
+    <script src="{% static '/vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js' %}"></script>
+    <script src="{% static '/vendors/datatables.net-scroller/js/dataTables.scroller.min.js' %}"></script>
+    <!-- validator -->
+    <script src="{% static '/vendors/validator/validator.js' %}"></script>
+    <!-- bootstrap-daterangepicker -->
+    <script src="{% static '/vendors/moment/min/moment.min.js' %}"></script>
+    <script src="{% static '/vendors/bootstrap-daterangepicker/daterangepicker.js' %}"></script>
+    <!-- bootstrap-datetimepicker -->    
+    <script src="{% static '/vendors/bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js' %}"></script>
+    <!-- iCheck -->
+    <script src="{% static '/vendors/iCheck/icheck.min.js' %}"></script>
+    <!-- jquery.inputmask -->
+    <script src="{% static '/vendors/jquery.inputmask/dist/min/jquery.inputmask.bundle.min.js' %}"></script>
+    
+    <!-- Custom Theme Scripts -->
+    <script src="{% static '/build/js/custom.min.js' %}"></script>
+
+    <!-- Initialize datetimepicker -->
+    <script>  
+     $('#datetimepicker6').datetimepicker({
+      
+      format: 'YYYY-MM-DD',
+      useCurrent: true,
+      minDate: moment().millisecond(0).second(0).minute(0).hour(0)
+    });
+        
+    $('#datetimepicker7').datetimepicker({
+
+      format: 'YYYY-MM-DD',
+      useCurrent: false,
+      minDate: moment().millisecond(0).second(0).minute(0).hour(0)
+    });
+    
+    $("#datetimepicker6").on("dp.change", function(e) {
+        $('#datetimepicker7').data("DateTimePicker").minDate(e.date);
+    });
+    
+    $("#datetimepicker7").on("dp.change", function(e) {
+        $('#datetimepicker6').data("DateTimePicker").maxDate(e.date);
+    });
+    </script>
+
+    <script> $('input[name="deviceList"]').first().prop('checked', true) </script>
+
+
+     <script>
+
+        function editAcctAjax(id){
+          var employeeid = document.getElementById('id-num-' + id).value;
+          var firstname = document.getElementById('first-name-' + id).value;
+          var lastname = document.getElementById('last-name-' + id).value;
+          var username = document.getElementById('user-name-' + id).value;
+          var email = document.getElementById('email-' + id).value;
+          var error = "";
+            $.ajax({url: '/editModal/?pkid='+ id + '&id-num=' + employeeid + '&first-name=' + firstname + '&last-name=' + lastname + '&username=' + username + '&email=' + email, 
+                success: function(data){
+                  var res = JSON.parse(data);
+                  //document.getElementById('routerConfig').innerHTML = res['routerConfig']; 
+                  var valid = "{{valid}}";
+                  if (res['valid'] == false){
+                    //var error = "{{error_msg2}}".replace(/&quot;/g,"\"");
+                    document.getElementById("error-id-num-" + id).innerHTML = res['error_id']
+                    document.getElementById("error-user-name-" + id).innerHTML = res['error_user']
+                    document.getElementById("error-email-" + id).innerHTML = res['error_email']
+                    document.getElementById("error-first-name-" + id).innerHTML = res['error_first']
+                    document.getElementById("error-last-name-" + id).innerHTML = res['error_last']
+                                        
+                  }
+                  else{
+                  window.location.reload();
+                  }
+                  // $("#testRefresh").replaceWith($("#testRefresh",$(data)));
+                  // window.location.reload();
+
+                },
+                 error: function(data) { 
+                  
+                }    
+                // error:function(data){
+                //   alert("invalid!");
+                // }
+            });
+           
+
+        }
+    </script>
+
+    <script>
+        function allocateDeviceAjax(id,groupid){
+            var newgroupid = document.getElementById(groupid).options[document.getElementById(groupid).selectedIndex].value;
+            var startDate = document.getElementById('start-date').value;
+            var endDate = document.getElementById('end-date').value;
+            var deviceid;
+            var radios = document.getElementsByName('deviceList');
+            for (var i = 0, length = radios.length; i < length; i++) {
+          if (radios[i].checked) {
+            deviceid = radios[i].value;
+            
+            
+              break;
+          }
+      }
+      
+            console.log(startDate)
+            console.log(endDate)
+           
+            console.log(newgroupid)
+            console.log(deviceid)
+            $.ajax({url: 'http://127.0.0.1:8000/admin/allocateDevice?pkid='+ id + "&groupid=" + newgroupid + "&deviceList=" + deviceid + "&start-date=" + startDate + "&end-date=" + endDate,
+                success: function(result){
+                  
+                  window.location.reload();
+
+                  // insert success message here
+                }
+            });
+        }
+    </script>
+	<!-- Create Group and User scripts Start -->
+		<script>
+			function createGroup(){
+				var groupName = document.getElementById("group-name").value;
+				$.ajax({url: 'http://127.0.0.1:8000/createGroup?groupName=' + groupName,
+					success: function(data){
+						var res = JSON.parse(data);
+							var groupnameisvalid = "{{groupnameisvalid}}";
+							if (res['groupnameisvalid'] == false){
+								document.getElementById("error-group-name").innerHTML = res['groupnameerrormessage'];							
+							} else {
+							
+							document.getElementById("group-name").value = "";	
+							window.location.reload();
+							}					
+					},});
+				}
+	
+			function clearUserFields(){
+				document.getElementById("createFirstName").value = "";
+				document.getElementById("createLastName").value = "";
+				document.getElementById("createUserName").value = "";
+				document.getElementById("createEmployeeID").value = "";
+				document.getElementById("createEmail").value = "";
+				document.getElementById("createPassword").value = "";
+				document.getElementById("createPassword2").value = "";
+			}
+			
+			function createUser(){
+				var firstName = document.getElementById("createFirstName").value;
+				var lastName = document.getElementById("createLastName").value;
+				var userName = document.getElementById("createUserName").value;
+				var employeeID = document.getElementById("createEmployeeID").value;
+				var password = document.getElementById("createPassword").value;
+				var password2 = document.getElementById("createPassword2").value;
+				var email = document.getElementById("createEmail").value;
+				var groupName = document.getElementById("createUserGroup").value;
+					
+				$.ajax({url: "http://127.0.0.1:8000/createUser?firstName=" + firstName + "&lastName=" + lastName + "&userName=" + userName + "&employeeID=" + employeeID + "&email=" + email + "&groupName=" + groupName + "&password=" + password + "&password2=" + password2,
+					success: function(data){
+						var res = JSON.parse(data);
+							var signupformisvalid = "{{signupformisvalid}}";
+							if (res['signupformisvalid'] == false){
+								document.getElementById("error-employee-id").innerHTML = res['signupIDerr'];							
+								document.getElementById("error-employee-username").innerHTML = res['signupUsererr'];							
+								document.getElementById("error-employee-email").innerHTML = res['signupEmailerr'];							
+								document.getElementById("error-employee-password").innerHTML = res['signupPasserr'];							
+								document.getElementById("error-employee-password2").innerHTML = res['signupPasserr2'];
+								document.getElementById("error-employee-first-name").innerHTML = res['signupFirstnameerr'];
+								document.getElementById("error-employee-last-name").innerHTML = res['signupLastnameerr'];
+							} else {	
+								window.location.reload();
+								document.getElementById("createFirstName").value = "";
+								document.getElementById("createLastName").value = "";
+								document.getElementById("createUserName").value = "";
+								document.getElementById("createEmployeeID").value = "";
+								document.getElementById("createEmail").value = "";
+								document.getElementById("createUserGroup").value = "";
+								document.getElementById("createPassword").value = "";
+								document.getElementById("createPassword2").value = "";
+								
+							}					
+					},
+				});
+				
+			}
+		</script>
+	<!-- Create Group and user script end -->
+    <!-- Calendar -->
+    <!-- <script src="js/jquery-1.11.1.min.js"></script> -->
+    <script src="{% static '/production/js/underscore-min.js' %}"></script>
+    <script src= "{% static 'production/js/moment-2.2.1.js' %}"></script>
+    <script src="{% static 'production/js/clndr.js' %}"></script>
+    <script src="{% static 'production/js/site.js' %}"></script>
+
+  </body>
+</html>

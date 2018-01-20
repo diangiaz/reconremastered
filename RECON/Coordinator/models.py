@@ -3,42 +3,49 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-class Profile(models.Model):
-	ADMIN = 'Admin'
-	EMPLOYEE = 'Employee'
-	EMPLOYEE_TYPE_CHOICES = (
-		(ADMIN, 'Admin'),
-		(EMPLOYEE, 'Employee'),
-	)
-	user = models.OneToOneField(User, on_delete=models.CASCADE)
-	name = models.CharField(
-		max_length=50
-	)
-	email = models.EmailField(
-		max_length=50
-	)
-	branch = models.CharField(
-		max_length=50
-	)
-	usertype = models.CharField(
-		max_length=10,
-		choices=EMPLOYEE_TYPE_CHOICES,
-	)
-	idnum = models.IntegerField(
-	)
-	userID = models.AutoField(
-		primary_key=True
+
+EMPLOYEE_TYPE_CHOICES = (
+		('admin', 'Admin'),
+		('employee', 'Employee'),
 	)
 	
+class Group(models.Model):
+	name = models.CharField(
+	unique=True,
+	max_length=50,
+	)
+		
+	def __str__(self):
+		return self.name
+
+class Profile(models.Model):
+	user = models.OneToOneField(User, on_delete=models.CASCADE)
+	usertype = models.CharField(
+		max_length=10,
+	)
+	employeeID = models.CharField(
+		max_length=10,
+	)
+	group = models.ForeignKey(
+		Group,
+		on_delete = models.CASCADE,	
+		null = True,
+		blank = True,
+	)
+	
+	def __str__(self):
+		return "%s's profile" % self.user
+
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
 	if created:
 		Profile.objects.create(user=instance)
-		
+
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
-	instance.profile.save()	
-
+    instance.profile.save()
+		
+post_save.connect(create_user_profile, sender=User)	
 	
 class Device(models.Model):
 	ROUTER = 'Router'
@@ -51,27 +58,15 @@ class Device(models.Model):
 		(TERMINAL, 'Terminal'),
 		(SERVER, 'Server'),
 	)
-	type = models.IntegerField(
+	type = models.CharField(
+		max_length=25,
 		choices=DEVICE_TYPE_CHOICES
 	)
 	name = models.CharField(
-		max_length=25
+		max_length=25,
 	)
-	ycord = models.PositiveIntegerField(
-	)
-	xcord = models.PositiveIntegerField(
-	)
-	devID = models.AutoField(
-		primary_key=True
-	)
-
-class Group(models.Model):
-	groupname = models.CharField(
-		max_length=25
-	)
-	groupID = models.AutoField(
-		primary_key=True
-	)
+	def __str__(self):
+		return self.name
 
 class Port(models.Model):
 	SERIAL = 'Serial'
@@ -85,43 +80,42 @@ class Port(models.Model):
 		(CONSOLE, 'Console'),
 	)
 	name = models.CharField(
-		max_length=25
-	)
-	portID = models.AutoField(
-		primary_key=True
+		unique=True,
+		max_length=25,
 	)
 	type = models.CharField(
 		max_length=20,
 		choices=PORT_TYPE_CHOICES
 	)
-	devID = models.ForeignKey(
-		'Device',
+	device = models.ForeignKey(
+		Device,
 		on_delete=models.CASCADE,
 	)
 	
-
 class GroupToDevice(models.Model):
 	RESERVE = 'RS'
 	APPROVE = 'AP'
 	ALLOCATION = 'AL'
+	DECLINED = 'DC'
 	TYPE_CHOICES = (
 		(RESERVE, 'Reserve'),
 		(APPROVE, 'Approve'),
 		(ALLOCATION, 'Allocation'),
+		(DECLINED, 'Declined'),
 	)
-	groupID = models.ForeignKey(
-		'Group',
+	group = models.ForeignKey(
+		Group,
 		on_delete=models.CASCADE,
 	)
-	devID = models.ForeignKey(
-		'Device',
+	device = models.ForeignKey(
+		Device,
 		on_delete=models.CASCADE,
 	)
-	startDateTime = models.DateTimeField(
+	startDateTime = models.DateField(
 		auto_now=False,
 		auto_now_add=False,
 		)
-	endDateTime = models.DateTimeField(
+	endDateTime = models.DateField(
 		auto_now=False,
 		auto_now_add=False,
 	)
@@ -129,18 +123,8 @@ class GroupToDevice(models.Model):
 		max_length = 2,
 		choices = TYPE_CHOICES,
 	)
-	
-class UserToGroup(models.Model):
-	userID = models.ForeignKey(
-		'Profile',
-		on_delete=models.CASCADE,
-	)
-	groupID	= models.ForeignKey(
-		'Group',
-		on_delete=models.CASCADE,
-	)
 
-class Connections(models.Model):
+class Connection(models.Model):
 	CONSOLE = 'Console'
 	SERIAL = 'Serial'
 	STRAIGHT = 'Straight'
@@ -149,7 +133,9 @@ class Connections(models.Model):
 		(SERIAL, 'Serial'),
 		(STRAIGHT, 'Straight'),
 	)
-	groupID = models.IntegerField(
+	Group = models.ForeignKey(
+		Group,
+		on_delete = models.CASCADE,
 	)
 	srcDevID = models.IntegerField(
 	)
@@ -163,88 +149,111 @@ class Connections(models.Model):
 		max_length=10,
 		choices=CONNECTION_TYPE_CHOICES,
 	)
-	connectionID = models.AutoField(
-		primary_key=True
-	)
 
 class Config(models.Model):
-	groupID = models.ForeignKey(
-		'Group',
+	group = models.ForeignKey(
+		Group,
 		on_delete=models.CASCADE,
 	)
-	devID = models.ForeignKey(
-		'Device',
+	device = models.ForeignKey(
+		Device,
 		on_delete=models.CASCADE,
 	)
 	config = models.FileField(
 		upload_to=None,
 		max_length=100,
 	)
-	configID = models.AutoField(
-		primary_key=True
-	)
 
 class SaveTopology(models.Model):
-	groupID = models.IntegerField(
+	group = models.ForeignKey(
+		Group,
+		on_delete=models.CASCADE,
 	)
 	name = models.CharField(
 		max_length = 40
 	)
-	saveID = models.AutoField(
-		primary_key=True
-	)
+	def __str__(self):
+		return self.name
 
 class SaveConn(models.Model):
-	CONSOLE = 'Console'
-	SERIAL = 'Serial'
-	STRAIGHT = 'Straight'
-	CONNECTION_TYPE_CHOICES = (
-		(CONSOLE, 'Console'),
-		(SERIAL, 'Serial'),
-		(STRAIGHT, 'Straight'),
-	)
-	saveID = models.AutoField(
-		primary_key=True
-	)
-	srcDevID = models.IntegerField(
-	)
-	srcDevPort = models.IntegerField(
-	)
-	destDevID = models.IntegerField(
-	)
-	destDevPort = models.IntegerField(
-	)
-	cableType = models.CharField(
-		max_length=10,
-		choices=CONNECTION_TYPE_CHOICES,
-	)
-
-class SaveDev(models.Model):
-	saveID = models.AutoField(
-		primary_key=True
-	)
-	xCord = models.IntegerField(
-	)
-	yCord = models.IntegerField(
-	)
-	devID = models.IntegerField(
-	)
-
-class Logs(models.Model):
-	logID = models.AutoField(
-		primary_key=True
-	)
-	devID = models.ForeignKey(
-		'Device',
+	saveTopology = models.ForeignKey(
+		SaveTopology,
 		on_delete=models.CASCADE,
 	)
-	userID = models.ForeignKey(
-		'Profile',
+	connectionName = models.CharField(
+		max_length=25,
+	)
+	srcDevice = models.CharField(
+		max_length=25,
+	)
+	srcPort = models.CharField(
+		max_length=25,
+	)
+	endDevice = models.CharField(
+		max_length=25,
+	)
+	endPort = models.CharField(
+		max_length=25,
+	)
+	cableType = models.CharField(
+		max_length=25,
+	)
+	startX = models.FloatField(
+		default = 0,
+	)
+	startY = models.FloatField(
+		default = 0,
+	)
+	endX = models.FloatField(
+		default = 0,
+	)
+	endY = models.FloatField(
+		default = 0,
+	)
+	def __str__(self):
+		return self.connectionName + " between " + self.srcDevice + " and " + self.endDevice + " of " + self.saveTopology.name
+
+class SaveDev(models.Model):
+	saveTopology = models.ForeignKey(
+		SaveTopology,
+		on_delete=models.CASCADE,
+	)
+	GroupToDevice = models.ForeignKey(
+		GroupToDevice,
+		on_delete=models.CASCADE,
+	)
+	deviceName = models.CharField(
+		max_length = 40,
+	)
+	xCord = models.FloatField(
+		default = 0,
+		null = True,
+	)
+	yCord = models.FloatField(
+		default = 0,
+		null = True,
+	)
+	def __str__(self):
+		return self.deviceName + " of " + self.saveTopology.name
+
+class Log(models.Model):
+	device = models.ForeignKey(
+		Device,
+		on_delete=models.CASCADE
+	)
+	user = models.ForeignKey(
+		User,
 		on_delete=models.CASCADE,
 	)
 	timestamp = models.DateTimeField(
-		auto_now_add=True, blank=True
+		auto_now_add=True, 
+		blank=True,
 	)
+	action = models.CharField(
+		max_length = 50,
+	)
+	def __str__(self):
+		return self.user.username + "(" + str(self.timestamp) + "): " + self.action
 	
 	
 	
