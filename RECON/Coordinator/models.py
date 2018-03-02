@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-
 EMPLOYEE_TYPE_CHOICES = (
 		('admin', 'Admin'),
 		('employee', 'Employee'),
@@ -46,7 +45,18 @@ def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
 		
 post_save.connect(create_user_profile, sender=User)	
-	
+
+class Comport(models.Model):
+	name = models.CharField(
+		max_length=10
+	)
+	istaken = models.CharField(
+		max_length=1,
+		default='0',
+	)
+	def __str__(self):
+		return self.name
+
 class Device(models.Model):
 	ROUTER = 'Router'
 	SWITCH = 'Switch'
@@ -65,6 +75,24 @@ class Device(models.Model):
 	name = models.CharField(
 		max_length=25,
 	)
+	serialIndex = models.IntegerField(
+		default=0
+	)
+	comport = models.ForeignKey(
+		Comport,
+		on_delete=models.CASCADE,
+	)
+	def __str__(self):
+		return self.name
+		
+class MainSwitchPort(models.Model):
+	name = models.CharField(
+		max_length=6
+	)
+	istaken = models.CharField(
+		max_length=1,
+		default=0,
+	)
 	def __str__(self):
 		return self.name
 
@@ -80,7 +108,6 @@ class Port(models.Model):
 		(CONSOLE, 'Console'),
 	)
 	name = models.CharField(
-		unique=True,
 		max_length=25,
 	)
 	type = models.CharField(
@@ -91,6 +118,20 @@ class Port(models.Model):
 		Device,
 		on_delete=models.CASCADE,
 	)
+	istaken = models.CharField(
+		max_length=1,
+		default = '0',
+	)
+	isactive = models.CharField(
+		max_length=1,
+		default='0',
+	)
+	mainswitchport = models.ForeignKey(
+		MainSwitchPort,
+		on_delete=models.CASCADE,
+	)
+	def __str__(self):
+		return self.name + " of " + self.device.name
 	
 class GroupToDevice(models.Model):
 	RESERVE = 'RS'
@@ -123,6 +164,9 @@ class GroupToDevice(models.Model):
 		max_length = 2,
 		choices = TYPE_CHOICES,
 	)
+	
+	def __str__(self):
+		return self.group.name + " to " + self.device.name
 
 class Connection(models.Model):
 	CONSOLE = 'Console'
@@ -133,7 +177,7 @@ class Connection(models.Model):
 		(SERIAL, 'Serial'),
 		(STRAIGHT, 'Straight'),
 	)
-	Group = models.ForeignKey(
+	group = models.ForeignKey(
 		Group,
 		on_delete = models.CASCADE,
 	)
@@ -179,6 +223,7 @@ class SaveConn(models.Model):
 	saveTopology = models.ForeignKey(
 		SaveTopology,
 		on_delete=models.CASCADE,
+		null=True,
 	)
 	connectionName = models.CharField(
 		max_length=25,
@@ -218,9 +263,10 @@ class SaveDev(models.Model):
 		SaveTopology,
 		on_delete=models.CASCADE,
 	)
-	GroupToDevice = models.ForeignKey(
+	groupToDevice = models.ForeignKey(
 		GroupToDevice,
 		on_delete=models.CASCADE,
+		null=True,
 	)
 	deviceName = models.CharField(
 		max_length = 40,

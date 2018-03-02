@@ -7,9 +7,10 @@ from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.core.validators import validate_email
+from django.core import serializers
 from . import forms
 from .forms import SignUpForm
-from .models import Group, Profile, Device, GroupToDevice, SaveTopology, SaveDev, SaveConn, Log
+from .models import Group, Profile, Device, GroupToDevice, SaveTopology, SaveDev, SaveConn, Log, Port, Comport, MainSwitchPort
 from django.db.models import Q
 from time import sleep
 from threading import Thread
@@ -19,8 +20,119 @@ import datetime
 import urllib.parse as urlparse
 
 # Create your views here.
-savedTopology = SaveTopology()
 
+# fill comports and mainswitchports
+comports = Comport.objects.all().count()
+x = 5
+if comports == 0:
+	print("initiating initial database population")
+	while x <= 7:
+		c = Comport()
+		c.name = "COM" + str(x)
+		c.save()
+		print("added" + str(c))
+		x+=1
+
+mainswitchports = MainSwitchPort.objects.all().count()
+x = 1
+if mainswitchports == 0:
+	while x <= 24:
+		m = MainSwitchPort()
+		m.name = "fa0/" + str(x)
+		m.save()
+		print("added" + str(m))
+		x+=1
+
+# create test devices
+if (Device.objects.all().count()) == 0:
+	d1 = Device()
+	d1.type = "Switch"
+	d1.name = "Switch 1"
+	d1.comport = Comport.objects.filter(name='COM5')[0]
+	d1.save()
+	d2 = Device()
+	d2.type = "Switch"
+	d2.name = "Switch 2"
+	d2.comport = Comport.objects.filter(name='COM6')[0]
+	d2.save()
+	d3 = Device()
+	d3.type = "Router"
+	d3.name = "Router 1"
+	d3.comport = Comport.objects.filter(name='COM7')[0]
+	d3.save()
+	
+	p1 = Port()
+	p1.name = 'fa0/0'
+	p1.type = 'Fast Ethernet'
+	p1.device = Device.objects.filter(name = 'Router 1')[0]
+	p1.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/1')[0]
+	p1.save()
+	
+	p2 = Port()
+	p2.name = 'fa0/1'
+	p2.type = 'Fast Ethernet'
+	p2.device = Device.objects.filter(name = 'Router 1')[0]
+	p2.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/2')[0]
+	p2.save()
+	
+	p3 = Port()
+	p3.name = 'fa0/1'
+	p3.type = 'Fast Ethernet'
+	p3.device = Device.objects.filter(name = 'Switch 1')[0]
+	p3.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/3')[0]
+	p3.save()
+	
+	p4 = Port()
+	p4.name = 'fa0/2'
+	p4.type = 'Fast Ethernet'
+	p4.device = Device.objects.filter(name = 'Switch 1')[0]
+	p4.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/4')[0]
+	p4.save()
+	
+	p5 = Port()
+	p5.name = 'fa0/3'
+	p5.type = 'Fast Ethernet'
+	p5.device = Device.objects.filter(name = 'Switch 1')[0]
+	p5.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/5')[0]
+	p5.save()
+	
+	p6 = Port()
+	p6.name = 'fa0/4'
+	p6.type = 'Fast Ethernet'
+	p6.device = Device.objects.filter(name = 'Switch 1')[0]
+	p6.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/6')[0]
+	p6.save()
+	
+	p7 = Port()
+	p7.name = 'fa0/1'
+	p7.type = 'Fast Ethernet'
+	p7.device = Device.objects.filter(name = 'Switch 2')[0]
+	p7.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/7')[0]
+	p7.save()
+	
+	p8 = Port()
+	p8.name = 'fa0/2'
+	p8.type = 'Fast Ethernet'
+	p8.device = Device.objects.filter(name = 'Switch 2')[0]
+	p8.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/8')[0]
+	p8.save()
+	
+	p9 = Port()
+	p9.name = 'fa0/3'
+	p9.type = 'Fast Ethernet'
+	p9.device = Device.objects.filter(name = 'Switch 2')[0]
+	p9.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/9')[0]
+	p9.save()
+	
+	p10 = Port()
+	p10.name = 'fa0/4'
+	p10.type = 'Fast Ethernet'
+	p10.device = Device.objects.filter(name = 'Switch 2')[0]
+	p10.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/10')[0]
+	p10.save()
+	
+	print("added test device and ports")
+	
 @login_required(login_url="/login")
 def userPage(request):
 	currentUser = request.user
@@ -33,6 +145,7 @@ def userPage(request):
 	devices = Device.objects.all()
 	grouptodevice = GroupToDevice.objects.all()
 	today=datetime.datetime.now().date()
+	ports = Port.objects.all()
 
 	context = {
 		'current_user': currentUser,
@@ -41,62 +154,57 @@ def userPage(request):
 		'devices':devices,
 		'groups':groups,
 		'users':users,
-		'today':today
+		'today':today,
+		'ports':ports,
 	}
 	return render(request, 'user.html', context)
-	
-# serial reader/sender start
-strBuilder1 = ""
-strBuilder2 = ""
-mainSwitchPort = serial.Serial("COM4", 9600)
-routerPort = serial.Serial("COM5", 9600)
-switchPort = serial.Serial("COM3", 9600)
 
-class Receiver1(Thread):
-		def __init__(self, routerPort): 
+	
+# create serial connections
+	
+class Receiver(Thread):
+		def __init__(self, Serial, Idx):
 			Thread.__init__(self) 
-			self.serialPort = routerPort
+			self.serialPort = Serial
+			self.index = Idx
 		def run(self):
-			global routerPort
-			global strBuilder1
 			text = "" 
 			while (text != "exitReceiverThread\n"): 
-				text = routerPort.readline()
-				strBuilder1 += text.decode() + "\n"
-				print("Router output is" + strBuilder1)
+				text = self.serialPort.readline()
+				strBuilders[self.index] += text.decode() + "\n"
 			
-			self.serialPort.close()
-			
-receive = Receiver1(routerPort) 
-receive.start()
-
-# Serial port 2 (Switch)
-
-class Receiver2(Thread):
-		def __init__(self, switchPort): 
-			Thread.__init__(self) 
-			self.serialPort = switchPort
-		def run(self):
-			global switchPort
-			global strBuilder2
-			text = "" 
-			while (text != "exitReceiverThread\n"): 
-				text = switchPort.readline()
-				strBuilder2 += text.decode() + "\n"
-				print("Switch output is" + strBuilder2)
-			
-			self.serialPort.close()
-			
-receive2 = Receiver2(switchPort) 
-receive2.start()
-
-def getSerialOutput(request):
-	global strBuilder1
+			self.serialPort.close()		
 	
-	JSONer = {}
-	JSONer['config1'] = strBuilder1
-	JSONer['config2'] = strBuilder2
-	return HttpResponse(json.dumps(JSONer))
+devices = Device.objects.all()
+
+strBuilders = []
+serialList = []
+receiverList = []
+			
+try:
+	mainSwitchSerial = serial.Serial('COM5', 9600)
+except serial.SerialException:
+	print("Main switch not detected")
+
+for idx, device in enumerate(devices):
+	try:
+		cereal = serial.Serial(device.comport.name, 9600)
+		strBuilders.append("")
+		serialList.append(cereal)
+	except serial.SerialException:
+		print("comport not detected")
+		
+	device.serialIndex = idx
+	device.save()
+	
+for idx, serial in enumerate(serialList):
+	r = Receiver(serial, idx)
+	receiverList.append(r)
+
+for idx, receiver in enumerate(receiverList):
+	receiver.start()
+
+# create serial connections end	
 	
 def inputSend(request):
 	JSONer = {}
@@ -106,36 +214,40 @@ def inputSend(request):
 	
 	device = Device.objects.filter(id = deviceID)[0]
 	
-	if (text != "" | text != "return"):	
-		audit = Log()
-		audit.device = device
-		audit.user = request.user
-		audit.action = text
-		audit.save()
+	# if (text != "return"):	
+		# audit = Log()
+		# audit.device = device
+		# audit.user = request.user
+		# audit.action = text
+		# audit.save()
+		# print("Audited " + audit.action + " @ time " + str(audit.timestamp))
 	
-	if (text == "return"):
+	text += "\n\n"
+	
+	if (text == "return\n\n"):
 		text = "\r"
 	
-	text += "\n"
-	print("Device: " + deviceID)
-	print ("Input: " + text)
+	serialList[device.serialIndex].flushInput()
+	serialList[device.serialIndex].write(text.encode('utf-8'))
+	bytes_to_read = serialList[device.serialIndex].inWaiting()
 	
-	# REMEMBER TO CHANGE THIS
-	
-	if deviceID == '1':
-			routerPort.flushInput()
-			routerPort.write(text.encode('utf-8'))
-			bytes_to_read = routerPort.inWaiting()
-			
-	if deviceID == '2':
-			switchPort.flushInput()
-			switchPort.write(text.encode('utf-8'))
-			bytes_to_read = switchPort.inWaiting()
-	
-	print("Audited " + audit.action + " @ time " + str(audit.timestamp))
+	print(text)
+
 	return HttpResponseRedirect(json.dumps(JSONer))
 
-# serial reader/sender end	
+def getSerialOutput(request):
+	return JsonResponse(strBuilders, safe=False)
+
+def getPorts(request):
+	parsedData = urlparse.urlparse(request.get_full_path())
+	devicename = (urlparse.parse_qs(parsedData.query)['device'][0])
+	
+	device = Device.objects.filter(name = devicename)[0]
+	ports = Port.objects.filter(device = device).filter(istaken = '0')
+	
+	data = serializers.serialize('json', ports, fields=('name'))
+	
+	return JsonResponse(data, safe=False)	
 	
 @login_required(login_url="/login")
 def connectDevices(request):
@@ -146,30 +258,34 @@ def connectDevices(request):
 	srcPort = (urlparse.parse_qs(parsedData.query)['srcPort'][0])
 	endPort = (urlparse.parse_qs(parsedData.query)['endPort'][0])
 	
-	if (srcDevice == "Switch 1"):
-		port1 = srcPort
-		if (endPort == "fa0/0"):
-			port2 = "fa0/5"
-		if (endPort == "fa0/1"):
-			port2 = "fa0/6"
+	device1 = Device.objects.filter(name = srcDevice)[0]
+	device2 = Device.objects.filter(name = endDevice)[0]
 	
-	if (endDevice == "Switch 1"):
-		port1 = endPort
-		if (srcPort =="fa0/0"):
-			port2 = "fa0/5"
-		if (srcPort == "fa0/1"):
-			port2 = "fa0/6"
+	port1 = Port.objects.filter(name = srcPort).filter(device = device1)[0]
+	port2 = Port.objects.filter(name = endPort).filter(device = device2)[0]
+	
+	port1.istaken = "1"
+	port2.istaken = "1"
+	
+	port1.save()
+	port2.save()
+	
+	print(port1.istaken)
+	print(port2.istaken)
+	
+	p1 = port1.portOnMainSwitch
+	p2 = port2.portOnMainSwitch
 
-	vlan1 = "10" + port1.split("/",1)[1]
-	vlan2 = "10" + port2.split("/",1)[1]
+	vlan1 = "10" + p1.split("/",1)[1]
 	
-	text = "\renable\nconfigure terminal\ninterface range " + port1 +", " + port2 +"\nswitchport mode access\nswitchport access vlan " + vlan1 + "\nexit"	
-	print("connected devices")
-	mainSwitchPort.flushInput()
-	mainSwitchPort.write(text.encode('utf-8'))
-	bytes_to_read = mainSwitchPort.inWaiting()
+	text = "\renable\nconfigure terminal\ninterface range " + p1 +", " + p2 +"\nswitchport mode access\nswitchport access vlan " + vlan1 + "\nexit"	
+	print(text)
+	# print("connected devices")
+	# mainSwitchPort.flushInput()
+	# mainSwitchPort.write(text.encode('utf-8'))
+	# bytes_to_read = mainSwitchPort.inWaiting()
 	
-	return HttpResponse(json.dumps(JSONer))
+	return JsonResponse(JSONer)
 	
 @login_required(login_url="/login")
 def disconnectDevices(request):
@@ -180,32 +296,33 @@ def disconnectDevices(request):
 	srcPort = (urlparse.parse_qs(parsedData.query)['srcPort'][0])
 	endPort = (urlparse.parse_qs(parsedData.query)['endPort'][0])
 	
-	if (srcDevice == "Switch 1"):
-		port1 = srcPort
-		if (endPort == "fa0/0"):
-			port2 = "fa0/5"
-		if (endPort == "fa0/1"):
-			port2 = "fa0/6"
+	device1 = Device.objects.filter(name = srcDevice)[0]
+	device2 = Device.objects.filter(name = endDevice)[0]
 	
-	if (endDevice == "Switch 1"):
-		port1 = endPort
-		if (srcPort =="fa0/0"):
-			port2 = "fa0/5"
-		if (srcPort == "fa0/1"):
-			port2 = "fa0/6"
+	port1 = Port.objects.filter(name = srcPort).filter(device = device1)[0]
+	port2 = Port.objects.filter(name = endPort).filter(device = device2)[0]
+	
+	port1.istaken = "0"
+	port2.istaken = "0"
+	
+	port1.save()
+	port2.save()
 
-	vlan1 = "10" + port1.split("/",1)[1]
-	vlan2 = "10" + port2.split("/",1)[1]
+	p1 = port1.portOnMainSwitch
+	p2 = port2.portOnMainSwitch
+
+	vlan1 = "10" + p1.split("/",1)[1]
+	vlan2 = "10" + p2.split("/",1)[1]
 	
-	text = "\renable\nconfigure terminal\ninterface " + port1 +"\nswitchport mode access\nswitchport access vlan " + vlan1 + "\nexit"	
-	text += "\renable\nconfigure terminal\ninterface " + port2 +"\nswitchport mode access\nswitchport access vlan " + vlan2 + "\nexit"	
+	text = "\renable\nconfigure terminal\ninterface " + p1 +"\nswitchport mode access\nswitchport access vlan " + vlan1 + "\nexit"	
+	text += "\renable\nconfigure terminal\ninterface " + p2 +"\nswitchport mode access\nswitchport access vlan " + vlan2 + "\nexit"	
 	print(text)
-	print("Disconnected")
-	mainSwitchPort.flushInput()
-	mainSwitchPort.write(text.encode('utf-8'))
-	bytes_to_read = mainSwitchPort.inWaiting()	
+	# print("Disconnected devices")
+	# mainSwitchPort.flushInput()
+	# mainSwitchPort.write(text.encode('utf-8'))
+	# bytes_to_read = mainSwitchPort.inWaiting()	
 	
-	return HttpResponse(json.dumps(JSONer))
+	return JsonResponse(JSONer)
 @login_required(login_url="/login")	
 def reserveDevice(request):
 	ctr = 0
@@ -298,17 +415,17 @@ def loadTopology(request):
 	
 @login_required(login_url="/login")
 def saveTopologyFunc(request):
-	global savedTopology
 	user = request.user
-
 	JSONer = {}
+	
 	parsedData = urlparse.urlparse(request.get_full_path())
 	topName = (urlparse.parse_qs(parsedData.query)['topologyName'][0])
 	
 	if (SaveTopology.objects.filter(name = topName).count() > 0):
 		savedTopology = SaveTopology.objects.filter(name = topName)[0]
-		SaveDev.objects.filter(saveTopology = savedTopology).delete()
 		SaveConn.objects.filter(saveTopology = savedTopology).delete()
+		SaveDev.objects.filter(saveTopology = savedTopology).delete()
+		JSONer['topo'] = savedTopology.pk
 		print("Overwrite " + savedTopology.name)
 	else:
 		newTopology = SaveTopology()	
@@ -316,41 +433,45 @@ def saveTopologyFunc(request):
 		newTopology.group = user.profile.group
 		newTopology.save()
 		newTopology.refresh_from_db()
-		savedTopology = newTopology
+		JSONer['topo'] = newTopology.pk
 		print("Created " + newTopology.name)
 		
 	return HttpResponse(json.dumps(JSONer))
 	
 @login_required(login_url="/login")
 def saveDevice(request):
-	global savedTopology
-	
 	JSONer = {}
 	parsedData = urlparse.urlparse(request.get_full_path())
+	tId = (urlparse.parse_qs(parsedData.query)['topoId'][0])
 	devName = (urlparse.parse_qs(parsedData.query)['deviceName'][0])
 	x = (urlparse.parse_qs(parsedData.query)['x'][0])
 	y = (urlparse.parse_qs(parsedData.query)['y'][0])
 	deviceID = Device.objects.filter(name = devName)[0]
 	deviceID = deviceID.id
 	gtd = GroupToDevice.objects.filter(device = deviceID)[0]
+	savedTopology = SaveTopology.objects.filter(pk=tId)[0]
+	
 	print("Save " + devName + " x/y=" + x + y + " to " + savedTopology.name)
 
-	newSaveDev = SaveDev()
-	newSaveDev.saveTopology = savedTopology
-	newSaveDev.GroupToDevice = gtd
-	newSaveDev.deviceName = devName
-	newSaveDev.xCord = float(x)
-	newSaveDev.yCord = float(y)
-	newSaveDev.save()
-		
+	nSDev = SaveDev()
+	nSDev.saveTopology = savedTopology
+	nSDev.deviceName = devName
+	nSDev.xCord = float(x)
+	nSDev.yCord = float(y)
+	nSDev.save()
+	nSDev.refresh_from_db()
+	nSDev.GroupToDevice = gtd
+	nSDev.save()
+	
+	print("GTD is " + str(nSDev.GroupToDevice))
+	
 	return HttpResponse(json.dumps(JSONer))
 
 @login_required(login_url="/login")
 def saveConnection(request):
-	global savedTopology
-	
 	JSONer = {}
 	parsedData = urlparse.urlparse(request.get_full_path())
+	tId = (urlparse.parse_qs(parsedData.query)['topoId'][0])
 	connectionName = (urlparse.parse_qs(parsedData.query)['connectionName'][0])
 	startX = (urlparse.parse_qs(parsedData.query)['startX'][0])	
 	startY = (urlparse.parse_qs(parsedData.query)['startY'][0])
@@ -360,6 +481,8 @@ def saveConnection(request):
 	endDevice = (urlparse.parse_qs(parsedData.query)['endDevice'][0])
 	srcPort = (urlparse.parse_qs(parsedData.query)['srcPort'][0])
 	endPort = (urlparse.parse_qs(parsedData.query)['endPort'][0])
+	
+	savedTopology = SaveTopology.objects.filter(pk=tId)[0]
 	
 	print("Save " + connectionName + "src:" + srcDevice + " end:" + endDevice +" to " + savedTopology.name)
 	
@@ -405,8 +528,15 @@ def adminPage(request):
 	devicesort= Device.objects.all().order_by('name')
 	today=datetime.datetime.now().date()
 	log = Log.objects.all()
+	comport = Comport.objects.all()
+	mainswitchports = MainSwitchPort.objects.all()
+	
 	valid = True
 	error_msg1 = ""
+	
+	routerCount = Device.objects.filter(type = 'Router').count()
+	switchCount = Device.objects.filter(type = 'Switch').count()
+	terminalCount = Device.objects.filter(type = 'Siwtch').count()
 	
 	context = {
 	'log':log,
@@ -421,6 +551,11 @@ def adminPage(request):
 	'devicesort':devicesort,
 	'valid':valid,
 	'error_msg1':error_msg1,
+	'routerCount':routerCount,
+	'switchCount':switchCount,
+	'terminalCount':terminalCount,
+	'comport':comport,
+	'mainswitchports':mainswitchports,
 	}
 	return render(request, 'admin.html', context)
 	
@@ -895,4 +1030,272 @@ def editGrp(request):
 		print(userID.username)
 		userID.save(force_update=True)
 		messages.success(request,"User successfully reassigned!")
-	return HttpResponse(json.dumps(JSONer))	
+	return HttpResponse(json.dumps(JSONer))
+
+def addDevice(request):
+	JSONer = {}
+	parsedData = urlparse.urlparse(request.get_full_path())
+	type = (urlparse.parse_qs(parsedData.query)['type'][0])
+	comportname = (urlparse.parse_qs(parsedData.query)['comport'][0])
+	comport = Comport.objects.filter(name=comportname)[0]
+	
+	if type == '2':
+		portNumber = (urlparse.parse_qs(parsedData.query)['portnumber'][0])
+		mainswitchports = []
+		portactivity = []
+		if portNumber == '12':
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p1'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p2'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p3'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p4'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p5'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p6'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p7'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p8'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p9'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p10'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p11'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p12'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f1'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f2'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f3'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f4'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f5'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f6'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f7'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f8'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f9'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f10'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f11'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f12'][0]))
+			print(mainswitchports)
+		elif portNumber == '24':
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p1'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p2'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p3'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p4'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p5'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p6'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p7'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p8'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p9'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p10'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p11'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p12'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p13'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p14'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p15'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p16'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p17'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p18'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p19'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p20'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p21'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p22'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p23'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p24'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f1'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f2'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f3'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f4'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f5'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f6'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f7'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f8'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f9'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f10'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f11'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f12'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f13'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f14'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f15'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f16'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f17'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f18'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f19'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f20'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f21'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f22'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f23'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f24'][0]))
+			print(mainswitchports)
+		elif portNumber == '48':
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p1'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p2'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p3'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p4'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p5'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p6'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p7'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p8'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p9'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p10'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p11'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p12'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p13'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p14'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p15'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p16'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p17'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p18'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p19'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p20'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p21'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p22'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p23'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p24'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p25'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p26'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p27'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p28'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p29'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p30'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p31'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p32'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p33'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p34'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p35'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p36'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p37'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p38'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p39'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p40'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p41'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p42'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p43'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p44'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p45'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p46'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p47'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p48'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f1'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f2'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f3'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f4'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f5'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f6'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f7'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f8'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f9'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f10'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f11'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f12'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f13'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f14'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f15'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f16'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f17'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f18'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f19'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f20'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f21'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f22'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f23'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f24'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f25'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f26'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f27'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f28'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f29'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f30'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f31'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f32'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f33'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f34'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f35'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f36'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f37'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f38'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f39'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f40'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f41'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f42'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f43'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f44'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f45'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f46'][0]))
+			portactivity.append((urlparse.parse_qs(parsedData.query)['f47'][0]))
+			mainswitchports.append((urlparse.parse_qs(parsedData.query)['f48'][0]))
+
+		nDevice = Device()
+		nDevice.type = 'Switch'
+		nDevice.name = 'Switch ' + str(Device.objects.filter(type='Switch').count() + 1)
+		nDevice.comport = comport
+		# nDevice.save()  
+		
+		comport.istaken = '1'
+		# comport.save()
+		
+		for idx, port in enumerate(mainswitchports):
+			nPort = Port()
+			nPort.name='fa0/' + str(idx+1)
+			nPort.type = 'Fast Ethernet'
+			nPort.device = nDevice
+			mps = MainSwitchPort.objects.filter(pk=port)[0]
+			mps.istaken = '1'
+			# mps.save()
+			nPort.mainswitchport = mps
+			if portactivity[idx] == 'true':
+				nPort.isactive = '1'
+			# nPort.save()
+		
+		# AddSerialConnection(comport, nDevice)
+		
+		print(mainswitchports)
+		if len(mainswitchports) > len(set(mainswitchports)):
+			print('not unique')
+		else:
+			print('unique')
+	
+	if type == '1':
+		mainswitchports = []
+		portactivity = []
+		nDevice = Device()
+		nDevice.type = 'Router'
+		nDevice.name = 'Router ' + str(Device.objects.filter(type='Router').count() + 1)
+		nDevice.comport = comport
+		# nDevice.save()
+		
+		comport.istaken = '1'
+		# comport.save()
+		
+		mainswitchports.append((urlparse.parse_qs(parsedData.query)['rp1'][0]))
+		mainswitchports.append((urlparse.parse_qs(parsedData.query)['rp2'][0]))
+		
+		for idx, port in enumerate(mainswitchports):
+			nPort = Port()
+			nPort.name='fa0/' + str(idx+1)
+			nPort.type = 'Fast Ethernet'
+			nPort.device = nDevice
+			mps = MainSwitchPort.objects.filter(pk=port)[0]
+			mps.istaken = '1'
+			# mps.save()
+			nPort.mainswitchport = mps
+			nPort.isactive = '1'
+			# nPort.save()
+		
+		AddSerialConnection(comport, nDevice)
+		
+		# unique port checker
+		# if len(mainswitchports) > len(set(mainswitchports)):
+			# print('not unique')
+		# else:
+			# print('unique')
+
+	return HttpResponse(json.dumps(JSONer))
+
+def AddSerialConnection(comport, device):
+	
+	try:
+		cereal = serial.Serial(str(comport), 9600)
+		idx = len(serialList)
+		serialList.append(cereal)
+		strBuilders.append("")
+		d = Device.objects.filter(name='device')[0]
+		d.serialIndex = idx
+		# d.save()
+		r = Receiver(cereal, idx)
+		receiverList.append(r)
+		r.start()
+	except serial.SerialException:
+		print("Serial is not detected")

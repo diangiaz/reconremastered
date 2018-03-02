@@ -32,7 +32,9 @@
     <link href="{% static '/vendors/datatables.net-bs/css/dataTables.bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static '/vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static '/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css' %}" rel="stylesheet">
-    
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+
+    <script src="http://code.jquery.com/jquery-1.12.4.js"></script>    
 
     <!-- Custom Theme Style -->
     <link href="{% static '/build/css/custom.min.css' %}" rel="stylesheet">
@@ -55,22 +57,18 @@
                     <!-- <span data-toggle="modal" data-target="#">   -->
                       <button class="btn btn-default" id="navButton" type="button" onclick="toggleVisibility('divHome')" style="margin-right:10px"><i class="fa fa-home"></i></button>
                     </span>
-                    <span data-toggle="tooltip" data-placement="bottom" title="Create Account">
+                    <span data-toggle="tooltip" data-placement="bottom" title="Accounts">
                     <!-- <span data-toggle="modal" data-target="#createAcct">   -->
                       <button class="btn btn-default" id="navButton" type="button" onclick="toggleVisibility('divCreate')" style="margin-right:10px"><i class="fa fa-user"></i></button>
                     </span>
-                    <span data-toggle="modal" data-target="#createGroup">
-                      <button class="btn btn-default" id="navButton" type="button" data-toggle="tooltip" data-placement="bottom" title="Create Group" style="margin-right:10px"><i class="fa fa-users"></i></button>
-                    </span>
-                    <span data-toggle="tooltip" data-placement="bottom" title="Audit Logs">
-                    <!-- <span data-toggle="modal" data-target="#auditLogs"> -->
-                      <button class="btn btn-default" id="navButton" type="button" onclick="toggleVisibility('divAudit')" style="margin-right:10px"><i class="fa fa-list"></i></button>
-                    </span>
-                    <span data-toggle="modal" data-target="#allocateModal-{{current_user.id}}">
-                      <button class="btn btn-default" id="navButton" type="button" data-toggle="tooltip" data-placement="bottom" title="Allocate Device" style="margin-right:10px"><i class="fa fa-cogs"></i></button>
+                    <span data-toggle="tooltip" data-placement="bottom" title="Devices">
+                      <button class="btn btn-default" id="navButton" type="button" onclick="toggleVisibility('divDevice')" style="margin-right:10px"><i class="fa fa-hdd-o"></i></button>
                     </span>
                     <span data-toggle="modal" data-target="#approveRes-{{user.id}}">
                       <button class="btn btn-default" id="navButton" type="button" data-toggle="tooltip" data-placement="bottom" title="Reservations" style="margin-right:10px"><i class="fa fa-exclamation-circle"></i></button>
+                    </span>
+                    <span data-toggle="tooltip" data-placement="bottom" title="Audit Logs">
+                      <button class="btn btn-default" id="navButton" type="button" onclick="toggleVisibility('divAudit')" style="margin-right:10px"><i class="fa fa-list"></i></button>
                     </span>
                   </div>                  
                 </div>
@@ -98,10 +96,12 @@
                 <div class="x_panel" style="padding:10px 17px;">
                   <div class="x_title">
                     <h2>Manage Groups and Devices</h2>
-                    <div class="clearfix"></div>
+                      <a href="#allocateModal-{{current_user.id}}" data-toggle="modal" style="float: right;"><h4><i class="fa fa-plus-circle"></i>    Allocate Device</h4></a>
 
+                    <div class="clearfix"></div>
                   </div>
-                 {% if messages %}
+
+                  {% if messages %}
                   <ul class="messages">
                       {% for message in messages %}
                       {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
@@ -141,121 +141,105 @@
                       {% endfor %}
                   </ul>
                   {% endif %}
-                  
               
-                   
-                  
-                  <div class="x_content">
-                    <div class="col-md-9" style="padding-left: 0;width: 80%" id="testRefresh">
-                         <table id="datatable" class="table table-striped table-bordered projects dt-responsive" style="border:0; width: 100%">
-                          <thead>
-                            <tr>
-                              <th style="text-align: center; width:5%; font-weight: 700">Group</th>
-                              <th style="text-align: center; width:5%; font-weight: 700">Member</th>
-                              <th style="text-align: center; width:10%; font-weight: 700">Router</th>
-                              <th style="text-align: center; width:10%; font-weight: 700">Switch</th>
-                              <th style="text-align: center; width:10%; font-weight: 700">Terminal</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            
-                          {% for groups in groups %}
-                            
-                            <tr>                              
-                              <td>                                
-                                <a href="#editGrp-{{groups.id}}" data-toggle="modal"><strong>{{ groups.name }}</strong></a>
-                                
-                                <br />
-                          
-                              </td>
-
-                              <td>
-                              <ul class="list-unstyled">
-                              {% for user in users %}
-                                {% ifequal user.profile.group.id groups.id %}
-                                <li><a href="#editAcct-{{user.id}}" data-toggle="modal">{{user.username}}</a></li>
-                                
-                                {% endifequal %}
-                              {% endfor %}
+                  <div class="x_content" style="padding-left: 0">
+                    <div class="col-md-9" style="padding:10px;width: 80%;background:white;border-right: 5px" id="testRefresh">
+                      <table id="datatable" class="table table-striped projects dt-responsive" style="border:0px solid #E6E9ED; width: 100%">
+                        <thead>
+                          <tr style="height: 40px;">
+                            <th style="text-align: center; width:5%; font-weight: 700">Group</th>
+                            <th style="text-align: center; width:5%; font-weight: 700">Member</th>
+                            <th style="text-align: center; width:10%; font-weight: 700">Router</th>
+                            <th style="text-align: center; width:10%; font-weight: 700">Switch</th>
+                            <th style="text-align: center; width:10%; font-weight: 700">Terminal</th>
+                          </tr>
+                        </thead>
+                        <tbody>                          
+                        {% for groups in groups %}                          
+                          <tr>                              
+                            <td>                                
+                              <a href="#editGrp-{{groups.id}}" data-toggle="modal"><strong>{{ groups.name }}</strong></a>                              
+                              <br />                        
+                            </td>
+                            <td>
+                            <ul class="list-unstyled">
+                            {% for user in users %}
+                              {% ifequal user.profile.group.id groups.id %}
+                              <li><a href="#editAcct-{{user.id}}" data-toggle="modal">{{user.username}}</a></li>                              
+                              {% endifequal %}
+                            {% endfor %}
+                            </ul>
+                          </td>                 
+                          <td>
+                          {% for gtd in grouptodevice %}
+                           {% ifequal gtd.group.id groups.id %}
+                            {% ifequal gtd.type 'AP' %}
+                             {% if gtd.endDateTime >= today %}
+                             {% ifequal gtd.device.type 'Router' %}
+                              <ul class="allocatedDev-list">
+                                <li style="padding-left: 0">                                 
+                                  <a>
+                                    <img src="{% static 'production/images/routerAvatar.png' %}" class="avatar" alt="Avatar" style="margin-right: 6px">
+                                    <strong>{{gtd.device.name}}</strong>
+                                    <br/>
+                                    <small>{{ gtd.startDateTime }} - {{ gtd.endDateTime }}</small>
+                                  </a>
+                                </li>
                               </ul>
-                            </td>
-                            
-
-                            <td>
-                            {% for gtd in grouptodevice %}
-                             {% ifequal gtd.group.id groups.id %}
-                              {% ifequal gtd.type 'AP' %}
-                               {% if gtd.endDateTime >= today %}
-                               {% ifequal gtd.device.type 'Router' %}
-                                <ul class="allocatedDev-list">
-                                  <li style="padding-left: 0">                                 
-                                    <a>
-                                      <img src="{% static 'production/images/routerAvatar.png' %}" class="avatar" alt="Avatar" style="margin-right: 6px">
-                                      <strong>{{gtd.device.name}}</strong>
-                                      <br/>
-                                      <small>{{ gtd.startDateTime }} - {{ gtd.endDateTime }}</small>
-                                    </a>
-                                  </li>
-                                </ul>
-                               {% endifequal %}
-                               {% endif %}
-                              {% endifequal %}                            
                              {% endifequal %}
-                            {% endfor %}
-                            </td>
-                            <td>
-                            {% for gtd in grouptodevice %}
-                             {% ifequal gtd.group.id groups.id %}
-                              {% ifequal gtd.type 'AP' %}
-                              {% if gtd.endDateTime >= today %}
-                               {% ifequal gtd.device.type 'Switch' %}
-                                <ul class="allocatedDev-list">
-                                  <li style="padding-left: 0">                                 
-                                    <a>
-                                      <img src="{% static 'production/images/switchAvatar.png' %}" class="avatar" alt="Avatar" style="margin-right: 6px">
-                                      <strong>{{gtd.device.name}}</strong>
-                                      <br/>
-                                      <small>{{ gtd.startDateTime }} - {{ gtd.endDateTime }}</small>
-                                    </a>
-                                  </li>
-                                </ul>
-                               {% endifequal %}
-                               {% endif %}
-                              {% endifequal %}
-                             {% endifequal %}                             
-                            {% endfor %}
-                            </td>
-                            <td>
-                            {% for gtd in grouptodevice %}
-                             {% ifequal gtd.group.id groups.id %}
-                              {% ifequal gtd.type 'AP' %}
-                              {% if gtd.endDateTime >= today %}
-                               {% ifequal gtd.device.type 'Terminal' %}
-                                <ul class="allocatedDev-list">
-                                  <li style="padding-left: 0">                                 
-                                    <a>
-                                      <img src="{% static 'production/images/terminalAvatar.png' %}" class="avatar" alt="Avatar" style="margin-right: 6px">
-                                      <strong>{{gtd.device.name}}</strong>
-                                      <br/>
-                                      <small>{{ gtd.startDateTime }} - {{ gtd.endDateTime }}</small>
-                                    </a>
-                                  </li>
-                                </ul>
-                               {% endifequal %}
-                               {% endif %}
-                              {% endifequal %}
-                             {% endifequal %}
-                            {% endfor %}
-                            </td>        
-                            </tr>
-                         
+                             {% endif %}
+                            {% endifequal %}                            
+                           {% endifequal %}
                           {% endfor %}
-
-                            
-
-                          </tbody>
-                          
-                        </table>                      
+                          </td>
+                          <td>
+                          {% for gtd in grouptodevice %}
+                           {% ifequal gtd.group.id groups.id %}
+                            {% ifequal gtd.type 'AP' %}
+                            {% if gtd.endDateTime >= today %}
+                             {% ifequal gtd.device.type 'Switch' %}
+                              <ul class="allocatedDev-list">
+                                <li style="padding-left: 0">                                 
+                                  <a>
+                                    <img src="{% static 'production/images/switchAvatar.png' %}" class="avatar" alt="Avatar" style="margin-right: 6px">
+                                    <strong>{{gtd.device.name}}</strong>
+                                    <br/>
+                                    <small>{{ gtd.startDateTime }} - {{ gtd.endDateTime }}</small>
+                                  </a>
+                                </li>
+                              </ul>
+                             {% endifequal %}
+                             {% endif %}
+                            {% endifequal %}
+                           {% endifequal %}                             
+                          {% endfor %}
+                          </td>
+                          <td>
+                          {% for gtd in grouptodevice %}
+                           {% ifequal gtd.group.id groups.id %}
+                            {% ifequal gtd.type 'AP' %}
+                            {% if gtd.endDateTime >= today %}
+                             {% ifequal gtd.device.type 'Terminal' %}
+                              <ul class="allocatedDev-list">
+                                <li style="padding-left: 0">                                 
+                                  <a>
+                                    <img src="{% static 'production/images/terminalAvatar.png' %}" class="avatar" alt="Avatar" style="margin-right: 6px">
+                                    <strong>{{gtd.device.name}}</strong>
+                                    <br/>
+                                    <small>{{ gtd.startDateTime }} - {{ gtd.endDateTime }}</small>
+                                  </a>
+                                </li>
+                              </ul>
+                             {% endifequal %}
+                             {% endif %}
+                            {% endifequal %}
+                           {% endifequal %}
+                          {% endfor %}
+                          </td>        
+                          </tr>                       
+                        {% endfor %}
+                        </tbody>                        
+                      </table>                      
                     </div>
 
                     <div class="col-md-3 mail_view" style="width: 20%;padding-right: 0">
@@ -355,10 +339,11 @@
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel" style="padding:10px 17px;">
                   <div class="x_title">
-                    <h2>Employee Information</h2>                    
-					
-					<div class="clearfix"></div>
+                    <h2>Employee Information</h2>
+                    <a href="#createGroup" data-toggle="modal" style="float: right;"><h4><i class="fa fa-users"></i>    Create Group</h4></a>
+                    <div class="clearfix"></div>
                   </div>
+
                   <div class="x_content">
                     <br />
                     <div class="col-md-8 col-sm-8 col-md-offset-2 col-xs-12">
@@ -366,13 +351,13 @@
                         <div class="form-group">
                           <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
                             <input id="createEmployeeID" type="number" class="form-control has-feedback-left" placeholder="Employee ID *" required="required">
-							<font id="error-employee-id"></font>
+                            <font id="error-employee-id"></font>
                             <span class="fa fa-hashtag form-control-feedback left" aria-hidden="true"></span>
                           </div>
 
                           <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
                             <input id="createEmail" type="mail" class="form-control has-feedback"  placeholder="Email *" required="required" data-validate-linked="email">
-							<font id="error-employee-email"></font>
+                            <font id="error-employee-email"></font>
                             <span class="fa fa-envelope form-control-feedback right" aria-hidden="true"></span>
                           </div>                                                  
                         </div>
@@ -380,14 +365,13 @@
                         <div class="form-group">                        
                           <div class="col-md-6 col-sm-6 col-xs-12 item form-group has-feedback">
                             <input id="createFirstName" type="text" class="form-control has-feedback-left" placeholder="First Name *" required="required">
-							<font id="error-employee-first-name"></font>
+                            <font id="error-employee-first-name"></font>
                             <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
-							
                           </div>
 
                           <div class="col-md-6 col-sm-6 col-xs-12 item form-group has-feedback">
                             <input id="createLastName" type="text" class="form-control has-feedback" placeholder="Last Name *" required="required">
-							<font id="error-employee-last-name"></font>
+                            <font id="error-employee-last-name"></font>
                             <span class="fa fa-user form-control-feedback right" aria-hidden="true"></span>
                           </div>  
                         </div>
@@ -395,20 +379,15 @@
                         <div class="form-group">
                           <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
                             <input id="createUserName" type="text" class="form-control has-feedback-left" placeholder="Username *" required="required">
-							<font id="error-employee-username"></font>
-						   <span class="fa fa-at form-control-feedback left" aria-hidden="true"></span>
+                            <font id="error-employee-username"></font>
+                            <span class="fa fa-at form-control-feedback left" aria-hidden="true"></span>
                           </div>
 
                           <div class="col-md-6 col-sm-6 col-xs-12">
                             <select id="createUserGroup" class="form-control" required>
-							
-							{% for group in groups %}
-							
-                            <option value="{{group.name}}">{{group.name}}</option>
-							
-							{% endfor %}
-							
-							
+                              {% for group in groups %}             
+                              <option value="{{group.name}}">{{group.name}}</option>              
+                              {% endfor %}              
                             </select>
                           </div> 
                         </div>
@@ -417,15 +396,15 @@
                           <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
                             <input type="password" class="form-control has-feedback-left" id="createPassword" name="password" data-validate-length="6,8" placeholder="Password *" required="required">
                             <font id="error-employee-password"></font>
-							<span class="fa fa-lock form-control-feedback left" aria-hidden="true"></span>
+                            <span class="fa fa-lock form-control-feedback left" aria-hidden="true"></span>
                           </div>
 
                           <div class="col-md-6 col-sm-6 col-xs-12 item form-group has-feedback">
                             <input type="password" class="form-control" id="createPassword2" name="password2" data-validate-linked="password" placeholder="Repeat Password *" required="required">
-							<font id="error-employee-password2"></font>
+                            <font id="error-employee-password2"></font>
                             <span class="fa fa-lock form-control-feedback right" aria-hidden="true"></span>
                           </div>
-                        </div>     	
+                        </div>      
 
                         <div class="ln_solid"></div>
                         <div class="form-group">
@@ -441,6 +420,666 @@
               </div>
             </div>
 
+            <!-- THIS ONE ANGE -->
+            <div class="row" id="divDevice" style="display: none;">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel" style="padding:10px 17px;">
+                  <div class="x_title">
+                    <h2>Devices</h2>           
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <div class="row top_tiles">
+                      <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                        <div class="tile-stats">
+                          <div class="icon"><img src="{% static '/production/images/router-png.png' %}" alt="Router"></div>
+                          <div class="count">{{routerCount}}</div>
+                          <h3>Router</h3>
+                        </div>
+                      </div>
+                      <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                        <div class="tile-stats">
+                          <div class="icon"><img src="{% static '/production/images/switch-png.png' %}" alt="Switch"></div>
+                          <div class="count">{{switchCount}}</div>
+                          <h3>Switch</h3>
+                        </div>
+                      </div>
+                      <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                        <div class="tile-stats">
+                          <div class="icon"><img src="{% static '/production/images/terminal-png.png' %}" alt="Terminal"></div>
+                          <div class="count">{{terminalCount}}</div>
+                          <h3>Terminal</h3>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- TABLE -->
+                    <div class="dev_form">
+                      <div class="x_panel" style="background:white;">
+                        <div class="x_content" style="width: 100%">
+
+                        
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                          <div class="form-horizontal form-label-left">
+
+                            <!-- ROUTER ADDITIONAL PORT -->
+                            <div class="form-group">
+                              <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12">Device Type</label>
+                                <div class="col-md-8 col-sm-6 col-xs-12">
+                                  <select id="devType" name="devList" class="form-control" onchange="java_script_:show(this.options[this.selectedIndex].value)" required>
+                                    <option value="">*Choose a device*</option>         
+                                    <option value="1">Router</option>
+                                    <option value="2">Switch</option>
+                                    <option value="3">Terminal</option>
+                                  </select>
+                                </div>
+                              </div>                                                
+                            </div>
+                            <!-- ROUTER ADDITIONAL PORT -->
+
+                            <div class="form-group">
+                              <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Location
+                                </label>
+                                <div class="col-md-8 col-sm-6 col-xs-12">
+                                  <input type="text" id="devLocation" name="devLoc" class="form-control" required>
+                                </div>
+                              </div>
+                            </div> 
+
+                            <div class="form-group">
+                              <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="comport">Comport
+                              </label>
+                                <div class="col-md-8 col-sm-6 col-xs-12">
+                                  <select id="devComport" class="form-control" required>
+                                    <!-- <option value="1">*Select an option*</option> -->
+									{% for comport in comport %}
+										{% ifequal comport.istaken '0' %}
+											<option value="{{comport.name}}">{{comport.name}}</option>
+										{% endifequal %}
+									{% endfor %}
+                                  </select>
+                                </div>
+                              </div>  
+                            </div>
+
+                            <!--UPDATED ROUTER ADDITIONAL PORTS -->
+                            <div class="form-group" id="routerPort" style="display: none;">
+                              <div class="col-md-12 col-sm-12 col-xs-12 item form-group has-feedback">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="router-port">Ports
+                                </label>
+                                <div class="col-md-8 col-sm-6 col-xs-12">
+									<ul class="list-unstyled scroll-view" style="column-count: 2">
+										<div>                                      
+										  <li>
+											<!-- PORTS WITHOUT CHECKBOX-->
+											fa0/0
+											  <select id="rp1" required>
+												{% for port in mainswitchports %}
+													{{ ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{{ ifequal port.istaken '0' %}
+												{% endfor %}
+											  </select><br>
+											fa0/1 
+											  <select id="rp2" required>
+												{% for port in mainswitchports %}
+													{{ ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{{ ifequal port.istaken '0' %}
+												{% endfor %}
+											  </select><br>
+											<!-- PORTS WITHOUT CHECKBOX-->
+										  </li>
+										</div>
+									</ul>
+                                </div>
+                              </div>
+                            </div>
+                            <!--UPDATED ROUTER ADDITIONAL PORTS -->
+
+                            <div class="form-group" id="portDiv" style="display: none;">
+                              <div class="col-md-12 col-sm-12 col-xs-12 item form-group has-feedback">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="switch-port">No. of Ports
+                                </label>
+                                <div class="col-md-8 col-sm-6 col-xs-12">
+                                  <select id="switchportnum" class="form-control" onchange="java_script_:showPorts(this.options[this.selectedIndex].value)" required>
+                                    <option value="">*Select an option*</option>
+                                    <option value="12">12 Ports</option>
+                                    <option value="24">24 Ports</option>
+                                    <option value="48">48 Ports</option>
+                                  </select>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div id="divP12" class="form-group" style="display: none;">
+                              <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
+                                <div class="col-md-12 col-sm-6 col-xs-12" style="float: right">
+                                  <p style="font-style: italic;">*Check active ports | Choose port on main switch from dropdown option*</p>
+                                  <ul class="list-unstyled scroll-view" style="column-count: 3">
+                                    <div>                                      
+                                      <li>
+                                        <input type="checkbox" name="switchPort" id="f1"> fa0/1 
+                                          <select id="p1" required>
+												{% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                        <input type="checkbox" name="switchPort" id="f2"> fa0/2 
+                                          <select id="p2" required>
+												{% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                        <input type="checkbox" name="switchPort" id="f3"> fa0/3 
+                                          <select id="p3" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                        <input type="checkbox" name="switchPort" id="f4"> fa0/4 
+                                          <select id="p4" required>
+                                           {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                        <input type="checkbox" name="switchPort" id="f5"> fa0/5 
+                                          <select id="p5" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                        <input type="checkbox" name="switchPort" id="f6"> fa0/6 
+                                          <select id="p6" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                        <input type="checkbox" name="switchPort" id="f7"> fa0/7 
+                                          <select id="p7" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                        <input type="checkbox" name="switchPort" id="f8"> fa0/8 
+                                          <select id="p8" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                        <input type="checkbox" name="switchPort" id="f9"> fa0/9 
+                                          <select id="p9" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                        <input type="checkbox" name="switchPort" id="f10"> fa0/10 
+                                          <select id="p10" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                        <input type="checkbox" name="switchPort" id="f11"> fa0/11 
+                                          <select id="p11" required>
+                                           {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                        <input type="checkbox" name="switchPort" id="f12"> fa0/12 
+                                          <select id="p12" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                        
+                                        <div id="divP24" style="display: none;">                                        
+                                          <input type="checkbox" name="switchPort" id="f13"> fa0/13 
+                                          <select id="p13" required>
+                                           {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                          <input type="checkbox" name="switchPort" id="f14"> fa0/14 
+                                          <select id="p14" required>
+                                           {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                          <input type="checkbox" name="switchPort" id="f15"> fa0/15 
+                                          <select id="p15" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                          <input type="checkbox" name="switchPort" id="f16"> fa0/16 
+                                          <select id="p16" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                          <input type="checkbox" name="switchPort" id="f17"> fa0/17 
+                                          <select id="p17" required>
+                                           {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                          <input type="checkbox" name="switchPort" id="f18"> fa0/18 
+                                          <select id="p18" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                          <input type="checkbox" name="switchPort" id="f19"> fa0/19 
+                                          <select id="p19" required>
+                                           {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                          <input type="checkbox" name="switchPort" id="f20"> fa0/20 
+                                          <select id="p20" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                          <input type="checkbox" name="switchPort" id="f21"> fa0/21 
+                                          <select id="p21" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                          <input type="checkbox" name="switchPort" id="f22"> fa0/22 
+                                          <select id="p22" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                          <input type="checkbox" name="switchPort" id="f23"> fa0/23 
+                                          <select id="p23" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                          <input type="checkbox" name="switchPort" id="f24"> fa0/24 
+                                          <select id="p24" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br> 
+                                          
+                                          <div id="divP48" style="display: none;">                                          
+                                            <input type="checkbox" name="switchPort" id="f25"> fa0/25 
+                                          <select id="p25" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                            <input type="checkbox" name="switchPort" id="f26"> fa0/26 
+                                          <select id="p26" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                            <input type="checkbox" name="switchPort" id="f27"> fa0/27 
+                                          <select id="p27" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                            <input type="checkbox" name="switchPort" id="f28"> fa0/28 
+                                          <select id="p28" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                            <input type="checkbox" name="switchPort" id="f29"> fa0/29 
+                                          <select id="p29" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                            <input type="checkbox" name="switchPort" id="f30"> fa0/30 
+                                          <select id="p30" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                            <input type="checkbox" name="switchPort" id="f31"> fa0/31 
+                                          <select id="p31" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                            <input type="checkbox" name="switchPort" id="f32"> fa0/32 
+                                          <select id="p32" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                            <input type="checkbox" name="switchPort" id="f33"> fa0/33 
+                                          <select id="p33" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                            <input type="checkbox" name="switchPort" id="f34"> fa0/34 
+                                          <select id="p34" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                            <input type="checkbox" name="switchPort" id="f35"> fa0/35 
+                                          <select id="p35" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                            <input type="checkbox" name="switchPort" id="f36"> fa0/36
+                                          <select id="p36" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select> <br>
+                                            <input type="checkbox" name="switchPort" id="f37"> fa0/37 
+                                          <select id="p37" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                            <input type="checkbox" name="switchPort" id="f38"> fa0/38 
+                                          <select id="p38" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                            <input type="checkbox" name="switchPort" id="f39"> fa0/39 
+                                          <select id="p39" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                            <input type="checkbox" name="switchPort" id="f40"> fa0/40 
+                                          <select id="p40" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                            <input type="checkbox" name="switchPort" id="f41"> fa0/41 
+                                          <select id="p41" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                            <input type="checkbox" name="switchPort" id="f42"> fa0/42 
+                                          <select id="p42" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                            <input type="checkbox" name="switchPort" id="f43"> fa0/43 
+                                          <select id="p43" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                            <input type="checkbox" name="switchPort" id="f44"> fa0/44 
+                                          <select id="p44" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                            <input type="checkbox" name="switchPort" id="f45"> fa0/45 
+                                          <select id="p45" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                            <input type="checkbox" name="switchPort" id="f46"> fa0/46 
+                                          <select id="p46" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                            <input type="checkbox" name="switchPort" id="f47"> fa0/47 
+                                          <select id="p47" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select><br>
+                                            <input type="checkbox" name="switchPort" id="f48"> fa0/48 
+                                          <select id="p48" required>
+                                            {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                          </select>                                           
+                                          </div>
+                                        </div>
+                                      </li>                                      
+                                    </div>
+                                  </ul>
+                                </div>
+                              </div>  
+                            </div>
+
+                            <div class="ln_solid"></div>
+                            <div class="form-group">
+                              <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-4">
+                                <button type="submit" class="btn btn-success" onclick="addDevice()" name="editDevice">Add Device</button>
+                                <button class="btn btn-primary" onclick="clearUserFields()">Cancel</button> 
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                                                    
+                        </div>
+                      </div>
+                    </div>
+                    <!-- TABLE -->
+
+                    <!-- TABLE -->
+                    <div class="dev_table">
+                      <div class="x_panel" style="background:white;">
+                        <div class="x_content" style="width: 100%">
+                          <table id="datatable-fixed-header" class="table table-striped jambo_table table-bordered dt-responsive nowrap" width="100%">
+                            <thead>
+                              <tr>
+                                <th style="font-weight: 700;">Device Type</th>
+                                <th style="font-weight: 700;width: 50%">Device Name</th>
+                                <th style="font-weight: 700;">Ports</th>  
+                                <th style="font-weight: 700;width: 15%">Location</th>              
+                              </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                          </table>                            
+                        </div>
+                      </div>
+                    </div>
+                    <!-- TABLE -->
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            
+            <div id="editDevice" class="modal fade" role="dialog" aria-hidden="true">    
+             
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="form-horizontal form-label-left input_mask">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close" required><span aria-hidden="true">×</span>
+                      </button>
+                      <h3 class="modal-title" id="myModalLabel">Edit [DEVICE NAME]</h3>
+                    </div>
+                    
+                    <!-- <input type="hidden" name="pkid" id="pkid" class="form-control" value="{{ user.id }}">  -->
+                    
+                    <div class="modal-body">
+                      <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="devName">Device Name
+                        </label>
+                        <div class="col-md-8 col-sm-6 col-xs-12">
+                          <input type="text" name="dev-name" id="dev-name" class="form-control" value="[device name]" required>
+                          <!-- <strong><font style="color: #F00000;" id="error-id-num-{{ user.id }}"></font></strong>  -->
+                        </div>                        
+                      </div>
+                      
+                      <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="user-name">Active Ports
+                        </label>
+                        <div class="col-md-8 col-sm-6 col-xs-12">
+                          <!-- <input type="text" id="port-act" name="port-act" class="form-control" required> -->
+                          <!-- <font id="error-user-name-{{ user.id }}"></font> -->
+
+                          <ul class="list-unstyled scroll-view" style="column-count: 4">                                     
+                            <li>
+                              <input type="checkbox" name="switchPort" id="f1"> fa0/1 <br>
+                              <input type="checkbox" name="switchPort" id="f2"> fa0/2 <br>
+                              <input type="checkbox" name="switchPort" id="f3"> fa0/3 <br>
+                              <input type="checkbox" name="switchPort" id="f4"> fa0/4 <br>
+                              <input type="checkbox" name="switchPort" id="f5"> fa0/5 <br>
+                              <input type="checkbox" name="switchPort" id="f6"> fa0/6 <br>
+                              <input type="checkbox" name="switchPort" id="f7"> fa0/7 <br>
+                              <input type="checkbox" name="switchPort" id="f7"> fa0/8 <br>
+                            </li>
+                          </ul>
+                        </div>                  
+                      </div>
+                      
+                      <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="comport">Comport
+                        </label>
+                        <div class="col-md-8 col-sm-6 col-xs-12">
+                          <!-- <input type="text" id="dev-main" name="dev-main" class="form-control" value="port to main switch" required> -->
+                          <select id="comport" class="form-control" required>
+                            <option value="main1">fa0/1</option>
+                            <option value="main2">fa0/2</option>
+                            <option value="main3">fa0/3</option>
+                            <option value="main4">fa0/4</option>
+                          </select>
+                          
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="devLoc">Location
+                        </label>
+                        <div class="col-md-8 col-sm-6 col-xs-12">
+                          <input type="text" id="dev-loc" name="dev-loc" class="form-control" value="[location]" required>
+                          <!-- <font id="error-first-name-{{ user.id }}"></font> -->
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="modal-footer">
+                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                  </div>
+                </div>
+               
+              </div>
+            </div>
+
             <div class="row" id="divAudit" style="display: none;">
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel" style="padding:10px 17px;">
@@ -449,77 +1088,33 @@
                     <div class="clearfix"></div>
                   </div>
                   <div class="x_content">
-                    <!-- USERS & DEVICES LIST -->
-                    <div class="udList-position">
-                      <div class="x_title">
-                        <h4 style="margin: 0">Users</h4>
-                        <div class="clearfix"></div>
-                      </div>
-                      <div class="x_content">
-                        <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0">
-                          <ul class="list-unstyled top_profiles scroll-view">
-                            {% for user in users %}
-                             {% ifnotequal user.profile.usertype "admin" %}
-                            <li>
-                              <div class="radio">
-                                <label style="padding-left: 0">
-                                  <input type="radio" class="flat" name="radioList"> {{user.username}}
-                                </label>
-                              </div>
-                            </li>
-                              {% endifnotequal %}
-                            {% endfor %}
-                          </ul>
-                        </div>
-                      </div>
-                      <div class="x_content">
-                        <div class="x_title">
-                          <h4 style="margin: 0">Devices</h4>
-                          <div class="clearfix"></div>
-                        </div>
-                        <div class="col-md-12 col-sm-12 col-xs-12"  style="padding-left: 0">
-                          <ul class="list-unstyled top_profiles" style="column-count: 3">
-                            {% for device in devicesort %}
-                            <li>
-                              <div class="radio">
-                                <label style="padding-left: 0">
-                                  <input type="radio" class="flat" name="radioList"> {{device.name}}
-                                </label>
-                              </div>
-                            </li>
-                            {% endfor %}
-                          </ul>
-
-                        </div>
-                      </div>
-                    </div>
-                    <!-- USERS & DEVICES LIST -->
 
                     <!-- TABLE -->
-                    <div class="table-position">
-                      <div class="x_panel">
-                        <div class="x_content" style="width: 100%">
-                          <table id="datatable-responsive" class="table table-striped jambo_table table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
-                            <thead>
+                    <div class="x_panel">
+                      <div class="x_content" style="width: 100%">
+                        <table id="datatable-responsive" class="table table-striped jambo_table table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                          <thead>
+                            <tr>
+                              <th style="font-weight: 700;width: 20%">Device</th>
+                              <th style="font-weight: 700;width: 20%">Group</th>
+                              <th style="font-weight: 700;width: 20%">User/Location</th>
+                              <th style="font-weight: 700;width: 20%">Timestamp</th>
+                              <th style="font-weight: 700;width: 40%">Command</th>
+                            </tr>
+                          </thead>
+                          <tfoot>
                               <tr>
-                                <th style="font-weight: 700;width: 20%">Device</th>
-                                <th style="font-weight: 700;width: 20%">User</th>
-                                <th style="font-weight: 700;width: 20%">Timestamp</th>
-                                <th style="font-weight: 700;width: 40%">Command</th>                  
+                                <th>Device</th>
+                                <th>Group</th>
+                                <th>User</th>
+                                <th></th>
+                                <th></th>
                               </tr>
-                            </thead>
-                            <tbody>
-                              {% for logs in log %}
-                              <tr>
-                                <th style="font-weight: 700;width: 20%">{{logs.device.name}}</th>
-                                <th style="font-weight: 700;width: 20%">{{logs.user}}</th>
-                                <th style="font-weight: 700;width: 20%">{{logs.timestamp}}</th>
-                                <th style="font-weight: 700;width: 40%">{{logs.action}}</th>                  
-                              </tr>
-                              {% endfor %}
-                            </tbody>
-                          </table>                            
-                        </div>
+                            </tfoot>
+                          <tbody>
+
+                          </tbody>
+                        </table>                            
                       </div>
                     </div>
                     <!-- TABLE -->
@@ -529,8 +1124,7 @@
               </div>
             </div>
 
-            <div id="createGroup" class="modal fade" role="dialog" aria-hidden="true" style="padding-top: 100px">
-			
+            <div id="createGroup" class="modal fade" role="dialog" aria-hidden="true" style="padding-top: 100px">     
               <div class="modal-dialog">
                 <div class="modal-content">
                   <div class="form-horizontal form-label-left input_mask">
@@ -545,11 +1139,11 @@
                         </label>
                        <div class="col-md-6 col-sm-6 col-xs-12"> 
                          <input type="text" id="group-name" name="group-name" class="form-control">
-						 <font id="error-group-name"></font>
+                         <font id="error-group-name"></font>
                        </div>
                       </div>
-					  
-					  
+            
+            
                     <div class="modal-footer">
                       <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                       <button onClick="createGroup()" class="btn btn-primary" name="createGroup">Add</button>
@@ -559,7 +1153,7 @@
               </div>
             </div>
             <!-- end APPROVE -->
-			
+      
           </div>
         </div>
         <!-- /page content -->
@@ -580,33 +1174,6 @@
           </div>
           <div class="modal-body">
             <div class="form-horizontal form-label-left">
-              <!-- <table class="table-width table table-striped table-bordered jambo_table" style="width: 100%">
-                <thead>
-                
-                  <tr>
-                    <th style="font-weight: 700;width: 25%">Group</th>
-                    <th style="font-weight: 700;width: 30%">Device</th>
-                    <th style="font-weight: 700;width: 30%">Date</th>
-                    <th style="width: 14%"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                {% for grouptodevice in grouptodevice %}
-                  {% ifequal grouptodevice.type 'RS' %}
-                  <tr>
-                    <input type="hidden" name="grouptodeviceid" id="grouptodeviceid" class="form-control" value="{{ grouptodevice.id }}"> 
-                    <td value ="{{grouptodevice.group.name}}" style="vertical-align: unset;">{{ grouptodevice.group.name }}</td>
-                    <td value ="{{grouptodevice.device.name}}" style="vertical-align: unset;">{{ grouptodevice.device.name }}</td>
-                    <td style="vertical-align: unset;">{{ grouptodevice.startDateTime }} - {{ grouptodevice.endDateTime }}</td>
-                    <td style="vertical-align: unset;">
-                      <a type="button" data-dismiss="modal" onClick="approvedAjax({{grouptodevice.id}})" class="btn btn-info btn-xs" data-toggle="tooltip" data-placement="bottom" title="Approve"><i class="fa fa-check"></i></a>
-                      <a type="button" data-dismiss="modal" onClick="declinedAjax({{grouptodevice.id}})" class="btn btn-danger btn-xs" data-toggle="tooltip" data-placement="bottom" title="Reject" style="padding: 1px 6px"><i class="fa fa-close"></i></a>
-                    </td>
-                  </tr>
-                  {% endifequal %}
-                {% endfor %}
-                </tbody>
-              </table> -->
               <div style="width: 100%;height: 200px;overflow:auto;border-bottom: 1px solid #DBDBDB;">
                 <h5>Pending Reservations:</h5>
                 <table class="table-width table table-striped table-bordered jambo_table" style="width: 100%">
@@ -682,8 +1249,7 @@
     <!-- end APPROVE -->
     {% for user in users %} 
     <!--start EDIT MODAL -->
-    <div id="editAcct-{{user.id}}" class="modal fade" role="dialog" aria-hidden="true">
-     
+    <div id="editAcct-{{user.id}}" class="modal fade" role="dialog" aria-hidden="true">    
      
       {% csrf_token %}
       <div class="modal-dialog">
@@ -728,19 +1294,26 @@
                 <div class="col-md-8 col-sm-6 col-xs-12">
                   <input type="text" id="user-name-{{ user.id }}" name="user-name" class="form-control" value="{{ user.username }}" required>
                   <font id="error-user-name-{{ user.id }}"></font>
-                </div>
-               
-
-                  
-              </div>
-               
-
-               
+                </div>                  
+              </div>     
               <div class="form-group">
                 <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Email</label>
                 <div class="col-md-8 col-sm-6 col-xs-12">
                   <input id="email-{{ user.id }}" class="form-control" type="email" name="email" value="{{ user.email }}" required>
                   <font id="error-email-{{ user.id }}"></font>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12">Status
+                </label>
+                <div class="col-md-8 col-sm-6 col-xs-12">
+                  <input id="acct-status" class="form-control" type="text" name="user-status" value="Active" disabled="disabled">                
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="col-md-4 col-sm-2 col-xs-12" style="float: right">
+                  <button class="btn btn-default" id="enableButton" type="button" style="margin-right:5px;" data-toggle="tooltip" data-placement="bottom" title="Enable Account"><i class="fa fa-check"></i></button>
+                  <button class="btn btn-default" id="disableBUtton" type="button" data-toggle="tooltip" data-placement="bottom" title="Disable Account"><i class="fa fa-remove"></i></button>
                 </div>
               </div>
             </div>
@@ -757,7 +1330,7 @@
 
     <!-- end EDIT MODAL -->
 
-  	{% for groups in groups %}
+    {% for groups in groups %}
      
     <!--start EDIT GROUP -->
     <div id="editGrp-{{groups.id}}" class="modal fade" role="dialog" aria-hidden="true">
@@ -775,10 +1348,10 @@
                 <input type="hidden" name="groupid" id="groupid-{{groups.id}}" class="form-control" value="{{ groups.id }}"> 
                 <div class="pricing_features" style="padding: 10px 15px 0 15px">
                   <ul class="list-unstyled" style="column-count: 3; margin-bottom: 0">
-                  	{% for user in users %}
-                  	 {% ifequal user.profile.group.name groups.name %}		 
+                    {% for user in users %}
+                     {% ifequal user.profile.group.name groups.name %}     
                       <li style="margin: 0 0 10px 0">{{user.username}}</li>
-                    		
+                        
                       {% endifequal %}
                     {% endfor %}
                   </ul>
@@ -812,7 +1385,7 @@
     </div>
      
     {% endfor %}
-    <!-- end EDIT GROUP -->	
+    <!-- end EDIT GROUP --> 
     
     <!--start ALLOCATE MODAL -->
     <div id="allocateModal-{{current_user.id}}" class="modal fade" role="dialog" aria-hidden="true" style="padding-top: 90px">
@@ -922,9 +1495,53 @@
     <!-- end RESERVE -->
     
     <!-- end ALLOCATE MODAL -->
+
+    <!-- ROUTER ADDITIONAL PORT -->
+    <script type="text/javascript">
+      function show(aval) {
+        if (aval == "1") {
+          portDiv.style.display='none';
+          routerPort.style.display='block';
+        } 
+        else if (aval == "2") {
+          portDiv.style.display='block';
+          routerPort.style.display='none';
+        }
+        else {
+          portDiv.style.display='none';
+          routerPort.style.display='none';
+        }
+      }
+    </script>
+    <!-- ROUTER ADDITIONAL PORT -->
+
+    <script>
+      function showPorts(aval) {
+        if (aval == "12") {
+          divP12.style.display='block';
+          divP24.style.display='none';
+          divP48.style.display='none';
+        } 
+        else if (aval == "24") {
+          divP12.style.display='block';
+          divP24.style.display='block';
+          divP48.style.display='none';
+        }
+        else if (aval == "48") {
+          divP12.style.display='block';
+          divP24.style.display='block';
+          divP48.style.display='block';          
+        }
+        else {
+          divP12.style.display='none';
+          divP24.style.display='none';
+          divP48.style.display='none'; 
+        }
+      }
+    </script>
   
     <script>
-      var divs = ["divCreate", "divHome", "divAudit"];
+      var divs = ["divCreate", "divHome", "divAudit", "divDevice"];
       var visibleDivId = null;
 
       function toggleVisibility(divId) {
@@ -1066,6 +1683,33 @@
 
     <!-- jQuery -->
     <script src="{% static '/vendors/jquery/dist/jquery.min.js' %}"></script>
+
+     <script>
+      $(document).ready(function() {
+          $('#datatable-responsive').DataTable( {
+              initComplete: function () {
+                  this.api().columns([0, 1, 2]).every( function () {
+                      var column = this;
+                      var select = $('<select><option value=""></option></select>')
+                          .appendTo( $(column.footer()).empty() )
+                          .on( 'change', function () {
+                              var val = $.fn.dataTable.util.escapeRegex(
+                                  $(this).val()
+                              );
+       
+                              column
+                                  .search( val ? '^'+val+'$' : '', true, false )
+                                  .draw();
+                          } );
+       
+                      column.data().unique().sort().each( function ( d, j ) {
+                          select.append( '<option value="'+d+'">'+d+'</option>' )
+                      } );
+                  } );
+              }
+          } );
+      } );
+    </script>
     <!-- Bootstrap -->
     <script src="{% static '/vendors/bootstrap/dist/js/bootstrap.min.js' %}"></script>
     <!-- FastClick -->
@@ -1130,7 +1774,6 @@
     </script>
 
     <script> $('input[name="deviceList"]').first().prop('checked', true) </script>
-
 
      <script>
 
@@ -1204,75 +1847,308 @@
                 }
             });
         }
+		
+		function addDevice(){
+			var deviceType = document.getElementById("devType").value;
+			var deviceComport = document.getElementById("devComport").value;
+			var deviceLocation = document.getElementById("devLocation").value;
+			if(deviceType=='2'){
+				var portNumber = document.getElementById("switchportnum").value;
+				switch(portNumber){
+					case '12':{
+						var p1 = document.getElementById("p1").value;
+						var p2 = document.getElementById("p2").value;
+						var p3 = document.getElementById("p3").value;
+						var p4 = document.getElementById("p4").value;
+						var p5 = document.getElementById("p5").value;
+						var p6 = document.getElementById("p6").value;
+						var p7 = document.getElementById("p7").value;
+						var p8 = document.getElementById("p8").value;
+						var p9 = document.getElementById("p9").value;
+						var p10 = document.getElementById("p10").value;
+						var p11 = document.getElementById("p11").value;
+						var p12 = document.getElementById("p12").value;
+						var f1 = document.getElementById("f1").checked;
+						var f2 = document.getElementById("f2").checked;
+						var f3 = document.getElementById("f3").checked;
+						var f4 = document.getElementById("f4").checked;
+						var f5 = document.getElementById("f5").checked;
+						var f6 = document.getElementById("f6").checked;
+						var f7 = document.getElementById("f7").checked;
+						var f8 = document.getElementById("f8").checked;
+						var f9 = document.getElementById("f9").checked;
+						var f10 = document.getElementById("f10").checked;
+						var f11 = document.getElementById("f11").checked;
+						var f12 = document.getElementById("f12").checked;
+						}
+						$.ajax({url: 'addDevice?type=' + deviceType + '&portnumber=12' + '&comport=' +  deviceComport + '&location=' + deviceLocation + 
+									'&p1=' + p1 + '&p2=' + p2 + '&p3=' + p3 + '&p4=' + p4 + '&p5=' + p5 + '&p6=' + p6 + '&p7=' + p7 + '&p8=' + p8 + '&p9=' + p9 + '&p10=' + p10 + '&p11=' + p11 + '&p12=' + p12 + 
+									'&f1=' + f1 + '&f2=' + f2 + '&f3=' + f3 + '&f4=' + f4 + '&f5=' + f5 + '&f6=' + f6 + '&f7=' + f7 + '&f8=' + f8 + '&f9=' + f9 + '&f10=' + f10 + '&f11=' + f11 + '&f12=' + f12,
+							success: function(result){
+							var data = JSON.parse(data);
+							}
+						});
+						break;
+					case '24':{
+						var p1 = document.getElementById("p1").value;
+						var p2 = document.getElementById("p2").value;
+						var p3 = document.getElementById("p3").value;
+						var p4 = document.getElementById("p4").value;
+						var p5 = document.getElementById("p5").value;
+						var p6 = document.getElementById("p6").value;
+						var p7 = document.getElementById("p7").value;
+						var p8 = document.getElementById("p8").value;
+						var p9 = document.getElementById("p9").value;
+						var p10 = document.getElementById("p10").value;
+						var p11 = document.getElementById("p11").value;
+						var p12 = document.getElementById("p12").value;
+						var p13 = document.getElementById("p13").value;
+						var p14 = document.getElementById("p14").value;
+						var p15 = document.getElementById("p15").value;
+						var p16 = document.getElementById("p16").value;
+						var p17 = document.getElementById("p17").value;
+						var p18 = document.getElementById("p18").value;
+						var p19 = document.getElementById("p19").value;
+						var p20 = document.getElementById("p20").value;
+						var p21 = document.getElementById("p21").value;
+						var p22 = document.getElementById("p22").value;
+						var p23 = document.getElementById("p23").value;
+						var p24 = document.getElementById("p24").value;
+						var f1 = document.getElementById("f1").checked;
+						var f2 = document.getElementById("f2").checked;
+						var f3 = document.getElementById("f3").checked;
+						var f4 = document.getElementById("f4").checked;
+						var f5 = document.getElementById("f5").checked;
+						var f6 = document.getElementById("f6").checked;
+						var f7 = document.getElementById("f7").checked;
+						var f8 = document.getElementById("f8").checked;
+						var f9 = document.getElementById("f9").checked;
+						var f10 = document.getElementById("f10").checked;
+						var f11 = document.getElementById("f11").checked;
+						var f12 = document.getElementById("f12").checked;
+						var f13 = document.getElementById("f13").checked;
+						var f14 = document.getElementById("f14").checked;
+						var f15 = document.getElementById("f15").checked;
+						var f16 = document.getElementById("f16").checked;
+						var f17 = document.getElementById("f17").checked;
+						var f18 = document.getElementById("f18").checked;
+						var f19 = document.getElementById("f19").checked;
+						var f20 = document.getElementById("f20").checked;
+						var f21 = document.getElementById("f21").checked;
+						var f22 = document.getElementById("f22").checked;
+						var f23 = document.getElementById("f23").checked;
+						var f24 = document.getElementById("f24").checked;
+						}
+						$.ajax({url: 'addDevice?type=' + deviceType + '&portnumber=24' + '&comport=' +  deviceComport + '&location=' + deviceLocation + 
+									'&p1=' + p1 + '&p2=' + p2 + '&p3=' + p3 + '&p4=' + p4 + '&p5=' + p5 + '&p6=' + p6 + '&p7=' + p7 + '&p8=' + p8 + '&p9=' + p9 + '&p10=' + p10 + '&p11=' + p11 + '&p12=' + p12 + 
+									'&p13=' + p13 + '&p14=' + p14 + '&p15=' + p15 + '&p16=' + p16 + '&p17=' + p17 + '&p18=' + p18 + '&p19=' + p19 + '&p20=' + p20 + '&p21=' + p21 + '&p22=' + p22 + '&p23=' + p23 + '&p24=' + p24 + 
+									'&f1=' + f1 + '&f2=' + f2 + '&f3=' + f3 + '&f4=' + f4 + '&f5=' + f5 + '&f6=' + f6 + '&f7=' + f7 + '&f8=' + f8 + '&f9=' + f9 + '&f10=' + f10 + '&f11=' + f11 + '&f12=' + f12 +
+									'&f13=' + f13 + '&f14=' + f14 + '&f15=' + f15 + '&f16=' + f16 + '&f17=' + f17 + '&f18=' + f18 + '&f19=' + f19 + '&f20=' + f20 + '&f21=' + f21 + '&f22=' + f22 + '&f23=' + f23 + '&f24=' + f24,
+							success: function(result){
+							var data = JSON.parse(data);
+							}
+						});
+						break;
+					case '48':{
+						var p1 = document.getElementById("p1").value;
+						var p2 = document.getElementById("p2").value;
+						var p3 = document.getElementById("p3").value;
+						var p4 = document.getElementById("p4").value;
+						var p5 = document.getElementById("p5").value;
+						var p6 = document.getElementById("p6").value;
+						var p7 = document.getElementById("p7").value;
+						var p8 = document.getElementById("p8").value;
+						var p9 = document.getElementById("p9").value;
+						var p10 = document.getElementById("p10").value;
+						var p11 = document.getElementById("p11").value;
+						var p12 = document.getElementById("p12").value;
+						var p13 = document.getElementById("p13").value;
+						var p14 = document.getElementById("p14").value;
+						var p15 = document.getElementById("p15").value;
+						var p16 = document.getElementById("p16").value;
+						var p17 = document.getElementById("p17").value;
+						var p18 = document.getElementById("p18").value;
+						var p19 = document.getElementById("p19").value;
+						var p20 = document.getElementById("p20").value;
+						var p21 = document.getElementById("p21").value;
+						var p22 = document.getElementById("p22").value;
+						var p23 = document.getElementById("p23").value;
+						var p24 = document.getElementById("p24").value;
+						var p25 = document.getElementById("p25").value;
+						var p26 = document.getElementById("p26").value;
+						var p27 = document.getElementById("p27").value;
+						var p28 = document.getElementById("p28").value;
+						var p29 = document.getElementById("p29").value;
+						var p30 = document.getElementById("p30").value;
+						var p31 = document.getElementById("p31").value;
+						var p32 = document.getElementById("p32").value;
+						var p33 = document.getElementById("p33").value;
+						var p34 = document.getElementById("p34").value;
+						var p35 = document.getElementById("p35").value;
+						var p36 = document.getElementById("p36").value;
+						var p37 = document.getElementById("p37").value;
+						var p38 = document.getElementById("p38").value;
+						var p39 = document.getElementById("p39").value;
+						var p40 = document.getElementById("p40").value;
+						var p41 = document.getElementById("p41").value;
+						var p42 = document.getElementById("p42").value;
+						var p43 = document.getElementById("p43").value;
+						var p44 = document.getElementById("p44").value;
+						var p45 = document.getElementById("p45").value;
+						var p46 = document.getElementById("p46").value;
+						var p47 = document.getElementById("p47").value;
+						var p48 = document.getElementById("p48").value;
+						var f1 = document.getElementById("f1").checked;
+						var f2 = document.getElementById("f2").checked;
+						var f3 = document.getElementById("f3").checked;
+						var f4 = document.getElementById("f4").checked;
+						var f5 = document.getElementById("f5").checked;
+						var f6 = document.getElementById("f6").checked;
+						var f7 = document.getElementById("f7").checked;
+						var f8 = document.getElementById("f8").checked;
+						var f9 = document.getElementById("f9").checked;
+						var f10 = document.getElementById("f10").checked;
+						var f11 = document.getElementById("f11").checked;
+						var f12 = document.getElementById("f12").checked;
+						var f13 = document.getElementById("f13").checked;
+						var f14 = document.getElementById("f14").checked;
+						var f15 = document.getElementById("f15").checked;
+						var f16 = document.getElementById("f16").checked;
+						var f17 = document.getElementById("f17").checked;
+						var f18 = document.getElementById("f18").checked;
+						var f19 = document.getElementById("f19").checked;
+						var f20 = document.getElementById("f20").checked;
+						var f21 = document.getElementById("f21").checked;
+						var f22 = document.getElementById("f22").checked;
+						var f23 = document.getElementById("f23").checked;
+						var f24 = document.getElementById("f24").checked;
+						var f25 = document.getElementById("f25").checked;
+						var f26 = document.getElementById("f26").checked;
+						var f27 = document.getElementById("f27").checked;
+						var f28 = document.getElementById("f28").checked;
+						var f29 = document.getElementById("f29").checked;
+						var f30 = document.getElementById("f30").checked;
+						var f31 = document.getElementById("f31").checked;
+						var f32 = document.getElementById("f32").checked;
+						var f33 = document.getElementById("f33").checked;
+						var f34 = document.getElementById("f34").checked;
+						var f35 = document.getElementById("f35").checked;
+						var f36 = document.getElementById("f36").checked;
+						var f37 = document.getElementById("f37").checked;
+						var f38 = document.getElementById("f38").checked;
+						var f39 = document.getElementById("f39").checked;
+						var f40 = document.getElementById("f40").checked;
+						var f41 = document.getElementById("f41").checked;
+						var f42 = document.getElementById("f42").checked;
+						var f43 = document.getElementById("f43").checked;
+						var f44 = document.getElementById("f44").checked;
+						var f45 = document.getElementById("f45").checked;
+						var f46 = document.getElementById("f46").checked;
+						var f47 = document.getElementById("f47").checked;
+						var f48 = document.getElementById("f48").checked;
+						}
+						$.ajax({url: 'addDevice?type=' + deviceType + '&portnumber=48' + '&comport=' +  deviceComport + '&location=' + deviceLocation + 
+									'&p1=' + p1 + '&p2=' + p2 + '&p3=' + p3 + '&p4=' + p4 + '&p5=' + p5 + '&p6=' + p6 + '&p7=' + p7 + '&p8=' + p8 + '&p9=' + p9 + '&p10=' + p10 + '&p11=' + p11 + '&p12=' + p12 + 
+									'&p13=' + p13 + '&p14=' + p14 + '&p15=' + p15 + '&p16=' + p16 + '&p17=' + p17 + '&p18=' + p18 + '&p19=' + p19 + '&p20=' + p20 + '&p21=' + p21 + '&p22=' + p22 + '&p23=' + p23 + '&p24=' + p24 + 
+									'&p25=' + p25 + '&p26=' + p26 + '&p27=' + p27 + '&p28=' + p28 + '&p29=' + p29 + '&p30=' + p30 + '&p31=' + p31 + '&p32=' + p32 + '&p33=' + p33 + '&p34=' + p34 + '&p35=' + p35 + '&p36=' + p36 + 
+									'&p37=' + p37 + '&p38=' + p38 + '&p39=' + p39 + '&p40=' + p40 + '&p41=' + p41 + '&p42=' + p42 + '&p43=' + p43 + '&p44=' + p44 + '&p45=' + p45 + '&p46=' + p46 + '&p47=' + p47 + '&p48=' + p48 +
+									'&f1=' + f1 + '&f2=' + f2 + '&f3=' + f3 + '&f4=' + f4 + '&f5=' + f5 + '&f6=' + f6 + '&f7=' + f7 + '&f8=' + f8 + '&f9=' + f9 + '&f10=' + f10 + '&f11=' + f11 + '&f12=' + f12 + 
+									'&f13=' + f13 + '&f14=' + f14 + '&f15=' + f15 + '&f16=' + f16 + '&f17=' + f17 + '&f18=' + f18 + '&f19=' + f19 + '&f20=' + f20 + '&f21=' + f21 + '&f22=' + f22 + '&f23=' + f23 + '&f24=' + f24 + 
+									'&f25=' + f25 + '&f26=' + f26 + '&f27=' + f27 + '&f28=' + f28 + '&f29=' + f29 + '&f30=' + f30 + '&f31=' + f31 + '&f32=' + f32 + '&f33=' + f33 + '&f34=' + f34 + '&f35=' + f35 + '&f36=' + f36 + 
+									'&f37=' + f37 + '&f38=' + f38 + '&f39=' + f39 + '&f40=' + f40 + '&f41=' + f41 + '&f42=' + f42 + '&f43=' + f43 + '&f44=' + f44 + '&f45=' + f45 + '&f46=' + f46 + '&f47=' + f47 + '&f48=' + f48,
+							success: function(result){
+							var data = JSON.parse(data);
+							}
+						});
+						break
+					default:
+						break;
+				}				
+			} else if(deviceType=='1'){
+						var rp1 = document.getElementById("rp1").value;
+						var rp2 = document.getElementById("rp2").value;
+						$.ajax({url: 'addDevice?type=' + deviceType + '&comport=' +  deviceComport + '&location=' + deviceLocation + 
+									'&rp1=' + rp1 + '&rp2=' + rp2,
+							success: function(result){
+							var data = JSON.parse(data);
+							}
+						});
+			}
+			//$.ajax({url: 'addDevice?type=' + deviceType + '&comport=' +  deviceComport + '&location=' + deviceLocation,
+			//	success: function(result){
+			//	var data = JSON.parse(data);
+			//	}
+			//});
+		}
     </script>
-	<!-- Create Group and User scripts Start -->
-		<script>
-			function createGroup(){
-				var groupName = document.getElementById("group-name").value;
-				$.ajax({url: 'http://127.0.0.1:8000/createGroup?groupName=' + groupName,
-					success: function(data){
-						var res = JSON.parse(data);
-							var groupnameisvalid = "{{groupnameisvalid}}";
-							if (res['groupnameisvalid'] == false){
-								document.getElementById("error-group-name").innerHTML = res['groupnameerrormessage'];							
-							} else {
-							
-							document.getElementById("group-name").value = "";	
-							window.location.reload();
-							}					
-					},});
-				}
-	
-			function clearUserFields(){
-				document.getElementById("createFirstName").value = "";
-				document.getElementById("createLastName").value = "";
-				document.getElementById("createUserName").value = "";
-				document.getElementById("createEmployeeID").value = "";
-				document.getElementById("createEmail").value = "";
-				document.getElementById("createPassword").value = "";
-				document.getElementById("createPassword2").value = "";
-			}
-			
-			function createUser(){
-				var firstName = document.getElementById("createFirstName").value;
-				var lastName = document.getElementById("createLastName").value;
-				var userName = document.getElementById("createUserName").value;
-				var employeeID = document.getElementById("createEmployeeID").value;
-				var password = document.getElementById("createPassword").value;
-				var password2 = document.getElementById("createPassword2").value;
-				var email = document.getElementById("createEmail").value;
-				var groupName = document.getElementById("createUserGroup").value;
-					
-				$.ajax({url: "http://127.0.0.1:8000/createUser?firstName=" + firstName + "&lastName=" + lastName + "&userName=" + userName + "&employeeID=" + employeeID + "&email=" + email + "&groupName=" + groupName + "&password=" + password + "&password2=" + password2,
-					success: function(data){
-						var res = JSON.parse(data);
-							var signupformisvalid = "{{signupformisvalid}}";
-							if (res['signupformisvalid'] == false){
-								document.getElementById("error-employee-id").innerHTML = res['signupIDerr'];							
-								document.getElementById("error-employee-username").innerHTML = res['signupUsererr'];							
-								document.getElementById("error-employee-email").innerHTML = res['signupEmailerr'];							
-								document.getElementById("error-employee-password").innerHTML = res['signupPasserr'];							
-								document.getElementById("error-employee-password2").innerHTML = res['signupPasserr2'];
-								document.getElementById("error-employee-first-name").innerHTML = res['signupFirstnameerr'];
-								document.getElementById("error-employee-last-name").innerHTML = res['signupLastnameerr'];
-							} else {	
-								window.location.reload();
-								document.getElementById("createFirstName").value = "";
-								document.getElementById("createLastName").value = "";
-								document.getElementById("createUserName").value = "";
-								document.getElementById("createEmployeeID").value = "";
-								document.getElementById("createEmail").value = "";
-								document.getElementById("createUserGroup").value = "";
-								document.getElementById("createPassword").value = "";
-								document.getElementById("createPassword2").value = "";
-								
-							}					
-					},
-				});
-				
-			}
-		</script>
-	<!-- Create Group and user script end -->
+  <!-- Create Group and User scripts Start -->
+    <script>
+      function createGroup(){
+        var groupName = document.getElementById("group-name").value;
+        $.ajax({url: 'http://127.0.0.1:8000/createGroup?groupName=' + groupName,
+          success: function(data){
+            var res = JSON.parse(data);
+              var groupnameisvalid = "{{groupnameisvalid}}";
+              if (res['groupnameisvalid'] == false){
+                document.getElementById("error-group-name").innerHTML = res['groupnameerrormessage'];             
+              } else {
+              
+              document.getElementById("group-name").value = ""; 
+              window.location.reload();
+              }         
+          },});
+        }
+  
+      function clearUserFields(){
+        document.getElementById("createFirstName").value = "";
+        document.getElementById("createLastName").value = "";
+        document.getElementById("createUserName").value = "";
+        document.getElementById("createEmployeeID").value = "";
+        document.getElementById("createEmail").value = "";
+        document.getElementById("createPassword").value = "";
+        document.getElementById("createPassword2").value = "";
+      }
+      
+      function createUser(){
+        var firstName = document.getElementById("createFirstName").value;
+        var lastName = document.getElementById("createLastName").value;
+        var userName = document.getElementById("createUserName").value;
+        var employeeID = document.getElementById("createEmployeeID").value;
+        var password = document.getElementById("createPassword").value;
+        var password2 = document.getElementById("createPassword2").value;
+        var email = document.getElementById("createEmail").value;
+        var groupName = document.getElementById("createUserGroup").value;
+          
+        $.ajax({url: "http://127.0.0.1:8000/createUser?firstName=" + firstName + "&lastName=" + lastName + "&userName=" + userName + "&employeeID=" + employeeID + "&email=" + email + "&groupName=" + groupName + "&password=" + password + "&password2=" + password2,
+          success: function(data){
+            var res = JSON.parse(data);
+              var signupformisvalid = "{{signupformisvalid}}";
+              if (res['signupformisvalid'] == false){
+                document.getElementById("error-employee-id").innerHTML = res['signupIDerr'];              
+                document.getElementById("error-employee-username").innerHTML = res['signupUsererr'];              
+                document.getElementById("error-employee-email").innerHTML = res['signupEmailerr'];              
+                document.getElementById("error-employee-password").innerHTML = res['signupPasserr'];              
+                document.getElementById("error-employee-password2").innerHTML = res['signupPasserr2'];
+                document.getElementById("error-employee-first-name").innerHTML = res['signupFirstnameerr'];
+                document.getElementById("error-employee-last-name").innerHTML = res['signupLastnameerr'];
+              } else {  
+                window.location.reload();
+                document.getElementById("createFirstName").value = "";
+                document.getElementById("createLastName").value = "";
+                document.getElementById("createUserName").value = "";
+                document.getElementById("createEmployeeID").value = "";
+                document.getElementById("createEmail").value = "";
+                document.getElementById("createUserGroup").value = "";
+                document.getElementById("createPassword").value = "";
+                document.getElementById("createPassword2").value = "";
+                
+              }         
+          },
+        });
+        
+      }
+    </script>
+  <!-- Create Group and user script end -->
     <!-- Calendar -->
     <!-- <script src="js/jquery-1.11.1.min.js"></script> -->
     <script src="{% static '/production/js/underscore-min.js' %}"></script>
