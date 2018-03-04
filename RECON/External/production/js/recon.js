@@ -1,4 +1,3 @@
-
 var Content = document.getElementById("Content");
 var CnvsWorkspace = document.getElementById("Workspace");
 var Workspace = CnvsWorkspace.getContext("2d");

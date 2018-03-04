@@ -20,13 +20,12 @@ import datetime
 import urllib.parse as urlparse
 
 # Create your views here.
-
 # fill comports and mainswitchports
+
 comports = Comport.objects.all().count()
 x = 5
 if comports == 0:
-	print("initiating initial database population")
-	while x <= 7:
+	while x <= 6:
 		c = Comport()
 		c.name = "COM" + str(x)
 		c.save()
@@ -42,96 +41,53 @@ if mainswitchports == 0:
 		m.save()
 		print("added" + str(m))
 		x+=1
-
-# create test devices
-if (Device.objects.all().count()) == 0:
-	d1 = Device()
-	d1.type = "Switch"
-	d1.name = "Switch 1"
-	d1.comport = Comport.objects.filter(name='COM5')[0]
-	d1.save()
-	d2 = Device()
-	d2.type = "Switch"
-	d2.name = "Switch 2"
-	d2.comport = Comport.objects.filter(name='COM6')[0]
-	d2.save()
-	d3 = Device()
-	d3.type = "Router"
-	d3.name = "Router 1"
-	d3.comport = Comport.objects.filter(name='COM7')[0]
-	d3.save()
-	
+		
+	nDevice = Device()
+	nDevice.type = 'Router'
+	nDevice.name = 'Router 1'
+	nDevice.comport = Comport.objects.filter(name = 'COM5')[0]
+	nDevice.save()
+	nDevice2 = Device()
+	nDevice2.type = 'Switch'
+	nDevice2.name = 'Switch 1'
+	nDevice2.comport = Comport.objects.filter(name = 'COM6')[0]
+	nDevice2.save()
 	p1 = Port()
-	p1.name = 'fa0/0'
 	p1.type = 'Fast Ethernet'
-	p1.device = Device.objects.filter(name = 'Router 1')[0]
+	p1.name = 'fa0/0'
+	p1.device = nDevice
 	p1.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/1')[0]
 	p1.save()
-	
 	p2 = Port()
-	p2.name = 'fa0/1'
 	p2.type = 'Fast Ethernet'
-	p2.device = Device.objects.filter(name = 'Router 1')[0]
+	p2.name = 'fa0/1'
+	p2.device = nDevice
 	p2.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/2')[0]
 	p2.save()
-	
 	p3 = Port()
-	p3.name = 'fa0/1'
 	p3.type = 'Fast Ethernet'
-	p3.device = Device.objects.filter(name = 'Switch 1')[0]
+	p3.name = 'fa0/1'
+	p3.device = nDevice2
 	p3.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/3')[0]
 	p3.save()
-	
 	p4 = Port()
-	p4.name = 'fa0/2'
 	p4.type = 'Fast Ethernet'
-	p4.device = Device.objects.filter(name = 'Switch 1')[0]
+	p4.name = 'fa0/2'
+	p4.device = nDevice2
 	p4.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/4')[0]
 	p4.save()
-	
 	p5 = Port()
-	p5.name = 'fa0/3'
 	p5.type = 'Fast Ethernet'
-	p5.device = Device.objects.filter(name = 'Switch 1')[0]
+	p5.name = 'fa0/3'
+	p5.device = nDevice2
 	p5.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/5')[0]
 	p5.save()
-	
 	p6 = Port()
-	p6.name = 'fa0/4'
 	p6.type = 'Fast Ethernet'
-	p6.device = Device.objects.filter(name = 'Switch 1')[0]
+	p6.name = 'fa0/4'
+	p6.device = nDevice2
 	p6.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/6')[0]
 	p6.save()
-	
-	p7 = Port()
-	p7.name = 'fa0/1'
-	p7.type = 'Fast Ethernet'
-	p7.device = Device.objects.filter(name = 'Switch 2')[0]
-	p7.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/7')[0]
-	p7.save()
-	
-	p8 = Port()
-	p8.name = 'fa0/2'
-	p8.type = 'Fast Ethernet'
-	p8.device = Device.objects.filter(name = 'Switch 2')[0]
-	p8.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/8')[0]
-	p8.save()
-	
-	p9 = Port()
-	p9.name = 'fa0/3'
-	p9.type = 'Fast Ethernet'
-	p9.device = Device.objects.filter(name = 'Switch 2')[0]
-	p9.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/9')[0]
-	p9.save()
-	
-	p10 = Port()
-	p10.name = 'fa0/4'
-	p10.type = 'Fast Ethernet'
-	p10.device = Device.objects.filter(name = 'Switch 2')[0]
-	p10.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/10')[0]
-	p10.save()
-	
-	print("added test device and ports")
 	
 @login_required(login_url="/login")
 def userPage(request):
@@ -159,7 +115,6 @@ def userPage(request):
 	}
 	return render(request, 'user.html', context)
 
-	
 # create serial connections
 	
 class Receiver(Thread):
@@ -182,7 +137,7 @@ serialList = []
 receiverList = []
 			
 try:
-	mainSwitchSerial = serial.Serial('COM5', 9600)
+	mainSwitchSerial = serial.Serial('COM7', 9600)
 except serial.SerialException:
 	print("Main switch not detected")
 
@@ -251,6 +206,8 @@ def getPorts(request):
 	
 @login_required(login_url="/login")
 def connectDevices(request):
+	global mainSwitchSerial
+
 	JSONer = {}
 	parsedData = urlparse.urlparse(request.get_full_path())
 	srcDevice = (urlparse.parse_qs(parsedData.query)['srcDevice'][0])
@@ -267,28 +224,30 @@ def connectDevices(request):
 	port1.istaken = "1"
 	port2.istaken = "1"
 	
-	port1.save()
-	port2.save()
+	# port1.save()
+	# port2.save()
 	
 	print(port1.istaken)
 	print(port2.istaken)
 	
-	p1 = port1.portOnMainSwitch
-	p2 = port2.portOnMainSwitch
+	p1 = str(port1.mainswitchport)
+	p2 = str(port2.mainswitchport)
 
 	vlan1 = "10" + p1.split("/",1)[1]
 	
 	text = "\renable\nconfigure terminal\ninterface range " + p1 +", " + p2 +"\nswitchport mode access\nswitchport access vlan " + vlan1 + "\nexit"	
 	print(text)
-	# print("connected devices")
-	# mainSwitchPort.flushInput()
-	# mainSwitchPort.write(text.encode('utf-8'))
-	# bytes_to_read = mainSwitchPort.inWaiting()
+	print("connected devices")
+	mainSwitchSerial.flushInput()
+	mainSwitchSerial.write(text.encode('utf-8'))
+	bytes_to_read = mainSwitchSerial.inWaiting()
 	
 	return JsonResponse(JSONer)
 	
 @login_required(login_url="/login")
 def disconnectDevices(request):
+	global mainSwitchSerial
+	
 	JSONer = {}
 	parsedData = urlparse.urlparse(request.get_full_path())
 	srcDevice = (urlparse.parse_qs(parsedData.query)['srcDevice'][0])
@@ -305,11 +264,11 @@ def disconnectDevices(request):
 	port1.istaken = "0"
 	port2.istaken = "0"
 	
-	port1.save()
-	port2.save()
+	# port1.save()
+	# port2.save()
 
-	p1 = port1.portOnMainSwitch
-	p2 = port2.portOnMainSwitch
+	p1 = str(port1.mainswitchport)
+	p2 = str(port2.mainswitchport)
 
 	vlan1 = "10" + p1.split("/",1)[1]
 	vlan2 = "10" + p2.split("/",1)[1]
@@ -317,10 +276,10 @@ def disconnectDevices(request):
 	text = "\renable\nconfigure terminal\ninterface " + p1 +"\nswitchport mode access\nswitchport access vlan " + vlan1 + "\nexit"	
 	text += "\renable\nconfigure terminal\ninterface " + p2 +"\nswitchport mode access\nswitchport access vlan " + vlan2 + "\nexit"	
 	print(text)
-	# print("Disconnected devices")
-	# mainSwitchPort.flushInput()
-	# mainSwitchPort.write(text.encode('utf-8'))
-	# bytes_to_read = mainSwitchPort.inWaiting()	
+	print("Disconnected devices")
+	mainSwitchSerial.flushInput()
+	mainSwitchSerial.write(text.encode('utf-8'))
+	bytes_to_read = mainSwitchSerial.inWaiting()	
 	
 	return JsonResponse(JSONer)
 @login_required(login_url="/login")	
@@ -395,7 +354,9 @@ def loadTopology(request):
 	grouptodevice = GroupToDevice.objects.all()
 	today=datetime.datetime.now().date()
 	loadDevices = SaveDev.objects.filter(saveTopology = loadThisTopology)
-	loadConnections = SaveConn.objects.filter(saveTopology = loadThisTopology)
+	connections = SaveConn.objects.filter(saveTopology = loadThisTopology)
+	
+	loadConnections(connections)
 	
 	context = {
 		'current_user': currentUser,
@@ -403,7 +364,7 @@ def loadTopology(request):
 		'currTopology':loadThisTopology.name,
 		'currTopologyID':topologyID,
 		'loadDevices': loadDevices,
-		'connections': loadConnections,
+		'connections': connections,
 		'grouptodevice':grouptodevice,
 		'devices':devices,
 		'groups':groups,
@@ -416,16 +377,16 @@ def loadTopology(request):
 @login_required(login_url="/login")
 def saveTopologyFunc(request):
 	user = request.user
+
 	JSONer = {}
-	
 	parsedData = urlparse.urlparse(request.get_full_path())
 	topName = (urlparse.parse_qs(parsedData.query)['topologyName'][0])
 	
 	if (SaveTopology.objects.filter(name = topName).count() > 0):
 		savedTopology = SaveTopology.objects.filter(name = topName)[0]
-		SaveConn.objects.filter(saveTopology = savedTopology).delete()
 		SaveDev.objects.filter(saveTopology = savedTopology).delete()
-		JSONer['topo'] = savedTopology.pk
+		SaveConn.objects.filter(saveTopology = savedTopology).delete()
+		JSONer['tId'] = savedTopology.pk
 		print("Overwrite " + savedTopology.name)
 	else:
 		newTopology = SaveTopology()	
@@ -433,45 +394,41 @@ def saveTopologyFunc(request):
 		newTopology.group = user.profile.group
 		newTopology.save()
 		newTopology.refresh_from_db()
-		JSONer['topo'] = newTopology.pk
 		print("Created " + newTopology.name)
+		JSONer['tId'] = newTopology.pk
 		
 	return HttpResponse(json.dumps(JSONer))
 	
 @login_required(login_url="/login")
 def saveDevice(request):
+	
 	JSONer = {}
 	parsedData = urlparse.urlparse(request.get_full_path())
-	tId = (urlparse.parse_qs(parsedData.query)['topoId'][0])
 	devName = (urlparse.parse_qs(parsedData.query)['deviceName'][0])
 	x = (urlparse.parse_qs(parsedData.query)['x'][0])
 	y = (urlparse.parse_qs(parsedData.query)['y'][0])
+	tId = (urlparse.parse_qs(parsedData.query)['tId'][0])
+	savedTopology = SaveTopology.objects.filter(id=tId)[0]
 	deviceID = Device.objects.filter(name = devName)[0]
 	deviceID = deviceID.id
 	gtd = GroupToDevice.objects.filter(device = deviceID)[0]
-	savedTopology = SaveTopology.objects.filter(pk=tId)[0]
-	
 	print("Save " + devName + " x/y=" + x + y + " to " + savedTopology.name)
 
-	nSDev = SaveDev()
-	nSDev.saveTopology = savedTopology
-	nSDev.deviceName = devName
-	nSDev.xCord = float(x)
-	nSDev.yCord = float(y)
-	nSDev.save()
-	nSDev.refresh_from_db()
-	nSDev.GroupToDevice = gtd
-	nSDev.save()
-	
-	print("GTD is " + str(nSDev.GroupToDevice))
-	
+	newSaveDev = SaveDev()
+	newSaveDev.saveTopology = savedTopology
+	newSaveDev.GroupToDevice = gtd
+	newSaveDev.deviceName = devName
+	newSaveDev.xCord = float(x)
+	newSaveDev.yCord = float(y)
+	newSaveDev.save()
+		
 	return HttpResponse(json.dumps(JSONer))
 
 @login_required(login_url="/login")
 def saveConnection(request):
+	
 	JSONer = {}
 	parsedData = urlparse.urlparse(request.get_full_path())
-	tId = (urlparse.parse_qs(parsedData.query)['topoId'][0])
 	connectionName = (urlparse.parse_qs(parsedData.query)['connectionName'][0])
 	startX = (urlparse.parse_qs(parsedData.query)['startX'][0])	
 	startY = (urlparse.parse_qs(parsedData.query)['startY'][0])
@@ -481,8 +438,8 @@ def saveConnection(request):
 	endDevice = (urlparse.parse_qs(parsedData.query)['endDevice'][0])
 	srcPort = (urlparse.parse_qs(parsedData.query)['srcPort'][0])
 	endPort = (urlparse.parse_qs(parsedData.query)['endPort'][0])
-	
-	savedTopology = SaveTopology.objects.filter(pk=tId)[0]
+	tId = (urlparse.parse_qs(parsedData.query)['tId'][0])
+	savedTopology = SaveTopology.objects.filter(id=tId)[0]
 	
 	print("Save " + connectionName + "src:" + srcDevice + " end:" + endDevice +" to " + savedTopology.name)
 	
@@ -920,8 +877,6 @@ def editModal(request):
 	email = ""
 	idnum = ""
 	
-
-
 	context = {
 	'valid':valid,
 	'error_id':error_id,
@@ -960,10 +915,6 @@ def editModal(request):
 		valid = False
 		error_email = "This field is required!"
 
-
-
-	
-
 	if User.objects.filter(id=pkid).count() > 0:
 		
 
@@ -986,8 +937,6 @@ def editModal(request):
 			valid = False
 			if not error_email:
 				error_email = "email is invalid!"
-		
-		
 		
 		if valid == False:
 		 	
@@ -1299,3 +1248,37 @@ def AddSerialConnection(comport, device):
 		r.start()
 	except serial.SerialException:
 		print("Serial is not detected")
+
+def loadConnections(connections):
+	for connection in connections:
+		d1 = Device.objects.filter(name = connection.srcDevice)[0]
+		d2 = Device.objects.filter(name = connection.endDevice)[0]
+		p1 = Port.objects.filter(device = d1).filter(name = connection.srcPort)[0]
+		p2 = Port.objects.filter(device = d2).filter(name = connection.endPort)[0]
+		
+		p1.istaken = "1"
+		p2.istaken = "1"
+		
+		# p1.save()
+		# p2.save()
+		
+		ps1 = str(p1.mainswitchport)
+		ps2 = str(p2.mainswitchport)
+		
+		vlan1 = "10" + p1.split("/",1)[1]
+	
+		text = "\renable\nconfigure terminal\ninterface range " + p1 +", " + p2 +"\nswitchport mode access\nswitchport access vlan " + vlan1 + "\nexit"	
+		print(text)
+		print("connected devices")
+		mainSwitchSerial.flushInput()
+		mainSwitchSerial.write(text.encode('utf-8'))
+		bytes_to_read = mainSwitchSerial.inWaiting()
+	
+
+	print("load that shit")
+
+def removeConnections():
+	connections = Port.objects.all()
+	for connection in connections:
+		connection.istaken = '0'
+		connection.save()

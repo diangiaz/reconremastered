@@ -223,7 +223,6 @@ class SaveConn(models.Model):
 	saveTopology = models.ForeignKey(
 		SaveTopology,
 		on_delete=models.CASCADE,
-		null=True,
 	)
 	connectionName = models.CharField(
 		max_length=25,
@@ -263,10 +262,9 @@ class SaveDev(models.Model):
 		SaveTopology,
 		on_delete=models.CASCADE,
 	)
-	groupToDevice = models.ForeignKey(
+	GroupToDevice = models.ForeignKey(
 		GroupToDevice,
 		on_delete=models.CASCADE,
-		null=True,
 	)
 	deviceName = models.CharField(
 		max_length = 40,
