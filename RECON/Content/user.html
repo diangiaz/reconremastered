@@ -484,8 +484,47 @@
                 }
             });
         }
-    </script>
+	// save/load functions
 	
+		function loadTopology(){
+			var topologyID = document.getElementById('topologyID').value;
+			window.location = "http://127.0.0.1:8000/loadTopology?topologyID=" + topologyID + "&newload=1";
+		}
+		
+		function saveTopology(){
+			var topologyName = document.getElementById('saveTopologyInput').value;
+			console.log("1")
+			var tId;
+			$.ajax({url: "saveTopology?topologyName=" + topologyName,
+					success: function(result){
+						data = JSON.parse(result);
+						tId = data['tId'];
+						console.log('2')
+						window.setTimeout(saveDevices(tId), 200);
+						window.setTimeout(saveConnections(tId), 200);	
+					}
+				});
+		}
+		
+		function saveDevices(tId){
+			var deviceArrayLength = Devices.length;
+			console.log('3')
+			for (var ctr = 0; ctr < deviceArrayLength; ctr++) {		
+				$.ajax({url: "saveDevice?tId=" + tId + "&deviceName=" + Devices[ctr].name + "&x=" + Devices[ctr].x + "&y=" + Devices[ctr].y,
+				});
+			}
+		}
+		
+		function saveConnections(tId){
+			var connectionsArrayLength = Cables.length;
+			console.log('4')
+			for (var ctr = 0; ctr < connectionsArrayLength; ctr++) {		
+				$.ajax({url: "saveConnection?tId=" + tId + "&startX=" + Cables[ctr].startpointx + "&startY=" + Cables[ctr].startpointy + "&endX=" + Cables[ctr].endpointx + "&endY=" + Cables[ctr].endpointy +
+				"&srcDevice=" + Cables[ctr].startdevice + "&endDevice=" + Cables[ctr].enddevice + "&srcPort=" + Cables[ctr].startport + "&endPort=" + Cables[ctr].endport + "&connectionName=" + Cables[ctr].name,
+				});
+			}
+		}
+    </script>
 	<!-- Receiver Scripts Start -->
 	{% for gtd in grouptodevice %}	
 		{% ifequal current_user.profile.group.id gtd.group.id %}
@@ -493,20 +532,17 @@
 		{% if gtd.startDateTime <= today and gtd.endDateTime >= today %}
 	<script>
 		setInterval(function(){reloader{{gtd.device.id}}();},1000);
-        
 		function reloader{{gtd.device.id}}(){
 			// if(document.getElementById('configTextArea {{gtd.device.id}}').innerHTML != res['config{{gtd.device.id}}']
-			var textarea = document.getElementById('configTextArea {{gtd.device.id}}'); 
-			textarea.scrollTop = textarea.scrollHeight;
-			$.ajax({url: 'http://127.0.0.1:8000/getouts',
+			$.ajax({url: 'getouts',
+				dataType: 'json',
 				success: function(result){
-					var res = JSON.parse(result);
-					document.getElementById('configTextArea {{gtd.device.id}}').innerHTML = res['config{{gtd.device.id}}'];
+					var res = result;
+					document.getElementById('configTextArea {{gtd.device.id}}').innerHTML = res[{{gtd.device.serialIndex}}];
 				}
 			});
         }
     </script>
-	
 		{% endif %}
 		{% endifequal %}
 		{% endifequal %}
@@ -524,10 +560,7 @@
 					if (e.keyCode == 13){
 						inputSend{{gtd.device.id}}();
 						}
-				var textarea = document.getElementById('configTextArea {{gtd.device.id}}');
-				textarea.scrollTop = textarea.scrollHeight;
-				});
-				
+				});	
 				function inputSend{{gtd.device.id}}(){
 					var textarea = document.getElementById('configTextArea {{gtd.device.id}}');
 					textarea.scrollTop = textarea.scrollHeight;
@@ -545,7 +578,8 @@
 					document.getElementById("deviceInput {{gtd.device.id}}").value = "";
 					
 					console.log("Input: " + cmd)
-					
+	
+					var textarea = document.getElementById('configTextArea {{gtd.device.id}}');
 					textarea.scrollTop = textarea.scrollHeight;
 				}
 			</script>
@@ -555,42 +589,6 @@
 	{% endfor %}
 	
 	<!-- Serial Sender Scripts End -->
-	
-	<!-- Save/Load Functions Start -->
-	<script>
-		function loadTopology(){
-			var topologyID = document.getElementById('topologyID').value;
-			window.location = "http://127.0.0.1:8000/loadTopology?topologyID=" + topologyID + "&newload=1";
-		}
-		
-		function saveTopology(){
-			var topologyName = document.getElementById('saveTopologyInput').value;
-			$.ajax({url: "http://127.0.0.1:8000/saveTopology?topologyName=" + topologyName,
-				});
-			window.setTimeout(saveDevices, 200);
-			window.setTimeout(saveConnections, 200);
-		}
-		
-		function saveDevices(){
-			var deviceArrayLength = Devices.length;
-			for (var ctr = 0; ctr < deviceArrayLength; ctr++) {		
-				$.ajax({url: "http://127.0.0.1:8000/saveDevice?deviceName=" + Devices[ctr].name + "&x=" + Devices[ctr].x + "&y=" + Devices[ctr].y,
-				});
-			}
-			console.log("Saved Devices")
-		}
-		
-		function saveConnections(){
-			var connectionsArrayLength = Cables.length;
-			for (var ctr = 0; ctr < connectionsArrayLength; ctr++) {		
-				$.ajax({url: "http://127.0.0.1:8000/saveConnection?startX=" + Cables[ctr].startpointx + "&startY=" + Cables[ctr].startpointy + "&endX=" + Cables[ctr].endpointx + "&endY=" + Cables[ctr].endpointy + "&srcDevice=" + Cables[ctr].startdevice + "&endDevice=" + Cables[ctr].enddevice + "&srcPort=" + Cables[ctr].startport + "&endPort=" + Cables[ctr].endport + "&connectionName=" + Cables[ctr].name,
-				});
-			}
-			console.log("Saved Connections")
-		}
-	</script>
-	<!-- Save/Load Functions End -->
-
 	<!-- Canvass Loader -->		
 	<script>
 		if ("{{currTopology}}" != "")
@@ -670,6 +668,11 @@
 		if (loadInt == 1)
 			window.location = "http://127.0.0.1:8000/loadTopology?topologyID={{currTopologyID}}&newload=0";
 	</script>
-	<!-- Canvass Loader End -->	
+	<!-- Canvass Loader End -->
+	
+	<!-- recon.js -->
+	
+	<!-- recon.js end -->
+	
   </body>
 </html>
