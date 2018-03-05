@@ -42,52 +42,52 @@ if mainswitchports == 0:
 		print("added" + str(m))
 		x+=1
 		
-	# nDevice = Device()
-	# nDevice.type = 'Router'
-	# nDevice.name = 'Router 1'
-	# nDevice.comport = Comport.objects.filter(name = 'COM5')[0]
-	# nDevice.save()
-	# nDevice2 = Device()
-	# nDevice2.type = 'Switch'
-	# nDevice2.name = 'Switch 1'
-	# nDevice2.comport = Comport.objects.filter(name = 'COM6')[0]
-	# nDevice2.save()
-	# p1 = Port()
-	# p1.type = 'Fast Ethernet'
-	# p1.name = 'fa0/0'
-	# p1.device = nDevice
-	# p1.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/1')[0]
-	# p1.save()
-	# p2 = Port()
-	# p2.type = 'Fast Ethernet'
-	# p2.name = 'fa0/1'
-	# p2.device = nDevice
-	# p2.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/2')[0]
-	# p2.save()
-	# p3 = Port()
-	# p3.type = 'Fast Ethernet'
-	# p3.name = 'fa0/1'
-	# p3.device = nDevice2
-	# p3.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/3')[0]
-	# p3.save()
-	# p4 = Port()
-	# p4.type = 'Fast Ethernet'
-	# p4.name = 'fa0/2'
-	# p4.device = nDevice2
-	# p4.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/4')[0]
-	# p4.save()
-	# p5 = Port()
-	# p5.type = 'Fast Ethernet'
-	# p5.name = 'fa0/3'
-	# p5.device = nDevice2
-	# p5.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/5')[0]
-	# p5.save()
-	# p6 = Port()
-	# p6.type = 'Fast Ethernet'
-	# p6.name = 'fa0/4'
-	# p6.device = nDevice2
-	# p6.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/6')[0]
-	# p6.save()
+	nDevice = Device()
+	nDevice.type = 'Router'
+	nDevice.name = 'Router 1'
+	nDevice.comport = Comport.objects.filter(name = 'COM5')[0]
+	nDevice.save()
+	nDevice2 = Device()
+	nDevice2.type = 'Switch'
+	nDevice2.name = 'Switch 1'
+	nDevice2.comport = Comport.objects.filter(name = 'COM6')[0]
+	nDevice2.save()
+	p1 = Port()
+	p1.type = 'Fast Ethernet'
+	p1.name = 'fa0/0'
+	p1.device = nDevice
+	p1.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/1')[0]
+	p1.save()
+	p2 = Port()
+	p2.type = 'Fast Ethernet'
+	p2.name = 'fa0/1'
+	p2.device = nDevice
+	p2.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/2')[0]
+	p2.save()
+	p3 = Port()
+	p3.type = 'Fast Ethernet'
+	p3.name = 'fa0/1'
+	p3.device = nDevice2
+	p3.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/3')[0]
+	p3.save()
+	p4 = Port()
+	p4.type = 'Fast Ethernet'
+	p4.name = 'fa0/2'
+	p4.device = nDevice2
+	p4.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/4')[0]
+	p4.save()
+	p5 = Port()
+	p5.type = 'Fast Ethernet'
+	p5.name = 'fa0/3'
+	p5.device = nDevice2
+	p5.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/5')[0]
+	p5.save()
+	p6 = Port()
+	p6.type = 'Fast Ethernet'
+	p6.name = 'fa0/4'
+	p6.device = nDevice2
+	p6.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/6')[0]
+	p6.save()
 	
 @login_required(login_url="/login")
 def userPage(request):
@@ -487,6 +487,7 @@ def adminPage(request):
 	log = Log.objects.all()
 	comport = Comport.objects.all()
 	mainswitchports = MainSwitchPort.objects.all()
+	ports = Port.objects.all()
 	
 	valid = True
 	error_msg1 = ""
@@ -513,6 +514,7 @@ def adminPage(request):
 	'terminalCount':terminalCount,
 	'comport':comport,
 	'mainswitchports':mainswitchports,
+	'ports': ports,
 	}
 	return render(request, 'admin.html', context)
 	

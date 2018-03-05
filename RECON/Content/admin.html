@@ -144,7 +144,7 @@
                   {% endif %}
               
                   <div class="x_content" style="padding-left: 0">
-                    <div class="col-md-9" style="padding:10px;width: 79%;background:white;border-right: 5px;margin-right: 10px" id="testRefresh">
+                    <div class="col-md-9" style="padding:10px;width: 80%;background:white;border-right: 5px;margin-right: 10px" id="testRefresh">
                       <table id="datatable" class="table table-striped projects dt-responsive" style="border:0px solid #E6E9ED; width: 100%">
                         <thead>
                           <tr style="height: 40px;">
@@ -453,7 +453,6 @@
                           <h3>Terminal</h3>
                         </div>
                       </div>
-                        <a href="#editDevice" data-toggle="modal" style="float: right;"><h4><i class="fa fa-plus-circle"></i>    Edit Device</h4></a>
                     </div>
 
                     <!-- DEVICE TABLE -->
@@ -463,13 +462,30 @@
                           <table id="datatable-fixed-header" class="table table-striped jambo_table table-bordered dt-responsive nowrap" width="100%">
                             <thead>
                               <tr>
-                                <th style="font-weight: 700;">Device Type</th>
                                 <th style="font-weight: 700;width: 50%">Device Name</th>
+                                <th style="font-weight: 700;">Device Type</th>
                                 <th style="font-weight: 700;">Ports</th>  
                                 <th style="font-weight: 700;width: 15%">Location</th>              
                               </tr>
                             </thead>
                             <tbody>
+							{% for device in devices  %}
+								<tr>
+									<td>
+										<a href="#editDev-{{device.id}}" data-toggle="modal"><strong>{{ device.name }}</strong></a>
+									</td>
+									<td>
+										{{ device.type }}
+									</td>
+									<td>
+										tangalin nalang natin to hehe
+									</td>
+									<td>
+										hehe lels
+									</td>
+								
+								<tr>							
+							{% endfor %}
                             </tbody>
                           </table>                            
                         </div>
@@ -1260,9 +1276,11 @@
                                             <td>fa0/40</td>
                                             <td>
                                               <select style="width:100px" id="p40" required>
-                                                <option value="">fa0/1</option>
-                                                <option value="">fa0/2</option>
-                                                <option value="">fa0/3</option>
+                                              {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
                                               </select>
                                             </td>
                                           </tr>
@@ -1273,9 +1291,11 @@
                                             <td>fa0/41</td>
                                             <td>
                                               <select style="width:100px" id="p41" required>
-                                                <option value="">fa0/1</option>
-                                                <option value="">fa0/2</option>
-                                                <option value="">fa0/3</option>
+                                              {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
                                               </select>
                                             </td>
                                           </tr>
@@ -1286,9 +1306,11 @@
                                             <td>fa0/42</td>
                                             <td>
                                               <select style="width:100px" id="p42" required>
-                                                <option value="">fa0/1</option>
-                                                <option value="">fa0/2</option>
-                                                <option value="">fa0/3</option>
+                                              {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
                                               </select>
                                             </td>
                                           </tr>
@@ -1298,7 +1320,7 @@
                                             </td>
                                             <td>fa0/43</td>
                                             <td>
-                                              <select style="width:100px" id="p44" required>
+                                              <select style="width:100px" id="p43" required>
                                               {% for port in mainswitchports %}
 													{% ifequal port.istaken '0' %}
 													<option value="{{port.pk}}">{{port.name}}</option>
@@ -1410,25 +1432,26 @@
               </div>
             </div>
 
-            
-            <div id="editDevice" class="modal fade" role="dialog" aria-hidden="true">                 
+            {% for device in devices %}
+            <div id="editDev-{{ device.id }}" class="modal fade" role="dialog" aria-hidden="true">
               <div class="modal-dialog">
                 <div class="modal-content">
                   <div class="form-horizontal form-label-left input_mask">
                     <div class="modal-header">
                       <button type="button" class="close" data-dismiss="modal" aria-label="Close" required><span aria-hidden="true">×</span>
                       </button>
-                      <h3 class="modal-title" id="myModalLabel">Edit [DEVICE NAME]</h3>
+                      <h3 class="modal-title" id="myModalLabel">Editing {{ device.name }}</h3>
                     </div>
                     
                     <!-- <input type="hidden" name="pkid" id="pkid" class="form-control" value="{{ user.id }}">  -->
                     
                     <div class="modal-body">
+					<font id="error-editdevice-{{ device.id }}"></font>
                       <div class="form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12" for="devName">Device Name
                         </label>
                         <div class="col-md-8 col-sm-6 col-xs-12">
-                          <input type="text" name="dev-name" id="dev-name" class="form-control" value="[device name]" required>
+                          <input disabled="disabled" type="text" name="dev-name" id="edit-dev-name-{{ device.id }}" class="form-control" value="{{ device.name }}" required>
                           <!-- <strong><font style="color: #F00000;" id="error-id-num-{{ user.id }}"></font></strong>  -->
                         </div>                        
                       </div>
@@ -1437,7 +1460,7 @@
                         <label class="control-label col-md-3 col-sm-3 col-xs-12" for="devLoc">Location
                         </label>
                         <div class="col-md-8 col-sm-6 col-xs-12">
-                          <input type="text" id="dev-loc" name="dev-loc" class="form-control" value="[location]" required>
+                          <input type="text" id="edit-dev-loc-{{ device.id }}" name="dev-loc" class="form-control" value=" lels " required>
                           <!-- <font id="error-first-name-{{ user.id }}"></font> -->
                         </div>
                       </div>
@@ -1447,7 +1470,8 @@
                         </label>
                         <div class="col-md-8 col-sm-6 col-xs-12">
                           <!-- <input type="text" id="dev-main" name="dev-main" class="form-control" value="port to main switch" required> -->
-                          <select id="comport" class="form-control" required>
+                          <select id="edit-device-comport-{{ device.id }}" class="form-control" required>
+						    <option value="{{ device.comport.name }}">{{ device.comport.name }}</option>
                             {% for comport in comport %}
 										{% ifequal comport.istaken '0' %}
 											<option value="{{comport.name}}">{{comport.name}}</option>
@@ -1468,19 +1492,29 @@
                               </tr>
                             </thead>
                             <tbody>
+							{% for port in ports %}
+								{% with forloop.counter as port_counter %}
+								{% ifequal port.device.id device.id %}
                               <tr>
                                 <td class="a-center ">
-                                  <input type="checkbox" name="switchPort" class="flat" id="f1">
+                                  <input type="checkbox" name="switchPort" class="flat" id="edit-f{{ port_counter }}-{{ device.id }}">
                                 </td>
-                                <td>fa0/1</td>
+                                <td>{{ port.name }}</td>
                                 <td>
-                                  <select style="width:100px" id="p1" required>
-                                  <option value="">fa0/1</option>
-                                  <option value="">fa0/2</option>
-                                  <option value="">fa0/3</option>
+                                  <select style="width:100px" id="edit-p{{ port_counter }}-{{ device.id }}" required>
+								  <option value="{{ port.mainswitchport.id }}">{{ port.mainswitchport.name }}</option>
+									{% for msport in mainswitchports %}
+										{% ifequal msport.istaken '0' %}
+										<option value="{{msport.id}}">{{msport.name}}</option>
+										{% endifequal %}
+									{% endfor %}
                                 </select>
                                 </td>
                               </tr>
+								{% endifequal %}
+								{% endwith %}
+							{% endfor %}
+							<!--
                               <tr>
                                 <td class="a-center ">
                                   <input type="checkbox" name="switchPort" class="flat" id="f2">
@@ -1624,9 +1658,11 @@
                                 </select>
                                 </td>
                               </tr>
+							  -->
                             </tbody>
                           </table>
                         </div>
+						<!--
                         <div class="col-md-6 col-sm-6 col-xs-12">
                           <table class="table-width table table-striped jambo_table" style="width: 100%;margin: 0">
                             <thead>
@@ -1796,19 +1832,18 @@
                             </tbody>
                           </table>
                         </div>
+						-->
                       </div>
-
                     </div>
-                    
                     <div class="modal-footer">
                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                      <button type="submit" class="btn btn-primary">Save changes</button>
+                      <button type="submit" class="btn btn-primary" onclick="editDevice{{ device.id }}()">Save changes</button>
                     </div>
                   </div>
                 </div>
-               
               </div>
             </div>
+			{% endfor %}
 
             <div class="row" id="divAudit" style="display: none;">
               <div class="col-md-12 col-sm-12 col-xs-12">
@@ -2525,7 +2560,6 @@
     <script> $('input[name="deviceList"]').first().prop('checked', true) </script>
 
      <script>
-
         function editAcctAjax(id){
           var employeeid = document.getElementById('id-num-' + id).value;
           var firstname = document.getElementById('first-name-' + id).value;
@@ -2561,9 +2595,7 @@
                 //   alert("invalid!");
                 // }
             });
-           
-
-        }
+		}
     </script>
 
     <script>
@@ -2860,6 +2892,50 @@
 			//	var data = JSON.parse(data);
 			//	}
 			//});
+		}
+		
+		{% for device in devices %}
+			function editDevice{{ device.id }}(){
+				var location = document.getElementById('edit-dev-loc-{{ device.id }}').value;
+				var comport = document.getElementById('edit-device-comport-{{ device.id }}').value;
+				var portactivity = []
+				var mainportchoices = []
+				{% for port in ports %}
+					{% with forloop.counter as port_counter %}
+					{% ifequal port.device.id device.id %}
+						portactivity.push(document.getElementById("edit-f{{ port_counter }}-{{ device.id }}").checked);
+						mainportchoices.push(document.getElementById("edit-p{{ port_counter }}-{{ device.id }}").value);
+					{% endifequal %}
+					{% endwith %}
+				{% endfor %}
+			
+				console.log(portactivity)
+				console.log(mainportchoices)
+				var activeswitchports = []
+				for(var x = 0; x < mainportchoices.length; x++){
+					if(portactivity[x] == true){
+						activeswitchports.push(mainportchoices[x]);
+					}
+				}
+				console.log(activeswitchports)
+				
+				if(hasDuplicates(activeswitchports)){
+					console.log("Choices are not unique")
+					document.getElementById("error-editdevice-{{ device.id }}").innerHTML = "Erorr: active main switch ports are not unique";										
+				} else { 
+					console.log("Choices are unique")
+					var url='editDevice?deviceID={{ device.id }}&portCount=' + String(mainportchoices.length);
+					for(var x = 0; x < mainportchoices.length;x++){
+						url+= '&f' + String(x) + '=' + String(portactivity[x]) + '&p' + String(x) + '=' + String(mainportchoices[x]);
+					}
+					console.log(url)
+				}
+							
+			}		
+		{% endfor %}
+		
+		function hasDuplicates(array) {
+			return (new Set(array)).size !== array.length;
 		}
 		
     </script>
