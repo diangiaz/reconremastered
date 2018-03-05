@@ -488,6 +488,7 @@
 
                             <!-- ROUTER ADDITIONAL PORT -->
                             <div class="form-group">
+								<font id="error-device-ports"></font>
                               <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12">Device Type</label>
                                 <div class="col-md-8 col-sm-6 col-xs-12">
@@ -2597,6 +2598,7 @@
         }
 		
 		function addDevice(){
+			console.log("add device")
 			var deviceType = document.getElementById("devType").value;
 			var deviceComport = document.getElementById("devComport").value;
 			var deviceLocation = document.getElementById("devLocation").value;
@@ -2633,7 +2635,15 @@
 									'&p1=' + p1 + '&p2=' + p2 + '&p3=' + p3 + '&p4=' + p4 + '&p5=' + p5 + '&p6=' + p6 + '&p7=' + p7 + '&p8=' + p8 + '&p9=' + p9 + '&p10=' + p10 + '&p11=' + p11 + '&p12=' + p12 + 
 									'&f1=' + f1 + '&f2=' + f2 + '&f3=' + f3 + '&f4=' + f4 + '&f5=' + f5 + '&f6=' + f6 + '&f7=' + f7 + '&f8=' + f8 + '&f9=' + f9 + '&f10=' + f10 + '&f11=' + f11 + '&f12=' + f12,
 							success: function(result){
-							var data = JSON.parse(data);
+								var data = JSON.parse(data);
+								console.log(data['valid'])
+								if (data['valid'] == false){
+									document.getElementById("error-device-ports").innerHTML = "Error: Active device ports must be unique";
+									console.log('alaws');
+								} else {
+									console.log('goods');
+									window.location.reload();
+								}
 							}
 						});
 						break;
@@ -2693,7 +2703,14 @@
 									'&f1=' + f1 + '&f2=' + f2 + '&f3=' + f3 + '&f4=' + f4 + '&f5=' + f5 + '&f6=' + f6 + '&f7=' + f7 + '&f8=' + f8 + '&f9=' + f9 + '&f10=' + f10 + '&f11=' + f11 + '&f12=' + f12 +
 									'&f13=' + f13 + '&f14=' + f14 + '&f15=' + f15 + '&f16=' + f16 + '&f17=' + f17 + '&f18=' + f18 + '&f19=' + f19 + '&f20=' + f20 + '&f21=' + f21 + '&f22=' + f22 + '&f23=' + f23 + '&f24=' + f24,
 							success: function(result){
-							var data = JSON.parse(data);
+								var data = JSON.parse(data);
+								if (data['valid'] == false){
+									document.getElementById("error-device-ports").innerHTML = "Error: Active device ports must be unique";
+									console.log("alaws")
+								} else {
+									console.log("goods");
+									window.location.reload();
+								}
 							}
 						});
 						break;
@@ -2805,7 +2822,14 @@
 									'&f25=' + f25 + '&f26=' + f26 + '&f27=' + f27 + '&f28=' + f28 + '&f29=' + f29 + '&f30=' + f30 + '&f31=' + f31 + '&f32=' + f32 + '&f33=' + f33 + '&f34=' + f34 + '&f35=' + f35 + '&f36=' + f36 + 
 									'&f37=' + f37 + '&f38=' + f38 + '&f39=' + f39 + '&f40=' + f40 + '&f41=' + f41 + '&f42=' + f42 + '&f43=' + f43 + '&f44=' + f44 + '&f45=' + f45 + '&f46=' + f46 + '&f47=' + f47 + '&f48=' + f48,
 							success: function(result){
-							var data = JSON.parse(data);
+								var data = JSON.parse(data);
+								if (data['valid'] == false){
+									document.getElementById("error-device-ports").innerHTML = "Error: Active device ports must be unique";
+									console.log(data['valid'])
+								} else {
+									console.log("goods")
+									window.location.reload();
+								}
 							}
 						});
 						break
@@ -2815,10 +2839,19 @@
 			} else if(deviceType=='1'){
 						var rp0 = document.getElementById("rp0").value;
 						var rp1 = document.getElementById("rp1").value;
+						var rf0 = document.getElementById("rf0").checked;
+						var rf1 = document.getElementById("rf1").checked;
 						$.ajax({url: 'addDevice?type=' + deviceType + '&comport=' +  deviceComport + '&location=' + deviceLocation + 
-									'&rp0=' + rp0 + '&rp1=' + rp1,
+									'&rp0=' + rp0 + '&rp1=' + rp1 + '&rf0=' + rf0 + '&rf1=' + rf1,
 							success: function(result){
-							var data = JSON.parse(result);
+								var data = JSON.parse(result);
+								if (data['valid'] == false){
+									document.getElementById("error-device-ports").innerHTML = "Error: Active device ports must be unique";
+									console.log("alaws")
+								} else {
+									console.log("goods");
+									windows.location.reload();
+								}
 							}
 						});
 			}
@@ -2890,7 +2923,6 @@
                 document.getElementById("createUserGroup").value = "";
                 document.getElementById("createPassword").value = "";
                 document.getElementById("createPassword2").value = "";
-                
               }         
           },
         });

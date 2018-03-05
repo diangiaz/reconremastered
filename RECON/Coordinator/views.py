@@ -989,6 +989,7 @@ def addDevice(request):
 	type = (urlparse.parse_qs(parsedData.query)['type'][0])
 	comportname = (urlparse.parse_qs(parsedData.query)['comport'][0])
 	comport = Comport.objects.filter(name=comportname)[0]
+	deviceisvalid = True
 	error = ""
 	
 	if type == '2':
@@ -1173,6 +1174,8 @@ def addDevice(request):
 				activemainswitchports.append(port)
 		
 		if len(activemainswitchports) > len(set(activemainswitchports)):
+			deviceisvalid = False
+			JSONer['valid'] = deviceisvalid
 			print('not unique')
 			error = "Active main switch ports must be unique"
 			
@@ -1182,16 +1185,17 @@ def addDevice(request):
 			
 			return HttpResponse(json.dumps(JSONer), context)
 		else:
-			print('unique')
+			deviceisvalid = True
+			JSONer['valid'] = deviceisvalid
 			
 			nDevice = Device()
 			nDevice.type = 'Switch'
 			nDevice.name = 'Switch ' + str(Device.objects.filter(type='Switch').count() + 1)
 			nDevice.comport = comport
-			nDevice.save()
+			# nDevice.save()
 		
 			comport.istaken = '1'
-			comport.save()
+			# comport.save()
 		
 			for idx, port in enumerate(mainswitchports):
 				nPort = Port()
@@ -1201,11 +1205,11 @@ def addDevice(request):
 				if portactivity[idx] == 'true':
 					mps = MainSwitchPort.objects.filter(pk=port)[0]
 					mps.istaken = '1'
-					mps.save()
+					# mps.save()
 					nPort.isactive = '1'
 					nPort.mainswitchport = mps
 				
-				nPort.save()
+				# nPort.save()
 				
 			# AddSerialConnection(comport, nDevice)
 			
@@ -1213,11 +1217,21 @@ def addDevice(request):
 			
 	elif type == '1':
 		mainswitchports = []
+		portactivity = []
+		activemainswitchports = []
 		
 		mainswitchports.append((urlparse.parse_qs(parsedData.query)['rp0'][0]))
 		mainswitchports.append((urlparse.parse_qs(parsedData.query)['rp1'][0]))
+		portactivity.append((urlparse.parse_qs(parsedData.query)['rf0'][0]))
+		portactivity.append((urlparse.parse_qs(parsedData.query)['rf1'][0]))
 		
-		if len(mainswitchports) > len(set(mainswitchports)):
+		for idx, port in enumerate(mainswitchports):
+			if portactivity[idx] == 'true':
+				activemainswitchports.append(port)
+		
+		if len(activemainswitchports) > len(set(activemainswitchports)):
+			deviceisvalid = False
+			JSONer['valid'] = deviceisvalid
 			print('not unique')
 			error = "Active main switch ports must be unique"
 			
@@ -1227,14 +1241,16 @@ def addDevice(request):
 			
 			return HttpResponse(json.dumps(JSONer), context)
 		else: 
+			deviceisvalid = True
+			JSONer['valid'] = deviceisvalid
 			nDevice = Device()
 			nDevice.type = 'Router'
 			nDevice.name = 'Router ' + str(Device.objects.filter(type='Router').count() + 1)
 			nDevice.comport = comport
-			nDevice.save()
+			# nDevice.save()
 			
 			comport.istaken = '1'
-			comport.save()
+			# comport.save()
 			
 			for idx, port in enumerate(mainswitchports):
 				nPort = Port()
@@ -1243,10 +1259,10 @@ def addDevice(request):
 				nPort.device = nDevice
 				mps = MainSwitchPort.objects.filter(pk=port)[0]
 				mps.istaken = '1'
-				mps.save()
+				# mps.save()
 				nPort.mainswitchport = mps
 				nPort.isactive = '1'
-				nPort.save()
+				# nPort.save()
 			
 			print('saved')
 			
