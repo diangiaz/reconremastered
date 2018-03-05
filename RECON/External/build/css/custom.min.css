@@ -10,6 +10,27 @@ img.deviceIcons:hover {
 	opacity: 0.5;
 }
 
+.x_panel {
+	background: #f7f7f7;
+	border: 0px;
+}
+
+.x_title h2 {
+	font-weight: bold;
+}
+
+table {
+	background: white;
+}
+
+.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th{
+	border-top: 0px;
+}
+
+.table-striped>tbody>tr:nth-of-type(odd){
+	background-color: #f8fafb;
+}
+
 img.avatar {
 	border:none;
 	height: 45px;
@@ -137,21 +158,6 @@ body .site_logo {
   padding: 0 10px;
 }
 
-/*.device-list{
-  list-style: none;
-  margin-bottom: 10px;
-  padding-left: 0;
-  width: 100%;
-  column-count: 3;
-}
-
-.device-list>li {
-  float: left;
-  margin-top: 5px;
-  margin-bottom: 10px;
-  cursor: pointer;
-}*/
-
 .deviceCell {
 	padding: 0 5px 0 5px;
 }
@@ -226,6 +232,38 @@ body .site_logo {
   float: right;
   padding: 0 0 0 10px;
 }
+
+.dev_table {
+	border: 1px solid #E4E4E4;
+	background: #FFF;
+	border-radius: 5px;
+  	padding: 10px;
+  	position: relative;
+  	width: 	100%;
+  	min-height: 1px; 
+  	margin-bottom: 10px;
+}
+
+.dev_form {
+	position: relative;
+	border: 1px solid #E4E4E4;
+	background: #FFF;
+	border-radius: 5px;
+  	padding: 10px;
+  	width: 100%
+}
+
+#testRefresh {
+	border: 1px solid #E4E4E4;
+	background: #FFF;
+	border-radius: 5px;
+} 
+
+#addEmployee {
+	border: 1px solid #E4E4E4;
+	background: #FFF;
+	border-radius: 5px;
+} 
 
 .device-table>tbody>tr:nth-of-type(odd) {
 	background-color: #eeeeee;

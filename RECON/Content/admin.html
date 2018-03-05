@@ -61,6 +61,7 @@
                     <!-- <span data-toggle="modal" data-target="#createAcct">   -->
                       <button class="btn btn-default" id="navButton" type="button" onclick="toggleVisibility('divCreate')" style="margin-right:10px"><i class="fa fa-user"></i></button>
                     </span>
+                    <!-- THIS ONE ANGE -->
                     <span data-toggle="tooltip" data-placement="bottom" title="Devices">
                       <button class="btn btn-default" id="navButton" type="button" onclick="toggleVisibility('divDevice')" style="margin-right:10px"><i class="fa fa-hdd-o"></i></button>
                     </span>
@@ -143,7 +144,7 @@
                   {% endif %}
               
                   <div class="x_content" style="padding-left: 0">
-                    <div class="col-md-9" style="padding:10px;width: 80%;background:white;border-right: 5px" id="testRefresh">
+                    <div class="col-md-9" style="padding:10px;width: 79%;background:white;border-right: 5px;margin-right: 10px" id="testRefresh">
                       <table id="datatable" class="table table-striped projects dt-responsive" style="border:0px solid #E6E9ED; width: 100%">
                         <thead>
                           <tr style="height: 40px;">
@@ -344,7 +345,7 @@
                     <div class="clearfix"></div>
                   </div>
 
-                  <div class="x_content">
+                  <div id="addEmployee" class="x_content">
                     <br />
                     <div class="col-md-8 col-sm-8 col-md-offset-2 col-xs-12">
                       <div class="form-horizontal form-label-left">
@@ -425,7 +426,8 @@
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel" style="padding:10px 17px;">
                   <div class="x_title">
-                    <h2>Devices</h2>           
+                    <h2>Devices</h2>
+                      <a onclick="showAddDev()" style="float: right;"><h4><i class="fa fa-plus-circle"></i>    Add Device</h4></a>          
                     <div class="clearfix"></div>
                   </div>
                   <div class="x_content">
@@ -451,10 +453,32 @@
                           <h3>Terminal</h3>
                         </div>
                       </div>
+                        <a href="#editDevice" data-toggle="modal" style="float: right;"><h4><i class="fa fa-plus-circle"></i>    Edit Device</h4></a>
                     </div>
 
-                    <!-- TABLE -->
-                    <div class="dev_form">
+                    <!-- DEVICE TABLE -->
+                    <div class="dev_table">
+                      <div class="x_panel" style="background:white;">
+                        <div class="x_content" style="width: 100%">
+                          <table id="datatable-fixed-header" class="table table-striped jambo_table table-bordered dt-responsive nowrap" width="100%">
+                            <thead>
+                              <tr>
+                                <th style="font-weight: 700;">Device Type</th>
+                                <th style="font-weight: 700;width: 50%">Device Name</th>
+                                <th style="font-weight: 700;">Ports</th>  
+                                <th style="font-weight: 700;width: 15%">Location</th>              
+                              </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                          </table>                            
+                        </div>
+                      </div>
+                    </div>
+                    <!-- DEVICE TABLE -->
+
+                    <!-- ADD DEVICE TABLE -->
+                    <div id="divAddDevice" class="dev_form" style="display:none">
                       <div class="x_panel" style="background:white;">
                         <div class="x_content" style="width: 100%">
 
@@ -508,34 +532,52 @@
                             <!--UPDATED ROUTER ADDITIONAL PORTS -->
                             <div class="form-group" id="routerPort" style="display: none;">
                               <div class="col-md-12 col-sm-12 col-xs-12 item form-group has-feedback">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="router-port">Ports
-                                </label>
-                                <div class="col-md-8 col-sm-6 col-xs-12">
-									<ul class="list-unstyled scroll-view" style="column-count: 2">
-										<div>                                      
-										  <li>
-											<!-- PORTS WITHOUT CHECKBOX-->
-											fa0/0
-											  <select id="rp1" required>
-												{% for port in mainswitchports %}
-													{{ ifequal port.istaken '0' %}
+                              <label class="control-label col-md-3 col-sm-3 col-xs-12" for="router-port">Port
+                              </label>
+                              <div class="col-md-8 col-sm-6 col-xs-12">
+                                <p style="font-style: italic;">*Check active ports | Choose port on main switch from dropdown option*</p>
+                                <table class="table-width table table-striped jambo_table" style="width: 100%;margin: 0">
+                                  <thead>
+                                    <tr>
+                                      <th style="width: 10%">Mode</th>
+                                      <th style="width: 30%">Port</th>
+                                      <th>Port on Main Switch</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                      <td class="a-center ">
+                                        <input type="checkbox" class="flat" name="switchPort" id="rf0">
+                                      </td>
+                                      <td>fa0/0</td>
+                                      <td>
+                                        <select id="rp0" class="form-control" style="width: 150px" required>
+                                        {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
 													<option value="{{port.pk}}">{{port.name}}</option>
-													{{ ifequal port.istaken '0' %}
+													{% endifequal %}
 												{% endfor %}
-											  </select><br>
-											fa0/1 
-											  <select id="rp2" required>
-												{% for port in mainswitchports %}
-													{{ ifequal port.istaken '0' %}
+                                      </select>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td class="a-center ">
+                                        <input type="checkbox" class="flat" name="switchPort" id="rf1">
+                                      </td>
+                                      <td>fa0/1</td>
+                                      <td>
+                                        <select id="rp1" class="form-control"  style="width: 150px" required>
+                                        {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
 													<option value="{{port.pk}}">{{port.name}}</option>
-													{{ ifequal port.istaken '0' %}
+													{% endifequal %}
 												{% endfor %}
-											  </select><br>
-											<!-- PORTS WITHOUT CHECKBOX-->
-										  </li>
-										</div>
-									</ul>
-                                </div>
+                                      </select>
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </div>
                               </div>
                             </div>
                             <!--UPDATED ROUTER ADDITIONAL PORTS -->
@@ -558,411 +600,800 @@
                             <div id="divP12" class="form-group" style="display: none;">
                               <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
                                 <div class="col-md-12 col-sm-6 col-xs-12" style="float: right">
+                                  
                                   <p style="font-style: italic;">*Check active ports | Choose port on main switch from dropdown option*</p>
-                                  <ul class="list-unstyled scroll-view" style="column-count: 3">
-                                    <div>                                      
-                                      <li>
-                                        <input type="checkbox" name="switchPort" id="f1"> fa0/1 
-                                          <select id="p1" required>
-												{% for port in mainswitchports %}
+
+                                  <div style="margin:auto">
+                                    <!-- TABLE 1 FOR PORTS -->
+                                    <!-- <div style="float: left; width: 20%"> -->
+                                    <div class="col-md-3 col-sm-6 col-xs-12">                                  
+                                      <table class="table-width table table-striped jambo_table" style="width: 100%;margin: 0">
+                                        <thead>
+                                          <tr>
+                                            <th style="width: 10%">Mode</th>
+                                            <th style="width: 30%">Port</th>
+                                            <th>Port on Main Switch</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f1">
+                                            </td>
+                                            <td>fa0/1</td>
+                                            <td>
+                                              <select style="width:100px" id="p1" required>
+                                             {% for port in mainswitchports %}
 													{% ifequal port.istaken '0' %}
 													<option value="{{port.pk}}">{{port.name}}</option>
 													{% endifequal %}
 												{% endfor %}
-                                          </select><br>
-                                        <input type="checkbox" name="switchPort" id="f2"> fa0/2 
-                                          <select id="p2" required>
-												{% for port in mainswitchports %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f2">
+                                            </td>
+                                            <td>fa0/2</td>
+                                            <td>
+                                              <select style="width:100px" id="p2" required>
+                                              {% for port in mainswitchports %}
 													{% ifequal port.istaken '0' %}
 													<option value="{{port.pk}}">{{port.name}}</option>
 													{% endifequal %}
 												{% endfor %}
-                                          </select><br>
-                                        <input type="checkbox" name="switchPort" id="f3"> fa0/3 
-                                          <select id="p3" required>
-                                            {% for port in mainswitchports %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f3">
+                                            </td>
+                                            <td>fa0/3</td>
+                                            <td>
+                                              <select style="width:100px" id="p3" required>
+                                              {% for port in mainswitchports %}
 													{% ifequal port.istaken '0' %}
 													<option value="{{port.pk}}">{{port.name}}</option>
 													{% endifequal %}
 												{% endfor %}
-                                          </select><br>
-                                        <input type="checkbox" name="switchPort" id="f4"> fa0/4 
-                                          <select id="p4" required>
-                                           {% for port in mainswitchports %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f4">
+                                            </td>
+                                            <td>fa0/4</td>
+                                            <td>
+                                              <select style="width:100px" id="p4" required>
+                                             {% for port in mainswitchports %}
 													{% ifequal port.istaken '0' %}
 													<option value="{{port.pk}}">{{port.name}}</option>
 													{% endifequal %}
 												{% endfor %}
-                                          </select><br>
-                                        <input type="checkbox" name="switchPort" id="f5"> fa0/5 
-                                          <select id="p5" required>
-                                            {% for port in mainswitchports %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f5">
+                                            </td>
+                                            <td>fa0/5</td>
+                                            <td>
+                                              <select style="width:100px" id="p5" required>
+                                              {% for port in mainswitchports %}
 													{% ifequal port.istaken '0' %}
 													<option value="{{port.pk}}">{{port.name}}</option>
 													{% endifequal %}
 												{% endfor %}
-                                          </select><br>
-                                        <input type="checkbox" name="switchPort" id="f6"> fa0/6 
-                                          <select id="p6" required>
-                                            {% for port in mainswitchports %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f6">
+                                            </td>
+                                            <td>fa0/6</td>
+                                            <td>
+                                              <select style="width:100px" id="p6" required>
+                                             {% for port in mainswitchports %}
 													{% ifequal port.istaken '0' %}
 													<option value="{{port.pk}}">{{port.name}}</option>
 													{% endifequal %}
 												{% endfor %}
-                                          </select><br>
-                                        <input type="checkbox" name="switchPort" id="f7"> fa0/7 
-                                          <select id="p7" required>
-                                            {% for port in mainswitchports %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f7">
+                                            </td>
+                                            <td>fa0/7</td>
+                                            <td>
+                                              <select style="width:100px" id="p7" required>
+                                              {% for port in mainswitchports %}
 													{% ifequal port.istaken '0' %}
 													<option value="{{port.pk}}">{{port.name}}</option>
 													{% endifequal %}
 												{% endfor %}
-                                          </select><br>
-                                        <input type="checkbox" name="switchPort" id="f8"> fa0/8 
-                                          <select id="p8" required>
-                                            {% for port in mainswitchports %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f8">
+                                            </td>
+                                            <td>fa0/8</td>
+                                            <td>
+                                              <select style="width:100px" id="p8" required>
+                                              {% for port in mainswitchports %}
 													{% ifequal port.istaken '0' %}
 													<option value="{{port.pk}}">{{port.name}}</option>
 													{% endifequal %}
 												{% endfor %}
-                                          </select><br>
-                                        <input type="checkbox" name="switchPort" id="f9"> fa0/9 
-                                          <select id="p9" required>
-                                            {% for port in mainswitchports %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f9">
+                                            </td>
+                                            <td>fa0/9</td>
+                                            <td>
+                                              <select style="width:100px" id="p9" required>
+                                              {% for port in mainswitchports %}
 													{% ifequal port.istaken '0' %}
 													<option value="{{port.pk}}">{{port.name}}</option>
 													{% endifequal %}
 												{% endfor %}
-                                          </select><br>
-                                        <input type="checkbox" name="switchPort" id="f10"> fa0/10 
-                                          <select id="p10" required>
-                                            {% for port in mainswitchports %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f10">
+                                            </td>
+                                            <td>fa0/10</td>
+                                            <td>
+                                              <select style="width:100px" id="p10" required>
+                                              {% for port in mainswitchports %}
 													{% ifequal port.istaken '0' %}
 													<option value="{{port.pk}}">{{port.name}}</option>
 													{% endifequal %}
 												{% endfor %}
-                                          </select><br>
-                                        <input type="checkbox" name="switchPort" id="f11"> fa0/11 
-                                          <select id="p11" required>
-                                           {% for port in mainswitchports %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f11">
+                                            </td>
+                                            <td>fa0/11</td>
+                                            <td>
+                                              <select style="width:100px" id="p11" required>
+                                              {% for port in mainswitchports %}
 													{% ifequal port.istaken '0' %}
 													<option value="{{port.pk}}">{{port.name}}</option>
 													{% endifequal %}
 												{% endfor %}
-                                          </select><br>
-                                        <input type="checkbox" name="switchPort" id="f12"> fa0/12 
-                                          <select id="p12" required>
-                                            {% for port in mainswitchports %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f12">
+                                            </td>
+                                            <td>fa0/12</td>
+                                            <td>
+                                              <select style="width:100px" id="p12" required>
+                                              {% for port in mainswitchports %}
 													{% ifequal port.istaken '0' %}
 													<option value="{{port.pk}}">{{port.name}}</option>
 													{% endifequal %}
 												{% endfor %}
-                                          </select><br>
-                                        
-                                        <div id="divP24" style="display: none;">                                        
-                                          <input type="checkbox" name="switchPort" id="f13"> fa0/13 
-                                          <select id="p13" required>
-                                           {% for port in mainswitchports %}
-													{% ifequal port.istaken '0' %}
-													<option value="{{port.pk}}">{{port.name}}</option>
-													{% endifequal %}
-												{% endfor %}
-                                          </select><br>
-                                          <input type="checkbox" name="switchPort" id="f14"> fa0/14 
-                                          <select id="p14" required>
-                                           {% for port in mainswitchports %}
-													{% ifequal port.istaken '0' %}
-													<option value="{{port.pk}}">{{port.name}}</option>
-													{% endifequal %}
-												{% endfor %}
-                                          </select><br>
-                                          <input type="checkbox" name="switchPort" id="f15"> fa0/15 
-                                          <select id="p15" required>
-                                            {% for port in mainswitchports %}
-													{% ifequal port.istaken '0' %}
-													<option value="{{port.pk}}">{{port.name}}</option>
-													{% endifequal %}
-												{% endfor %}
-                                          </select><br>
-                                          <input type="checkbox" name="switchPort" id="f16"> fa0/16 
-                                          <select id="p16" required>
-                                            {% for port in mainswitchports %}
-													{% ifequal port.istaken '0' %}
-													<option value="{{port.pk}}">{{port.name}}</option>
-													{% endifequal %}
-												{% endfor %}
-                                          </select><br>
-                                          <input type="checkbox" name="switchPort" id="f17"> fa0/17 
-                                          <select id="p17" required>
-                                           {% for port in mainswitchports %}
-													{% ifequal port.istaken '0' %}
-													<option value="{{port.pk}}">{{port.name}}</option>
-													{% endifequal %}
-												{% endfor %}
-                                          </select><br>
-                                          <input type="checkbox" name="switchPort" id="f18"> fa0/18 
-                                          <select id="p18" required>
-                                            {% for port in mainswitchports %}
-													{% ifequal port.istaken '0' %}
-													<option value="{{port.pk}}">{{port.name}}</option>
-													{% endifequal %}
-												{% endfor %}
-                                          </select><br>
-                                          <input type="checkbox" name="switchPort" id="f19"> fa0/19 
-                                          <select id="p19" required>
-                                           {% for port in mainswitchports %}
-													{% ifequal port.istaken '0' %}
-													<option value="{{port.pk}}">{{port.name}}</option>
-													{% endifequal %}
-												{% endfor %}
-                                          </select><br>
-                                          <input type="checkbox" name="switchPort" id="f20"> fa0/20 
-                                          <select id="p20" required>
-                                            {% for port in mainswitchports %}
-													{% ifequal port.istaken '0' %}
-													<option value="{{port.pk}}">{{port.name}}</option>
-													{% endifequal %}
-												{% endfor %}
-                                          </select><br>
-                                          <input type="checkbox" name="switchPort" id="f21"> fa0/21 
-                                          <select id="p21" required>
-                                            {% for port in mainswitchports %}
-													{% ifequal port.istaken '0' %}
-													<option value="{{port.pk}}">{{port.name}}</option>
-													{% endifequal %}
-												{% endfor %}
-                                          </select><br>
-                                          <input type="checkbox" name="switchPort" id="f22"> fa0/22 
-                                          <select id="p22" required>
-                                            {% for port in mainswitchports %}
-													{% ifequal port.istaken '0' %}
-													<option value="{{port.pk}}">{{port.name}}</option>
-													{% endifequal %}
-												{% endfor %}
-                                          </select><br>
-                                          <input type="checkbox" name="switchPort" id="f23"> fa0/23 
-                                          <select id="p23" required>
-                                            {% for port in mainswitchports %}
-													{% ifequal port.istaken '0' %}
-													<option value="{{port.pk}}">{{port.name}}</option>
-													{% endifequal %}
-												{% endfor %}
-                                          </select><br>
-                                          <input type="checkbox" name="switchPort" id="f24"> fa0/24 
-                                          <select id="p24" required>
-                                            {% for port in mainswitchports %}
-													{% ifequal port.istaken '0' %}
-													<option value="{{port.pk}}">{{port.name}}</option>
-													{% endifequal %}
-												{% endfor %}
-                                          </select><br> 
-                                          
-                                          <div id="divP48" style="display: none;">                                          
-                                            <input type="checkbox" name="switchPort" id="f25"> fa0/25 
-                                          <select id="p25" required>
-                                            {% for port in mainswitchports %}
-													{% ifequal port.istaken '0' %}
-													<option value="{{port.pk}}">{{port.name}}</option>
-													{% endifequal %}
-												{% endfor %}
-                                          </select><br>
-                                            <input type="checkbox" name="switchPort" id="f26"> fa0/26 
-                                          <select id="p26" required>
-                                            {% for port in mainswitchports %}
-													{% ifequal port.istaken '0' %}
-													<option value="{{port.pk}}">{{port.name}}</option>
-													{% endifequal %}
-												{% endfor %}
-                                          </select><br>
-                                            <input type="checkbox" name="switchPort" id="f27"> fa0/27 
-                                          <select id="p27" required>
-                                            {% for port in mainswitchports %}
-													{% ifequal port.istaken '0' %}
-													<option value="{{port.pk}}">{{port.name}}</option>
-													{% endifequal %}
-												{% endfor %}
-                                          </select><br>
-                                            <input type="checkbox" name="switchPort" id="f28"> fa0/28 
-                                          <select id="p28" required>
-                                            {% for port in mainswitchports %}
-													{% ifequal port.istaken '0' %}
-													<option value="{{port.pk}}">{{port.name}}</option>
-													{% endifequal %}
-												{% endfor %}
-                                          </select><br>
-                                            <input type="checkbox" name="switchPort" id="f29"> fa0/29 
-                                          <select id="p29" required>
-                                            {% for port in mainswitchports %}
-													{% ifequal port.istaken '0' %}
-													<option value="{{port.pk}}">{{port.name}}</option>
-													{% endifequal %}
-												{% endfor %}
-                                          </select><br>
-                                            <input type="checkbox" name="switchPort" id="f30"> fa0/30 
-                                          <select id="p30" required>
-                                            {% for port in mainswitchports %}
-													{% ifequal port.istaken '0' %}
-													<option value="{{port.pk}}">{{port.name}}</option>
-													{% endifequal %}
-												{% endfor %}
-                                          </select><br>
-                                            <input type="checkbox" name="switchPort" id="f31"> fa0/31 
-                                          <select id="p31" required>
-                                            {% for port in mainswitchports %}
-													{% ifequal port.istaken '0' %}
-													<option value="{{port.pk}}">{{port.name}}</option>
-													{% endifequal %}
-												{% endfor %}
-                                          </select><br>
-                                            <input type="checkbox" name="switchPort" id="f32"> fa0/32 
-                                          <select id="p32" required>
-                                            {% for port in mainswitchports %}
-													{% ifequal port.istaken '0' %}
-													<option value="{{port.pk}}">{{port.name}}</option>
-													{% endifequal %}
-												{% endfor %}
-                                          </select><br>
-                                            <input type="checkbox" name="switchPort" id="f33"> fa0/33 
-                                          <select id="p33" required>
-                                            {% for port in mainswitchports %}
-													{% ifequal port.istaken '0' %}
-													<option value="{{port.pk}}">{{port.name}}</option>
-													{% endifequal %}
-												{% endfor %}
-                                          </select><br>
-                                            <input type="checkbox" name="switchPort" id="f34"> fa0/34 
-                                          <select id="p34" required>
-                                            {% for port in mainswitchports %}
-													{% ifequal port.istaken '0' %}
-													<option value="{{port.pk}}">{{port.name}}</option>
-													{% endifequal %}
-												{% endfor %}
-                                          </select><br>
-                                            <input type="checkbox" name="switchPort" id="f35"> fa0/35 
-                                          <select id="p35" required>
-                                            {% for port in mainswitchports %}
-													{% ifequal port.istaken '0' %}
-													<option value="{{port.pk}}">{{port.name}}</option>
-													{% endifequal %}
-												{% endfor %}
-                                          </select><br>
-                                            <input type="checkbox" name="switchPort" id="f36"> fa0/36
-                                          <select id="p36" required>
-                                            {% for port in mainswitchports %}
-													{% ifequal port.istaken '0' %}
-													<option value="{{port.pk}}">{{port.name}}</option>
-													{% endifequal %}
-												{% endfor %}
-                                          </select> <br>
-                                            <input type="checkbox" name="switchPort" id="f37"> fa0/37 
-                                          <select id="p37" required>
-                                            {% for port in mainswitchports %}
-													{% ifequal port.istaken '0' %}
-													<option value="{{port.pk}}">{{port.name}}</option>
-													{% endifequal %}
-												{% endfor %}
-                                          </select><br>
-                                            <input type="checkbox" name="switchPort" id="f38"> fa0/38 
-                                          <select id="p38" required>
-                                            {% for port in mainswitchports %}
-													{% ifequal port.istaken '0' %}
-													<option value="{{port.pk}}">{{port.name}}</option>
-													{% endifequal %}
-												{% endfor %}
-                                          </select><br>
-                                            <input type="checkbox" name="switchPort" id="f39"> fa0/39 
-                                          <select id="p39" required>
-                                            {% for port in mainswitchports %}
-													{% ifequal port.istaken '0' %}
-													<option value="{{port.pk}}">{{port.name}}</option>
-													{% endifequal %}
-												{% endfor %}
-                                          </select><br>
-                                            <input type="checkbox" name="switchPort" id="f40"> fa0/40 
-                                          <select id="p40" required>
-                                            {% for port in mainswitchports %}
-													{% ifequal port.istaken '0' %}
-													<option value="{{port.pk}}">{{port.name}}</option>
-													{% endifequal %}
-												{% endfor %}
-                                          </select><br>
-                                            <input type="checkbox" name="switchPort" id="f41"> fa0/41 
-                                          <select id="p41" required>
-                                            {% for port in mainswitchports %}
-													{% ifequal port.istaken '0' %}
-													<option value="{{port.pk}}">{{port.name}}</option>
-													{% endifequal %}
-												{% endfor %}
-                                          </select><br>
-                                            <input type="checkbox" name="switchPort" id="f42"> fa0/42 
-                                          <select id="p42" required>
-                                            {% for port in mainswitchports %}
-													{% ifequal port.istaken '0' %}
-													<option value="{{port.pk}}">{{port.name}}</option>
-													{% endifequal %}
-												{% endfor %}
-                                          </select><br>
-                                            <input type="checkbox" name="switchPort" id="f43"> fa0/43 
-                                          <select id="p43" required>
-                                            {% for port in mainswitchports %}
-													{% ifequal port.istaken '0' %}
-													<option value="{{port.pk}}">{{port.name}}</option>
-													{% endifequal %}
-												{% endfor %}
-                                          </select><br>
-                                            <input type="checkbox" name="switchPort" id="f44"> fa0/44 
-                                          <select id="p44" required>
-                                            {% for port in mainswitchports %}
-													{% ifequal port.istaken '0' %}
-													<option value="{{port.pk}}">{{port.name}}</option>
-													{% endifequal %}
-												{% endfor %}
-                                          </select><br>
-                                            <input type="checkbox" name="switchPort" id="f45"> fa0/45 
-                                          <select id="p45" required>
-                                            {% for port in mainswitchports %}
-													{% ifequal port.istaken '0' %}
-													<option value="{{port.pk}}">{{port.name}}</option>
-													{% endifequal %}
-												{% endfor %}
-                                          </select><br>
-                                            <input type="checkbox" name="switchPort" id="f46"> fa0/46 
-                                          <select id="p46" required>
-                                            {% for port in mainswitchports %}
-													{% ifequal port.istaken '0' %}
-													<option value="{{port.pk}}">{{port.name}}</option>
-													{% endifequal %}
-												{% endfor %}
-                                          </select><br>
-                                            <input type="checkbox" name="switchPort" id="f47"> fa0/47 
-                                          <select id="p47" required>
-                                            {% for port in mainswitchports %}
-													{% ifequal port.istaken '0' %}
-													<option value="{{port.pk}}">{{port.name}}</option>
-													{% endifequal %}
-												{% endfor %}
-                                          </select><br>
-                                            <input type="checkbox" name="switchPort" id="f48"> fa0/48 
-                                          <select id="p48" required>
-                                            {% for port in mainswitchports %}
-													{% ifequal port.istaken '0' %}
-													<option value="{{port.pk}}">{{port.name}}</option>
-													{% endifequal %}
-												{% endfor %}
-                                          </select>                                           
-                                          </div>
-                                        </div>
-                                      </li>                                      
+                                            </select>
+                                            </td>
+                                          </tr>
+                                        </tbody>
+                                      </table>
                                     </div>
-                                  </ul>
+                                    <!-- TABLE 1 FOR PORTS -->
+
+                                    <!-- TABLE 2 FOR PORTS -->     
+                                    <!-- <div style="float: left; width: 20%" id="divP24" style="display: none;"> -->
+                                    <div class="col-md-3 col-sm-6 col-xs-12" id="divP24" style="display: none;">
+                                      <table class="table-width table table-striped jambo_table" style="width: 100%;margin: 0">
+                                        <thead>
+                                          <tr>
+                                            <th style="width: 10%">Mode</th>
+                                            <th style="width: 30%">Port</th>
+                                            <th>Port on Main Switch</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f13">
+                                            </td>
+                                            <td>fa0/13</td>
+                                            <td>
+                                              <select style="width:100px" id="p13" required>
+                                              {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f14">
+                                            </td>
+                                            <td>fa0/14</td>
+                                            <td>
+                                              <select style="width:100px" id="p14" required>
+                                              {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f15">
+                                            </td>
+                                            <td>fa0/15</td>
+                                            <td>
+                                              <select style="width:100px" id="p15" required>
+                                              {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f16">
+                                            </td>
+                                            <td>fa0/16</td>
+                                            <td>
+                                              <select style="width:100px" id="p16" required>
+                                              {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f17">
+                                            </td>
+                                            <td>fa0/17</td>
+                                            <td>
+                                              <select style="width:100px" id="p17" required>
+                                              {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f18">
+                                            </td>
+                                            <td>fa0/18</td>
+                                            <td>
+                                              <select style="width:100px" id="p18" required>
+                                              {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f19">
+                                            </td>
+                                            <td>fa0/19</td>
+                                            <td>
+                                              <select style="width:100px" id="p19" required>
+                                              {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f20">
+                                            </td>
+                                            <td>fa0/20</td>
+                                            <td>
+                                              <select style="width:100px" id="p20" required>
+                                              {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f21">
+                                            </td>
+                                            <td>fa0/21</td>
+                                            <td>
+                                              <select style="width:100px" id="p21" required>
+                                              {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f22">
+                                            </td>
+                                            <td>fa0/22</td>
+                                            <td>
+                                              <select style="width:100px" id="p22" required>
+                                              {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f23">
+                                            </td>
+                                            <td>fa0/23</td>
+                                            <td>
+                                              <select style="width:100px" id="p23" required>
+                                              {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f24">
+                                            </td>
+                                            <td>fa0/24</td>
+                                            <td>
+                                              <select style="width:100px" id="p24" required>
+                                              {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                        </tbody>
+                                      </table>
+                                    </div>
+                                    <!-- TABLE 2 FOR PORTS -->
+                                    
+                                    <!-- TABLE 3 FOR PORTS -->
+                                    <!-- <div style="float: left; width: 20%" id="divP48a" style="display: none;"> -->
+                                    <div class="col-md-3 col-sm-6 col-xs-12" id="divP48a" style="display: none;">
+                                      <table class="table-width table table-striped jambo_table" style="width: 100%;margin: 0">
+                                        <thead>
+                                          <tr>
+                                            <th style="width: 10%">Mode</th>
+                                            <th style="width: 30%">Port</th>
+                                            <th>Port on Main Switch</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f25">
+                                            </td>
+                                            <td>fa0/25</td>
+                                            <td>
+                                              <select style="width:100px" id="p25" required>
+                                              {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f26">
+                                            </td>
+                                            <td>fa0/26</td>
+                                            <td>
+                                              <select style="width:100px" id="p26" required>
+                                              {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f27">
+                                            </td>
+                                            <td>fa0/27</td>
+                                            <td>
+                                              <select style="width:100px" id="p27" required>
+                                              {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f28">
+                                            </td>
+                                            <td>fa0/28</td>
+                                            <td>
+                                              <select style="width:100px" id="p28" required>
+                                              {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f29">
+                                            </td>
+                                            <td>fa0/29</td>
+                                            <td>
+                                              <select style="width:100px" id="p29" required>
+                                              {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f30">
+                                            </td>
+                                            <td>fa0/30</td>
+                                            <td>
+                                              <select style="width:100px" id="p30" required>
+                                              {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f31">
+                                            </td>
+                                            <td>fa0/31</td>
+                                            <td>
+                                              <select style="width:100px" id="p31" required>
+                                              {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f32">
+                                            </td>
+                                            <td>fa0/32</td>
+                                            <td>
+                                              <select style="width:100px" id="p32" required>
+                                              {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f33">
+                                            </td>
+                                            <td>fa0/33</td>
+                                            <td>
+                                              <select style="width:100px" id="p35" required>
+                                              {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f34">
+                                            </td>
+                                            <td>fa0/34</td>
+                                            <td>
+                                              <select style="width:100px" id="p34" required>
+                                              {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f35">
+                                            </td>
+                                            <td>fa0/35</td>
+                                            <td>
+                                              <select style="width:100px" id="p35" required>
+                                              {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f36">
+                                            </td>
+                                            <td>fa0/36</td>
+                                            <td>
+                                              <select style="width:100px" id="p36" required>
+                                              {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                        </tbody>
+                                      </table>
+                                    </div>
+                                    <!-- TABLE 3 FOR PORTS -->
+
+                                    <!-- TABLE 4 FOR PORTS --> 
+                                    <!-- <div style="float: left; width: 20%" id="divP48b" style="display: none;"> -->
+                                    <div class="col-md-3 col-sm-6 col-xs-12" id="divP48b" style="display: none;">
+                                      <table class="table-width table table-striped jambo_table" style="width: 100%;margin: 0">
+                                        <thead>
+                                          <tr>
+                                            <th style="width: 10%">Mode</th>
+                                            <th style="width: 30%">Port</th>
+                                            <th>Port on Main Switch</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f37">
+                                            </td>
+                                            <td>fa0/37</td>
+                                            <td>
+                                              <select style="width:100px" id="p37" required>
+                                              {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f38">
+                                            </td>
+                                            <td>fa0/38</td>
+                                            <td>
+                                              <select style="width:100px" id="p38" required>
+                                              {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f39">
+                                            </td>
+                                            <td>fa0/39</td>
+                                            <td>
+                                              <select style="width:100px" id="p39" required>
+                                              {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f40">
+                                            </td>
+                                            <td>fa0/40</td>
+                                            <td>
+                                              <select style="width:100px" id="p40" required>
+                                                <option value="">fa0/1</option>
+                                                <option value="">fa0/2</option>
+                                                <option value="">fa0/3</option>
+                                              </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f41">
+                                            </td>
+                                            <td>fa0/41</td>
+                                            <td>
+                                              <select style="width:100px" id="p41" required>
+                                                <option value="">fa0/1</option>
+                                                <option value="">fa0/2</option>
+                                                <option value="">fa0/3</option>
+                                              </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f42">
+                                            </td>
+                                            <td>fa0/42</td>
+                                            <td>
+                                              <select style="width:100px" id="p42" required>
+                                                <option value="">fa0/1</option>
+                                                <option value="">fa0/2</option>
+                                                <option value="">fa0/3</option>
+                                              </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f43">
+                                            </td>
+                                            <td>fa0/43</td>
+                                            <td>
+                                              <select style="width:100px" id="p44" required>
+                                              {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f44">
+                                            </td>
+                                            <td>fa0/44</td>
+                                            <td>
+                                              <select style="width:100px" id="p44" required>
+                                              {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f45">
+                                            </td>
+                                            <td>fa0/45</td>
+                                            <td>
+                                              <select style="width:100px" id="p45" required>
+                                              {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f46">
+                                            </td>
+                                            <td>fa0/46</td>
+                                            <td>
+                                              <select style="width:100px" id="p46" required>
+                                              {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f47">
+                                            </td>
+                                            <td>fa0/47</td>
+                                            <td>
+                                              <select style="width:100px" id="p47" required>
+                                              {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td class="a-center ">
+                                              <input type="checkbox" name="switchPort" class="flat" id="f48">
+                                            </td>
+                                            <td>fa0/48</td>
+                                            <td>
+                                              <select style="width:100px" id="p48" required>
+                                              {% for port in mainswitchports %}
+													{% ifequal port.istaken '0' %}
+													<option value="{{port.pk}}">{{port.name}}</option>
+													{% endifequal %}
+												{% endfor %}
+                                            </select>
+                                            </td>
+                                          </tr>
+                                        </tbody>
+                                      </table>
+                                    </div>
+                                    <!-- TABLE 4 FOR PORTS -->
+                                  </div>
                                 </div>
                               </div>  
                             </div>
 
                             <div class="ln_solid"></div>
                             <div class="form-group">
-                              <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-4">
-                                <button type="submit" class="btn btn-success" onclick="addDevice()" name="editDevice">Add Device</button>
+                              <div class="col-md-8 col-sm-6 col-xs-12 col-md-offset-4">
+                                <button type="submit" class="btn btn-success" name="editDevice" onclick="addDevice()">Add Device</button>
                                 <button class="btn btn-primary" onclick="clearUserFields()">Cancel</button> 
                               </div>
                             </div>
@@ -972,36 +1403,14 @@
                         </div>
                       </div>
                     </div>
-                    <!-- TABLE -->
-
-                    <!-- TABLE -->
-                    <div class="dev_table">
-                      <div class="x_panel" style="background:white;">
-                        <div class="x_content" style="width: 100%">
-                          <table id="datatable-fixed-header" class="table table-striped jambo_table table-bordered dt-responsive nowrap" width="100%">
-                            <thead>
-                              <tr>
-                                <th style="font-weight: 700;">Device Type</th>
-                                <th style="font-weight: 700;width: 50%">Device Name</th>
-                                <th style="font-weight: 700;">Ports</th>  
-                                <th style="font-weight: 700;width: 15%">Location</th>              
-                              </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                          </table>                            
-                        </div>
-                      </div>
-                    </div>
-                    <!-- TABLE -->
+                    <!-- ADD DEVICE TABLE -->                    
                   </div>
                 </div>
               </div>
             </div>
 
             
-            <div id="editDevice" class="modal fade" role="dialog" aria-hidden="true">    
-             
+            <div id="editDevice" class="modal fade" role="dialog" aria-hidden="true">                 
               <div class="modal-dialog">
                 <div class="modal-content">
                   <div class="form-horizontal form-label-left input_mask">
@@ -1022,43 +1431,6 @@
                           <!-- <strong><font style="color: #F00000;" id="error-id-num-{{ user.id }}"></font></strong>  -->
                         </div>                        
                       </div>
-                      
-                      <div class="form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="user-name">Active Ports
-                        </label>
-                        <div class="col-md-8 col-sm-6 col-xs-12">
-                          <!-- <input type="text" id="port-act" name="port-act" class="form-control" required> -->
-                          <!-- <font id="error-user-name-{{ user.id }}"></font> -->
-
-                          <ul class="list-unstyled scroll-view" style="column-count: 4">                                     
-                            <li>
-                              <input type="checkbox" name="switchPort" id="f1"> fa0/1 <br>
-                              <input type="checkbox" name="switchPort" id="f2"> fa0/2 <br>
-                              <input type="checkbox" name="switchPort" id="f3"> fa0/3 <br>
-                              <input type="checkbox" name="switchPort" id="f4"> fa0/4 <br>
-                              <input type="checkbox" name="switchPort" id="f5"> fa0/5 <br>
-                              <input type="checkbox" name="switchPort" id="f6"> fa0/6 <br>
-                              <input type="checkbox" name="switchPort" id="f7"> fa0/7 <br>
-                              <input type="checkbox" name="switchPort" id="f7"> fa0/8 <br>
-                            </li>
-                          </ul>
-                        </div>                  
-                      </div>
-                      
-                      <div class="form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="comport">Comport
-                        </label>
-                        <div class="col-md-8 col-sm-6 col-xs-12">
-                          <!-- <input type="text" id="dev-main" name="dev-main" class="form-control" value="port to main switch" required> -->
-                          <select id="comport" class="form-control" required>
-                            <option value="main1">fa0/1</option>
-                            <option value="main2">fa0/2</option>
-                            <option value="main3">fa0/3</option>
-                            <option value="main4">fa0/4</option>
-                          </select>
-                          
-                        </div>
-                      </div>
 
                       <div class="form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12" for="devLoc">Location
@@ -1068,6 +1440,363 @@
                           <!-- <font id="error-first-name-{{ user.id }}"></font> -->
                         </div>
                       </div>
+                      
+                      <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="comport">Comport
+                        </label>
+                        <div class="col-md-8 col-sm-6 col-xs-12">
+                          <!-- <input type="text" id="dev-main" name="dev-main" class="form-control" value="port to main switch" required> -->
+                          <select id="comport" class="form-control" required>
+                            {% for comport in comport %}
+										{% ifequal comport.istaken '0' %}
+											<option value="{{comport.name}}">{{comport.name}}</option>
+										{% endifequal %}
+									{% endfor %}
+                          </select>
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                          <table class="table-width table table-striped jambo_table" style="width: 100%;margin: 0">
+                            <thead>
+                              <tr>
+                                <th style="width: 10%">Mode</th>
+                                <th style="width: 30%">Port</th>
+                                <th>Port on Main Switch</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td class="a-center ">
+                                  <input type="checkbox" name="switchPort" class="flat" id="f1">
+                                </td>
+                                <td>fa0/1</td>
+                                <td>
+                                  <select style="width:100px" id="p1" required>
+                                  <option value="">fa0/1</option>
+                                  <option value="">fa0/2</option>
+                                  <option value="">fa0/3</option>
+                                </select>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td class="a-center ">
+                                  <input type="checkbox" name="switchPort" class="flat" id="f2">
+                                </td>
+                                <td>fa0/2</td>
+                                <td>
+                                  <select style="width:100px" id="p2" required>
+                                  <option value="">fa0/1</option>
+                                  <option value="">fa0/2</option>
+                                  <option value="">fa0/3</option>
+                                </select>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td class="a-center ">
+                                  <input type="checkbox" name="switchPort" class="flat" id="f3">
+                                </td>
+                                <td>fa0/3</td>
+                                <td>
+                                  <select style="width:100px" id="p3" required>
+                                  <option value="">fa0/1</option>
+                                  <option value="">fa0/2</option>
+                                  <option value="">fa0/3</option>
+                                </select>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td class="a-center ">
+                                  <input type="checkbox" name="switchPort" class="flat" id="f4">
+                                </td>
+                                <td>fa0/4</td>
+                                <td>
+                                  <select style="width:100px" id="p4" required>
+                                  <option value="">fa0/1</option>
+                                  <option value="">fa0/2</option>
+                                  <option value="">fa0/3</option>
+                                </select>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td class="a-center ">
+                                  <input type="checkbox" name="switchPort" class="flat" id="f5">
+                                </td>
+                                <td>fa0/5</td>
+                                <td>
+                                  <select style="width:100px" id="p5" required>
+                                  <option value="">fa0/1</option>
+                                  <option value="">fa0/2</option>
+                                  <option value="">fa0/3</option>
+                                </select>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td class="a-center ">
+                                  <input type="checkbox" name="switchPort" class="flat" id="f6">
+                                </td>
+                                <td>fa0/6</td>
+                                <td>
+                                  <select style="width:100px" id="p6" required>
+                                  <option value="">fa0/1</option>
+                                  <option value="">fa0/2</option>
+                                  <option value="">fa0/3</option>
+                                </select>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td class="a-center ">
+                                  <input type="checkbox" name="switchPort" class="flat" id="f7">
+                                </td>
+                                <td>fa0/7</td>
+                                <td>
+                                  <select style="width:100px" id="p7" required>
+                                  <option value="">fa0/1</option>
+                                  <option value="">fa0/2</option>
+                                  <option value="">fa0/3</option>
+                                </select>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td class="a-center ">
+                                  <input type="checkbox" name="switchPort" class="flat" id="f8">
+                                </td>
+                                <td>fa0/8</td>
+                                <td>
+                                  <select style="width:100px" id="p8" required>
+                                  <option value="">fa0/1</option>
+                                  <option value="">fa0/2</option>
+                                  <option value="">fa0/3</option>
+                                </select>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td class="a-center ">
+                                  <input type="checkbox" name="switchPort" class="flat" id="f9">
+                                </td>
+                                <td>fa0/9</td>
+                                <td>
+                                  <select style="width:100px" id="p9" required>
+                                  <option value="">fa0/1</option>
+                                  <option value="">fa0/2</option>
+                                  <option value="">fa0/3</option>
+                                </select>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td class="a-center ">
+                                  <input type="checkbox" name="switchPort" class="flat" id="f10">
+                                </td>
+                                <td>fa0/10</td>
+                                <td>
+                                  <select style="width:100px" id="p10" required>
+                                  <option value="">fa0/1</option>
+                                  <option value="">fa0/2</option>
+                                  <option value="">fa0/3</option>
+                                </select>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td class="a-center ">
+                                  <input type="checkbox" name="switchPort" class="flat" id="f11">
+                                </td>
+                                <td>fa0/11</td>
+                                <td>
+                                  <select style="width:100px" id="p11" required>
+                                  <option value="">fa0/1</option>
+                                  <option value="">fa0/2</option>
+                                  <option value="">fa0/3</option>
+                                </select>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td class="a-center ">
+                                  <input type="checkbox" name="switchPort" class="flat" id="f12">
+                                </td>
+                                <td>fa0/12</td>
+                                <td>
+                                  <select style="width:100px" id="p12" required>
+                                  <option value="">fa0/1</option>
+                                  <option value="">fa0/2</option>
+                                  <option value="">fa0/3</option>
+                                </select>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                          <table class="table-width table table-striped jambo_table" style="width: 100%;margin: 0">
+                            <thead>
+                              <tr>
+                                <th style="width: 10%">Mode</th>
+                                <th style="width: 30%">Port</th>
+                                <th>Port on Main Switch</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td class="a-center ">
+                                  <input type="checkbox" name="switchPort" class="flat" id="f13">
+                                </td>
+                                <td>fa0/13</td>
+                                <td>
+                                  <select style="width:100px" id="p13" required>
+                                  <option value="">fa0/1</option>
+                                  <option value="">fa0/2</option>
+                                  <option value="">fa0/3</option>
+                                </select>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td class="a-center ">
+                                  <input type="checkbox" name="switchPort" class="flat" id="f14">
+                                </td>
+                                <td>fa0/14</td>
+                                <td>
+                                  <select style="width:100px" id="p14" required>
+                                  <option value="">fa0/1</option>
+                                  <option value="">fa0/2</option>
+                                  <option value="">fa0/3</option>
+                                </select>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td class="a-center ">
+                                  <input type="checkbox" name="switchPort" class="flat" id="f15">
+                                </td>
+                                <td>fa0/15</td>
+                                <td>
+                                  <select style="width:100px" id="p15" required>
+                                  <option value="">fa0/1</option>
+                                  <option value="">fa0/2</option>
+                                  <option value="">fa0/3</option>
+                                </select>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td class="a-center ">
+                                  <input type="checkbox" name="switchPort" class="flat" id="f16">
+                                </td>
+                                <td>fa0/16</td>
+                                <td>
+                                  <select style="width:100px" id="p16" required>
+                                  <option value="">fa0/1</option>
+                                  <option value="">fa0/2</option>
+                                  <option value="">fa0/3</option>
+                                </select>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td class="a-center ">
+                                  <input type="checkbox" name="switchPort" class="flat" id="f17">
+                                </td>
+                                <td>fa0/17</td>
+                                <td>
+                                  <select style="width:100px" id="p17" required>
+                                  <option value="">fa0/1</option>
+                                  <option value="">fa0/2</option>
+                                  <option value="">fa0/3</option>
+                                </select>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td class="a-center ">
+                                  <input type="checkbox" name="switchPort" class="flat" id="f18">
+                                </td>
+                                <td>fa0/18</td>
+                                <td>
+                                  <select style="width:100px" id="p18" required>
+                                  <option value="">fa0/1</option>
+                                  <option value="">fa0/2</option>
+                                  <option value="">fa0/3</option>
+                                </select>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td class="a-center ">
+                                  <input type="checkbox" name="switchPort" class="flat" id="f19">
+                                </td>
+                                <td>fa0/19</td>
+                                <td>
+                                  <select style="width:100px" id="p19" required>
+                                  <option value="">fa0/1</option>
+                                  <option value="">fa0/2</option>
+                                  <option value="">fa0/3</option>
+                                </select>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td class="a-center ">
+                                  <input type="checkbox" name="switchPort" class="flat" id="f20">
+                                </td>
+                                <td>fa0/20</td>
+                                <td>
+                                  <select style="width:100px" id="p20" required>
+                                  <option value="">fa0/1</option>
+                                  <option value="">fa0/2</option>
+                                  <option value="">fa0/3</option>
+                                </select>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td class="a-center ">
+                                  <input type="checkbox" name="switchPort" class="flat" id="f21">
+                                </td>
+                                <td>fa0/21</td>
+                                <td>
+                                  <select style="width:100px" id="p21" required>
+                                  <option value="">fa0/1</option>
+                                  <option value="">fa0/2</option>
+                                  <option value="">fa0/3</option>
+                                </select>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td class="a-center ">
+                                  <input type="checkbox" name="switchPort" class="flat" id="f22">
+                                </td>
+                                <td>fa0/22</td>
+                                <td>
+                                  <select style="width:100px" id="p22" required>
+                                  <option value="">fa0/1</option>
+                                  <option value="">fa0/2</option>
+                                  <option value="">fa0/3</option>
+                                </select>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td class="a-center ">
+                                  <input type="checkbox" name="switchPort" class="flat" id="f23">
+                                </td>
+                                <td>fa0/23</td>
+                                <td>
+                                  <select style="width:100px" id="p23" required>
+                                  <option value="">fa0/1</option>
+                                  <option value="">fa0/2</option>
+                                  <option value="">fa0/3</option>
+                                </select>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td class="a-center ">
+                                  <input type="checkbox" name="switchPort" class="flat" id="f24">
+                                </td>
+                                <td>fa0/24</td>
+                                <td>
+                                  <select style="width:100px" id="p24" required>
+                                  <option value="">fa0/1</option>
+                                  <option value="">fa0/2</option>
+                                  <option value="">fa0/3</option>
+                                </select>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+
                     </div>
                     
                     <div class="modal-footer">
@@ -1312,8 +2041,7 @@
               </div>
               <div class="form-group">
                 <div class="col-md-4 col-sm-2 col-xs-12" style="float: right">
-                  <button class="btn btn-default" id="enableButton" type="button" style="margin-right:5px;" data-toggle="tooltip" data-placement="bottom" title="Enable Account"><i class="fa fa-check"></i></button>
-                  <button class="btn btn-default" id="disableBUtton" type="button" data-toggle="tooltip" data-placement="bottom" title="Disable Account"><i class="fa fa-remove"></i></button>
+                  <button class="btn btn-default" id="disableBUtton" type="button" data-toggle="tooltip" data-placement="bottom" title="Delete Account"><i class="fa fa-remove"></i></button>
                 </div>
               </div>
             </div>
@@ -1496,6 +2224,22 @@
     
     <!-- end ALLOCATE MODAL -->
 
+    <script>
+      var x = false;
+      function showAddDev(e) {
+        if(x==false){
+          document.getElementById('divAddDevice').style.display = "block";  
+          x=true;
+        }
+        else{
+           document.getElementById('divAddDevice').style.display = "none";
+          x=false;
+        }
+        
+      }
+
+    </script>
+
     <!-- ROUTER ADDITIONAL PORT -->
     <script type="text/javascript">
       function show(aval) {
@@ -1520,22 +2264,26 @@
         if (aval == "12") {
           divP12.style.display='block';
           divP24.style.display='none';
-          divP48.style.display='none';
+          divP48a.style.display='none';
+          divP48b.style.display='none';
         } 
         else if (aval == "24") {
           divP12.style.display='block';
           divP24.style.display='block';
-          divP48.style.display='none';
+          divP48a.style.display='none';
+          divP48b.style.display='none';
         }
         else if (aval == "48") {
           divP12.style.display='block';
           divP24.style.display='block';
-          divP48.style.display='block';          
+          divP48a.style.display='block';
+          divP48b.style.display='block';       
         }
         else {
           divP12.style.display='none';
           divP24.style.display='none';
-          divP48.style.display='none'; 
+          divP48a.style.display='none';
+          divP48b.style.display='none';
         }
       }
     </script>
@@ -1825,13 +2573,13 @@
             var deviceid;
             var radios = document.getElementsByName('deviceList');
             for (var i = 0, length = radios.length; i < length; i++) {
-          if (radios[i].checked) {
-            deviceid = radios[i].value;
-            
-            
-              break;
-          }
-      }
+				if (radios[i].checked) {
+					deviceid = radios[i].value;
+					
+					
+					break;
+				}
+			}
       
             console.log(startDate)
             console.log(endDate)
@@ -2065,12 +2813,12 @@
 						break;
 				}				
 			} else if(deviceType=='1'){
+						var rp0 = document.getElementById("rp0").value;
 						var rp1 = document.getElementById("rp1").value;
-						var rp2 = document.getElementById("rp2").value;
 						$.ajax({url: 'addDevice?type=' + deviceType + '&comport=' +  deviceComport + '&location=' + deviceLocation + 
-									'&rp1=' + rp1 + '&rp2=' + rp2,
+									'&rp0=' + rp0 + '&rp1=' + rp1,
 							success: function(result){
-							var data = JSON.parse(data);
+							var data = JSON.parse(result);
 							}
 						});
 			}
@@ -2080,6 +2828,7 @@
 			//	}
 			//});
 		}
+		
     </script>
   <!-- Create Group and User scripts Start -->
     <script>

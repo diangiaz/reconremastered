@@ -129,6 +129,7 @@ class Port(models.Model):
 	mainswitchport = models.ForeignKey(
 		MainSwitchPort,
 		on_delete=models.CASCADE,
+		null = True,
 	)
 	def __str__(self):
 		return self.name + " of " + self.device.name

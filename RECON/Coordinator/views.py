@@ -42,52 +42,52 @@ if mainswitchports == 0:
 		print("added" + str(m))
 		x+=1
 		
-	nDevice = Device()
-	nDevice.type = 'Router'
-	nDevice.name = 'Router 1'
-	nDevice.comport = Comport.objects.filter(name = 'COM5')[0]
-	nDevice.save()
-	nDevice2 = Device()
-	nDevice2.type = 'Switch'
-	nDevice2.name = 'Switch 1'
-	nDevice2.comport = Comport.objects.filter(name = 'COM6')[0]
-	nDevice2.save()
-	p1 = Port()
-	p1.type = 'Fast Ethernet'
-	p1.name = 'fa0/0'
-	p1.device = nDevice
-	p1.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/1')[0]
-	p1.save()
-	p2 = Port()
-	p2.type = 'Fast Ethernet'
-	p2.name = 'fa0/1'
-	p2.device = nDevice
-	p2.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/2')[0]
-	p2.save()
-	p3 = Port()
-	p3.type = 'Fast Ethernet'
-	p3.name = 'fa0/1'
-	p3.device = nDevice2
-	p3.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/3')[0]
-	p3.save()
-	p4 = Port()
-	p4.type = 'Fast Ethernet'
-	p4.name = 'fa0/2'
-	p4.device = nDevice2
-	p4.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/4')[0]
-	p4.save()
-	p5 = Port()
-	p5.type = 'Fast Ethernet'
-	p5.name = 'fa0/3'
-	p5.device = nDevice2
-	p5.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/5')[0]
-	p5.save()
-	p6 = Port()
-	p6.type = 'Fast Ethernet'
-	p6.name = 'fa0/4'
-	p6.device = nDevice2
-	p6.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/6')[0]
-	p6.save()
+	# nDevice = Device()
+	# nDevice.type = 'Router'
+	# nDevice.name = 'Router 1'
+	# nDevice.comport = Comport.objects.filter(name = 'COM5')[0]
+	# nDevice.save()
+	# nDevice2 = Device()
+	# nDevice2.type = 'Switch'
+	# nDevice2.name = 'Switch 1'
+	# nDevice2.comport = Comport.objects.filter(name = 'COM6')[0]
+	# nDevice2.save()
+	# p1 = Port()
+	# p1.type = 'Fast Ethernet'
+	# p1.name = 'fa0/0'
+	# p1.device = nDevice
+	# p1.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/1')[0]
+	# p1.save()
+	# p2 = Port()
+	# p2.type = 'Fast Ethernet'
+	# p2.name = 'fa0/1'
+	# p2.device = nDevice
+	# p2.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/2')[0]
+	# p2.save()
+	# p3 = Port()
+	# p3.type = 'Fast Ethernet'
+	# p3.name = 'fa0/1'
+	# p3.device = nDevice2
+	# p3.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/3')[0]
+	# p3.save()
+	# p4 = Port()
+	# p4.type = 'Fast Ethernet'
+	# p4.name = 'fa0/2'
+	# p4.device = nDevice2
+	# p4.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/4')[0]
+	# p4.save()
+	# p5 = Port()
+	# p5.type = 'Fast Ethernet'
+	# p5.name = 'fa0/3'
+	# p5.device = nDevice2
+	# p5.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/5')[0]
+	# p5.save()
+	# p6 = Port()
+	# p6.type = 'Fast Ethernet'
+	# p6.name = 'fa0/4'
+	# p6.device = nDevice2
+	# p6.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/6')[0]
+	# p6.save()
 	
 @login_required(login_url="/login")
 def userPage(request):
@@ -981,17 +981,21 @@ def editGrp(request):
 		messages.success(request,"User successfully reassigned!")
 	return HttpResponse(json.dumps(JSONer))
 
+	
+@login_required(login_url="/login")
 def addDevice(request):
 	JSONer = {}
 	parsedData = urlparse.urlparse(request.get_full_path())
 	type = (urlparse.parse_qs(parsedData.query)['type'][0])
 	comportname = (urlparse.parse_qs(parsedData.query)['comport'][0])
 	comport = Comport.objects.filter(name=comportname)[0]
+	error = ""
 	
 	if type == '2':
 		portNumber = (urlparse.parse_qs(parsedData.query)['portnumber'][0])
 		mainswitchports = []
 		portactivity = []
+		activemainswitchports = []
 		if portNumber == '12':
 			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p1'][0]))
 			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p2'][0]))
@@ -1017,7 +1021,6 @@ def addDevice(request):
 			portactivity.append((urlparse.parse_qs(parsedData.query)['f10'][0]))
 			portactivity.append((urlparse.parse_qs(parsedData.query)['f11'][0]))
 			portactivity.append((urlparse.parse_qs(parsedData.query)['f12'][0]))
-			print(mainswitchports)
 		elif portNumber == '24':
 			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p1'][0]))
 			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p2'][0]))
@@ -1067,7 +1070,6 @@ def addDevice(request):
 			portactivity.append((urlparse.parse_qs(parsedData.query)['f22'][0]))
 			portactivity.append((urlparse.parse_qs(parsedData.query)['f23'][0]))
 			portactivity.append((urlparse.parse_qs(parsedData.query)['f24'][0]))
-			print(mainswitchports)
 		elif portNumber == '48':
 			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p1'][0]))
 			mainswitchports.append((urlparse.parse_qs(parsedData.query)['p2'][0]))
@@ -1166,71 +1168,90 @@ def addDevice(request):
 			portactivity.append((urlparse.parse_qs(parsedData.query)['f47'][0]))
 			mainswitchports.append((urlparse.parse_qs(parsedData.query)['f48'][0]))
 
-		nDevice = Device()
-		nDevice.type = 'Switch'
-		nDevice.name = 'Switch ' + str(Device.objects.filter(type='Switch').count() + 1)
-		nDevice.comport = comport
-		# nDevice.save()  
-		
-		comport.istaken = '1'
-		# comport.save()
-		
 		for idx, port in enumerate(mainswitchports):
-			nPort = Port()
-			nPort.name='fa0/' + str(idx+1)
-			nPort.type = 'Fast Ethernet'
-			nPort.device = nDevice
-			mps = MainSwitchPort.objects.filter(pk=port)[0]
-			mps.istaken = '1'
-			# mps.save()
-			nPort.mainswitchport = mps
 			if portactivity[idx] == 'true':
-				nPort.isactive = '1'
-			# nPort.save()
+				activemainswitchports.append(port)
 		
-		# AddSerialConnection(comport, nDevice)
-		
-		print(mainswitchports)
-		if len(mainswitchports) > len(set(mainswitchports)):
+		if len(activemainswitchports) > len(set(activemainswitchports)):
 			print('not unique')
+			error = "Active main switch ports must be unique"
+			
+			context = {
+				'error': error,
+			}
+			
+			return HttpResponse(json.dumps(JSONer), context)
 		else:
 			print('unique')
-	
-	if type == '1':
+			
+			nDevice = Device()
+			nDevice.type = 'Switch'
+			nDevice.name = 'Switch ' + str(Device.objects.filter(type='Switch').count() + 1)
+			nDevice.comport = comport
+			nDevice.save()
+		
+			comport.istaken = '1'
+			comport.save()
+		
+			for idx, port in enumerate(mainswitchports):
+				nPort = Port()
+				nPort.name='fa0/' + str(idx+1)
+				nPort.type = 'Fast Ethernet'
+				nPort.device = nDevice
+				if portactivity[idx] == 'true':
+					mps = MainSwitchPort.objects.filter(pk=port)[0]
+					mps.istaken = '1'
+					mps.save()
+					nPort.isactive = '1'
+					nPort.mainswitchport = mps
+				
+				nPort.save()
+				
+			# AddSerialConnection(comport, nDevice)
+			
+			print('saved')
+			
+	elif type == '1':
 		mainswitchports = []
-		portactivity = []
-		nDevice = Device()
-		nDevice.type = 'Router'
-		nDevice.name = 'Router ' + str(Device.objects.filter(type='Router').count() + 1)
-		nDevice.comport = comport
-		# nDevice.save()
 		
-		comport.istaken = '1'
-		# comport.save()
-		
+		mainswitchports.append((urlparse.parse_qs(parsedData.query)['rp0'][0]))
 		mainswitchports.append((urlparse.parse_qs(parsedData.query)['rp1'][0]))
-		mainswitchports.append((urlparse.parse_qs(parsedData.query)['rp2'][0]))
 		
-		for idx, port in enumerate(mainswitchports):
-			nPort = Port()
-			nPort.name='fa0/' + str(idx+1)
-			nPort.type = 'Fast Ethernet'
-			nPort.device = nDevice
-			mps = MainSwitchPort.objects.filter(pk=port)[0]
-			mps.istaken = '1'
-			# mps.save()
-			nPort.mainswitchport = mps
-			nPort.isactive = '1'
-			# nPort.save()
-		
-		AddSerialConnection(comport, nDevice)
-		
-		# unique port checker
-		# if len(mainswitchports) > len(set(mainswitchports)):
-			# print('not unique')
-		# else:
-			# print('unique')
-
+		if len(mainswitchports) > len(set(mainswitchports)):
+			print('not unique')
+			error = "Active main switch ports must be unique"
+			
+			context = {
+				'error': error,
+			}
+			
+			return HttpResponse(json.dumps(JSONer), context)
+		else: 
+			nDevice = Device()
+			nDevice.type = 'Router'
+			nDevice.name = 'Router ' + str(Device.objects.filter(type='Router').count() + 1)
+			nDevice.comport = comport
+			nDevice.save()
+			
+			comport.istaken = '1'
+			comport.save()
+			
+			for idx, port in enumerate(mainswitchports):
+				nPort = Port()
+				nPort.name='fa0/' + str(idx+1)
+				nPort.type = 'Fast Ethernet'
+				nPort.device = nDevice
+				mps = MainSwitchPort.objects.filter(pk=port)[0]
+				mps.istaken = '1'
+				mps.save()
+				nPort.mainswitchport = mps
+				nPort.isactive = '1'
+				nPort.save()
+			
+			print('saved')
+			
+			# AddSerialConnection(comport, nDevice)
+	
 	return HttpResponse(json.dumps(JSONer))
 
 def AddSerialConnection(comport, device):
