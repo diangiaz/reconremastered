@@ -41,59 +41,60 @@ if mainswitchports == 0:
 		m.save()
 		print("added" + str(m))
 		x+=1
-		
-	nDevice = Device()
-	nDevice.type = 'Router'
-	nDevice.name = 'Router 1'
-	nDevice.comport = Comport.objects.filter(name = 'COM5')[0]
-	nDevice.save()
-	nDevice2 = Device()
-	nDevice2.type = 'Switch'
-	nDevice2.name = 'Switch 1'
-	nDevice2.comport = Comport.objects.filter(name = 'COM6')[0]
-	nDevice2.save()
-	p1 = Port()
-	p1.type = 'Fast Ethernet'
-	p1.name = 'fa0/0'
-	p1.device = nDevice
-	p1.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/1')[0]
-	p1.save()
-	p2 = Port()
-	p2.type = 'Fast Ethernet'
-	p2.name = 'fa0/1'
-	p2.device = nDevice
-	p2.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/2')[0]
-	p2.save()
-	p3 = Port()
-	p3.type = 'Fast Ethernet'
-	p3.name = 'fa0/1'
-	p3.device = nDevice2
-	p3.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/3')[0]
-	p3.save()
-	p4 = Port()
-	p4.type = 'Fast Ethernet'
-	p4.name = 'fa0/2'
-	p4.device = nDevice2
-	p4.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/4')[0]
-	p4.save()
-	p5 = Port()
-	p5.type = 'Fast Ethernet'
-	p5.name = 'fa0/3'
-	p5.device = nDevice2
-	p5.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/5')[0]
-	p5.save()
-	p6 = Port()
-	p6.type = 'Fast Ethernet'
-	p6.name = 'fa0/4'
-	p6.device = nDevice2
-	p6.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/6')[0]
-	p6.save()
+	# nDevice = Device()
+	# nDevice.type = 'Router'
+	# nDevice.name = 'Router 1'
+	# nDevice.comport = Comport.objects.filter(name = 'COM5')[0]
+	# nDevice.save()
+	# nDevice2 = Device()
+	# nDevice2.type = 'Switch'
+	# nDevice2.name = 'Switch 1'
+	# nDevice2.comport = Comport.objects.filter(name = 'COM6')[0]
+	# nDevice2.save()
+	# p1 = Port()
+	# p1.type = 'Fast Ethernet'
+	# p1.name = 'fa0/0'
+	# p1.device = nDevice
+	# p1.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/1')[0]
+	# p1.save()
+	# p2 = Port()
+	# p2.type = 'Fast Ethernet'
+	# p2.name = 'fa0/1'
+	# p2.device = nDevice
+	# p2.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/2')[0]
+	# p2.save()
+	# p3 = Port()
+	# p3.type = 'Fast Ethernet'
+	# p3.name = 'fa0/1'
+	# p3.device = nDevice2
+	# p3.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/3')[0]
+	# p3.save()
+	# p4 = Port()
+	# p4.type = 'Fast Ethernet'
+	# p4.name = 'fa0/2'
+	# p4.device = nDevice2
+	# p4.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/4')[0]
+	# p4.save()
+	# p5 = Port()
+	# p5.type = 'Fast Ethernet'
+	# p5.name = 'fa0/3'
+	# p5.device = nDevice2
+	# p5.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/5')[0]
+	# p5.save()
+	# p6 = Port()
+	# p6.type = 'Fast Ethernet'
+	# p6.name = 'fa0/4'
+	# p6.device = nDevice2
+	# p6.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/6')[0]
+	# p6.save()
 	
 @login_required(login_url="/login")
 def userPage(request):
 	currentUser = request.user
 	if currentUser.profile.usertype == 'admin':
 		return HttpResponseRedirect("/admin/")
+	elif currentUser.profile.status == 'disable':
+		return HttpResponseRedirect("/denied/")
 
 	groupTopologies = SaveTopology.objects.filter(group = currentUser.profile.group)
 	users = User.objects.all()
@@ -102,6 +103,8 @@ def userPage(request):
 	grouptodevice = GroupToDevice.objects.all()
 	today=datetime.datetime.now().date()
 	ports = Port.objects.all()
+	log = Log.objects.all()
+	totalNotifs= GroupToDevice.objects.filter(userNotifStatus="US").filter(group = currentUser.profile.group).count()
 
 	context = {
 		'current_user': currentUser,
@@ -112,6 +115,8 @@ def userPage(request):
 		'users':users,
 		'today':today,
 		'ports':ports,
+		'log':log,
+		'notifs':totalNotifs,
 	}
 	return render(request, 'user.html', context)
 
@@ -198,7 +203,7 @@ def getPorts(request):
 	devicename = (urlparse.parse_qs(parsedData.query)['device'][0])
 	
 	device = Device.objects.filter(name = devicename)[0]
-	ports = Port.objects.filter(device = device).filter(istaken = '0')
+	ports = Port.objects.filter(device = device).filter(istaken = '0').filter(isactive = '1')
 	
 	data = serializers.serialize('json', ports, fields=('name'))
 	
@@ -224,8 +229,8 @@ def connectDevices(request):
 	port1.istaken = "1"
 	port2.istaken = "1"
 	
-	# port1.save()
-	# port2.save()
+	port1.save()
+	port2.save()
 	
 	print(port1.istaken)
 	print(port2.istaken)
@@ -264,8 +269,8 @@ def disconnectDevices(request):
 	port1.istaken = "0"
 	port2.istaken = "0"
 	
-	# port1.save()
-	# port2.save()
+	port1.save()
+	port2.save()
 
 	p1 = str(port1.mainswitchport)
 	p2 = str(port2.mainswitchport)
@@ -335,6 +340,7 @@ def reserveDevice(request):
 	
 @login_required(login_url="/login")
 def loadTopology(request):
+	removeConnections()
 	currentUser = request.user
 	if currentUser.profile.usertype == 'admin':
 		return HttpResponseRedirect("/admin/")
@@ -488,9 +494,9 @@ def adminPage(request):
 	comport = Comport.objects.all()
 	mainswitchports = MainSwitchPort.objects.all()
 	ports = Port.objects.all()
-	
 	valid = True
 	error_msg1 = ""
+	totalNotifs= GroupToDevice.objects.filter(adminNotifStatus="US").count()
 	
 	routerCount = Device.objects.filter(type = 'Router').count()
 	switchCount = Device.objects.filter(type = 'Switch').count()
@@ -515,6 +521,7 @@ def adminPage(request):
 	'comport':comport,
 	'mainswitchports':mainswitchports,
 	'ports': ports,
+	'notifs': totalNotifs,
 	}
 	return render(request, 'admin.html', context)
 	
@@ -714,6 +721,8 @@ def approvedRes(request):
 
 		if success == True:
 			grouptodeviceID.type = "AP"
+			grouptodeviceID.userNotifStatus="US"
+			grouptodeviceID.usertimestamp = datetime.datetime.now()
 			print(grouptodeviceID.type)
 			grouptodeviceID.save(force_update=True)
 			messages.success(request,"Device reservation approved!")
@@ -736,12 +745,104 @@ def declinedRes(request):
 		print(pkid)
 	
 		grouptodeviceID = GroupToDevice.objects.filter(id=pkid)[0]
+		grouptodeviceID.userNotifStatus="US"
 		grouptodeviceID.type = "DC"
+		grouptodeviceID.usertimestamp = datetime.datetime.now()
+		
 		
 		grouptodeviceID.save(force_update=True)
 		messages.success(request,"Device reservation declined!")
+	return HttpResponse(json.dumps(JSONer))
+
+def disableAcct(request):		
+	JSONer = {}
+	parsedData = urlparse.urlparse(request.get_full_path())
+	print("check")
+	print((urlparse.parse_qs(parsedData.query)['pkid'][0]))
+	pkid = (urlparse.parse_qs(parsedData.query)['pkid'][0])
+	print(pkid)
+	
+	if User.objects.filter(id=pkid).count() > 0:
+		print(pkid)
+	
+		userID = User.objects.filter(id=pkid)[0]
+		userID.profile.status='Disable'
+		
+		
+		
+		
+		userID.save(force_update=True)
+		messages.success(request,"Account is successfully deleted!")
+	return HttpResponse(json.dumps(JSONer))
+
+def adminSeenNotif(request):		
+	JSONer = {}
+	parsedData = urlparse.urlparse(request.get_full_path())
+	print("check")
+	print((urlparse.parse_qs(parsedData.query)['grouptodeviceid'][0]))
+	pkid = (urlparse.parse_qs(parsedData.query)['grouptodeviceid'][0])
+	print(pkid)
+	
+	if GroupToDevice.objects.filter(id=pkid).count() > 0:
+		print(pkid)
+	
+		grouptodeviceID = GroupToDevice.objects.filter(id=pkid)[0]
+		grouptodeviceID.adminNotifStatus = "SE"
+		grouptodeviceID.userNotifStatus='US'
+		
+		grouptodeviceID.save(force_update=True)
+		
+	return HttpResponse(json.dumps(JSONer))		
+
+def adminSeenAllNotif(request):		
+	JSONer = {}
+	parsedData = urlparse.urlparse(request.get_full_path())
+	
+	
+	while GroupToDevice.objects.filter(adminNotifStatus='US').count() > 0:
+
+		toFilter = GroupToDevice.objects.filter(adminNotifStatus='US')[0];
+		toFilter.adminNotifStatus='SE'
+		toFilter.userNotifStatus='US'
+		toFilter.save(force_update=True)
+		
+	
+		
 	return HttpResponse(json.dumps(JSONer))	
 
+def userSeenNotif(request):		
+	JSONer = {}
+	parsedData = urlparse.urlparse(request.get_full_path())
+	print("check")
+	print((urlparse.parse_qs(parsedData.query)['grouptodeviceid'][0]))
+	pkid = (urlparse.parse_qs(parsedData.query)['grouptodeviceid'][0])
+	print(pkid)
+	
+	if GroupToDevice.objects.filter(id=pkid).count() > 0:
+		print(pkid)
+	
+		grouptodeviceID = GroupToDevice.objects.filter(id=pkid)[0]
+		grouptodeviceID.userNotifStatus = "SE"
+		
+		grouptodeviceID.save(force_update=True)
+		
+	return HttpResponse(json.dumps(JSONer))		
+
+def userSeenAllNotif(request):		
+	JSONer = {}
+	parsedData = urlparse.urlparse(request.get_full_path())
+	
+	
+	while GroupToDevice.objects.filter(userNotifStatus='US').count() > 0:
+
+		toFilter = GroupToDevice.objects.filter(userNotifStatus='US')[0];
+		toFilter.userNotifStatus='SE'
+		toFilter.save(force_update=True)
+		
+	
+		
+	return HttpResponse(json.dumps(JSONer))	
+	
 def deleteRes(request):		
 	JSONer = {}
 	parsedData = urlparse.urlparse(request.get_full_path())
@@ -754,7 +855,8 @@ def deleteRes(request):
 		print(pkid)
 	
 		grouptodeviceID = GroupToDevice.objects.filter(id=pkid)[0]
-		grouptodeviceID.type = "DC"
+		grouptodeviceID.type = "RS"
+		grouptodeviceID.userNotifStatus= "SE"
 		
 		grouptodeviceID.save(force_update=True)
 		messages.success(request,"Device reservation removed!")
@@ -810,7 +912,6 @@ def reserveDevice(request):
 			messages.error(request,"The device is already reserved on those dates!")
 		
 	return HttpResponse(json.dumps(JSONer), context)		
-
 			
 @login_required(login_url="/login")	
 def allocateDevice(request):
@@ -855,7 +956,7 @@ def allocateDevice(request):
 		if success == True:
 			newgroupID = Group.objects.get(id=groupid)
 			newdeviceID = Device.objects.get(id=deviceid)
-			a = GroupToDevice(group=newgroupID,device=newdeviceID,startDateTime=startdate,endDateTime=enddate,type='AP')
+			a = GroupToDevice(group=newgroupID,device=newdeviceID,startDateTime=startdate,endDateTime=enddate,type='AP',adminNotifStatus='SE',userNotifStatus='US')
 			a.save()
 			messages.success(request,"Successfully allocated!")
 		else:
@@ -878,7 +979,6 @@ def editModal(request):
 	lastname = ""
 	email = ""
 	idnum = ""
-	
 	context = {
 	'valid':valid,
 	'error_id':error_id,
@@ -917,6 +1017,10 @@ def editModal(request):
 		valid = False
 		error_email = "This field is required!"
 
+
+
+	
+
 	if User.objects.filter(id=pkid).count() > 0:
 		
 
@@ -939,6 +1043,8 @@ def editModal(request):
 			valid = False
 			if not error_email:
 				error_email = "email is invalid!"
+		
+		
 		
 		if valid == False:
 		 	
@@ -963,7 +1069,6 @@ def editModal(request):
 			messages.success(request,"Successfully updated account!")
 		return HttpResponse(json.dumps(JSONer),context)
 
-
 	return HttpResponse(json.dumps(JSONer),context)
 
 @login_required(login_url="/login")	
@@ -981,8 +1086,7 @@ def editGrp(request):
 		print(userID.username)
 		userID.save(force_update=True)
 		messages.success(request,"User successfully reassigned!")
-	return HttpResponse(json.dumps(JSONer))
-
+	return HttpResponse(json.dumps(JSONer))	
 	
 @login_required(login_url="/login")
 def addDevice(request):
@@ -1194,10 +1298,10 @@ def addDevice(request):
 			nDevice.type = 'Switch'
 			nDevice.name = 'Switch ' + str(Device.objects.filter(type='Switch').count() + 1)
 			nDevice.comport = comport
-			# nDevice.save()
+			nDevice.save()
 		
 			comport.istaken = '1'
-			# comport.save()
+			comport.save()
 		
 			for idx, port in enumerate(mainswitchports):
 				nPort = Port()
@@ -1207,11 +1311,11 @@ def addDevice(request):
 				if portactivity[idx] == 'true':
 					mps = MainSwitchPort.objects.filter(pk=port)[0]
 					mps.istaken = '1'
-					# mps.save()
+					mps.save()
 					nPort.isactive = '1'
 					nPort.mainswitchport = mps
 				
-				# nPort.save()
+				nPort.save()
 				
 			# AddSerialConnection(comport, nDevice)
 			
@@ -1249,10 +1353,10 @@ def addDevice(request):
 			nDevice.type = 'Router'
 			nDevice.name = 'Router ' + str(Device.objects.filter(type='Router').count() + 1)
 			nDevice.comport = comport
-			# nDevice.save()
+			nDevice.save()
 			
 			comport.istaken = '1'
-			# comport.save()
+			comport.save()
 			
 			for idx, port in enumerate(mainswitchports):
 				nPort = Port()
@@ -1261,10 +1365,10 @@ def addDevice(request):
 				nPort.device = nDevice
 				mps = MainSwitchPort.objects.filter(pk=port)[0]
 				mps.istaken = '1'
-				# mps.save()
+				mps.save()
 				nPort.mainswitchport = mps
 				nPort.isactive = '1'
-				# nPort.save()
+				nPort.save()
 			
 			print('saved')
 			
@@ -1272,6 +1376,47 @@ def addDevice(request):
 	
 	return HttpResponse(json.dumps(JSONer))
 
+@login_required(login_url="/login")
+def editDevice(request):
+	JSONer = {}
+	parsedData = urlparse.urlparse(request.get_full_path())
+	devID = (urlparse.parse_qs(parsedData.query)['deviceID'][0])
+	portCount = (urlparse.parse_qs(parsedData.query)['portCount'][0])
+	device = Device.objects.filter(id = devID)[0]
+	
+	#reminder: write code that frees up old comports and switch ports
+	
+	activity = []
+	portchoices = []
+	
+	x = 0
+	while x < int(portCount):
+		activity.append(str((urlparse.parse_qs(parsedData.query)['f' + str(x)][0])))
+		portchoices.append(str(urlparse.parse_qs(parsedData.query)['p' + str(x)][0]))
+		x+=1
+
+	for idx, port in enumerate(portchoices):
+		p1 = Port.objects.filter(device = device)[idx]
+		print("editing " + str(p1))
+		if activity[idx] == 'true':
+			p1.isactive = '1'
+			msp = MainSwitchPort.objects.filter(id = portchoices[idx])[0]
+			p1.mainswitchport = msp
+			msp.istaken = '1'
+			p1.save()
+			msp.save()
+		else:
+			p1.isactive = '0'
+			p1.save()
+			
+	print("edited " + str(device.name))
+	for port in (Port.objects.filter(device = device)):
+		print(port)
+		print(port.mainswitchport)
+		print(port.isactive)
+			
+	return HttpResponse(json.dumps(JSONer))	
+	
 def AddSerialConnection(comport, device):
 	
 	try:
@@ -1298,8 +1443,8 @@ def loadConnections(connections):
 		p1.istaken = "1"
 		p2.istaken = "1"
 		
-		# p1.save()
-		# p2.save()
+		p1.save()
+		p2.save()
 		
 		ps1 = str(p1.mainswitchport)
 		ps2 = str(p2.mainswitchport)

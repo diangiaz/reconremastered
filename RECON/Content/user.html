@@ -48,20 +48,30 @@
               		<img src="{% static '/production/images/logo4-sm.png' %}" class="nav-img-logo2" id="reconLogo2">
               		<img src="{% static '/production/images/logo4.png' %}" class="nav-img-logo" id="reconLogo">
 	                <div class="buttonPadding">
+	                 <span data-toggle="tooltip" data-placement="bottom" title="Home">  
+                    <!-- <span data-toggle="modal" data-target="#">   -->
+                      <button class="btn btn-default" id="navButton" type="button" onclick="toggleVisibility('divCanvas')" style="margin-right:10px"><i class="fa fa-home"></i></button>
+                    </span>
 										<span data-toggle="modal" data-target="#saveWork">	
 											<button class="btn btn-default" type="button" data-toggle="tooltip" data-placement="bottom" title="Save Topology" style="margin-right:10px"><i class="fa fa-save"></i></button>
 										</span>
 										<span data-toggle="modal" data-target="#loadFile">
 			                <button class="btn btn-default" type="button" data-toggle="tooltip" data-placement="bottom" title="Open File" style="margin-right:10px"><i class="fa fa-download"></i></button>
 			              </span>
-										<span data-toggle="modal" data-target="#reserveDevice-{{current_user.profile.group.id}}">
-		                	<button class="btn btn-default" type="button" data-toggle="tooltip" data-placement="bottom" title="Reserve Device" style="margin-right:10px"><i class="fa fa-calendar"></i></button>
-		                </span>
+                    <span data-toggle="modal" data-target="#reserveDevice-{{current_user.profile.group.id}}">
+                      <button class="btn btn-default" type="button" data-toggle="tooltip" data-placement="bottom" title="Reserve Device" style="margin-right:10px"><i class="fa fa-calendar"></i></button>
+                    </span>
+                     <span data-toggle="tooltip" data-placement="bottom" title="Audit Logs">
+                      <button class="btn btn-default" id="navButton" type="button" onclick="toggleVisibility('divAudit')" style="margin-right:10px"><i class="fa fa-list"></i></button>
+                    </span>
+
 									</div>              		
               	</div>
 
               	<ul class="nav-logout" >
-									<li> {{ current_user.username }}
+					<li><a data-toggle="tooltip" data-placement="bottom" title="Notifications">               
+                      <span id="signout" class="fa fa-bell {% if notifs > 0 %}badge1{%endif%}" data-badge="{{notifs}}" onclick="toggleVisibility('divNotifs')"></span>
+                    </a> {{ current_user.username }}
 	              	<a data-toggle="tooltip" data-placement="top" title="Logout" href="/logout/">               
 		                <span id="signout" class="fa fa-sign-out"></span>
 		              </a>
@@ -75,8 +85,71 @@
 
         <!-- page content -->
         <div class="right_col" role="main">
-        	<div class="">
-	      		<div class="clearfix"></div>
+          <div class="">
+            <div class="clearfix"></div>
+            <div class="row" id="divNotifs" style="display: none;">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel" style="padding:10px 17px;">
+                  <div class="x_title">
+                    <h2>Notifications</h2>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <br />	
+	                    
+
+	                     
+	                     <div class="x_panel">
+                        <div class="x_content" style="width: 100%">
+                        <a type="button" data-dismiss="modal" onClick="seenAllAjax({{gtd.id}})" class="btn btn-danger btn-xs" data-toggle="tooltip" data-placement="bottom" title="Mark All" style="padding: 1px 6px;float:right"><strong>Mark All as Seen</strong></a>
+                          <table id="datatable-responsive" class="table table-striped jambo_table table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                            <thead>
+                              <tr>
+                                <th style="font-weight: 700;width: 90%">Notification</th>
+                                <th style="font-weight: 700;width: 10%">Date</th>
+                                <th style="font-weight: 700;width: 5y%">Mark As Read</th>
+                                
+                                                  
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {% for gtd in grouptodevice %}
+                              {% ifequal gtd.userNotifStatus 'US' %}
+                              {% ifequal user.profile.group.id gtd.group.id %}
+                              
+                              
+                               <tr>
+                                  <td style="font-weight: 700;">{{gtd.type}}{% ifequal gtd.type 'DC' %}Your group's reservation for {{gtd.device.name}} on {%ifequal gtd.startDateTime gtd.endDateTime %}
+                                            {{gtd.startDateTime}}
+                                  
+                                        {% else %}
+                                          {{gtd.startDateTime}} - {{gtd.endDateTime}} 
+                                        {% endifequal %} has been declined!{% endifequal %}{% ifequal gtd.type 'AP' %}Your group's reservation for {{gtd.device.name}} on {%ifequal gtd.startDateTime gtd.endDateTime %}
+                                            {{gtd.startDateTime}}
+                                  
+                                        {% else %}
+                                          {{gtd.startDateTime}} - {{gtd.endDateTime}} 
+                                        {% endifequal %} has been approved!{% endifequal %}</td>
+                                  <td style="font-weight: 700;">{{gtd.usertimestamp}}</td>
+                                  <td style="font-weight: 700;"> <a type="button"  onClick="seenAjax({{gtd.id}})" class="btn btn-info btn-xs" data-toggle="tooltip" data-placement="bottom" title="Approve"><i class="fa fa-check"></i></a></td>
+                            
+                                                 
+                                </tr>
+                              
+                              {% endifequal %}
+                              {% endifequal %}
+                              {% endfor %}
+                            </tbody>
+                          </table>
+                        </div>
+
+                      </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
 	      		 {% if messages %}
                   <ul class="messages">
                       {% for message in messages %}
@@ -117,7 +190,8 @@
                       {% endfor %}
                   </ul>
                   {% endif %}
-		        <div class="row">
+
+		        <div class="row" id="divCanvas">
 							<div class="col-md-12 col-sm-12 col-xs-12">
 								<div class="x_panel" style="padding-top: 5px;padding-bottom: 5px;">
 									<div class="x_content" id="Content">								
@@ -240,6 +314,67 @@
 								</div>
 							</div>
 		        </div>
+
+            <!-- start AUDIT -->
+            <div class="row" id="divAudit" style="display: none;">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel" style="padding:10px 17px;">
+                  <div class="x_title">
+                    <h2>Audit Logs</h2>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                  <!-- TABLE -->
+                    
+                      <div class="x_panel">
+                        <div class="x_content" style="width: 100%">
+                          <table id="audittable" class="table table-striped jambo_table table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                            <thead>
+                              
+                              <tr>
+                                <th style="font-weight: 700;width: 20%">Device</th>
+                                <th style="font-weight: 700;width: 20%">User</th>
+                                <th style="font-weight: 700;width: 20%">Timestamp</th>
+                                <th style="font-weight: 700;width: 20%">Location</th>
+                                <th style="font-weight: 700;width: 40%">Command</th>                  
+                              </tr>
+                            
+                            </thead>
+                            <tfoot>
+                              <tr>
+                                <th style="font-weight: 700;width: 20%">Device</th>
+                                <th style="font-weight: 700;width: 20%">User</th>
+                                <th style="font-weight: 700;width: 20%"></th>
+                                <th style="font-weight: 700;width: 20%"></th>
+                                <th style="font-weight: 700;width: 40%"></th> 
+                              </tr>
+                            </tfoot>                            
+                            <tbody>
+                              {% for logs in log %}
+                              {% ifequal logs.group.id current_user.profile.group.id %}
+                              
+                              <tr>
+                                <td style="font-weight: 700;width: 20%">{{logs.device.name}}</td>
+                                <td style="font-weight: 700;width: 20%">{{logs.user}}</td>
+                                <td style="font-weight: 700;width: 20%">{{logs.timestamp}}</td>
+                                <td style="font-weight: 700;width: 20%">Location</td>
+                                <td style="font-weight: 700;width: 40%">{{logs.action}}</td>                  
+                              </tr>
+                              
+                              {% endifequal %}
+                              {% endfor %}
+                            </tbody>
+                          </table>                            
+                        </div>
+                      </div>
+                    
+                    <!-- TABLE -->
+                                         
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- end AUDIT -->
         	</div>
         </div>
         <!-- /page content -->
@@ -297,12 +432,13 @@
             </button>  
           </div>
           <div class="modal-body">
+		<strong><font style="color: #F00000;" id="error-load-topology"></font></strong>
             <div class="form-horizontal form-label-left">
             	<div class="form-group">
 	              <label class="control-label col-md-3" for="filename">File name: 
 	              </label>
 	              <div class="col-md-7">
-	              	<select id="topologyID" class="select2_single form-control" tabindex="-1">
+	              	<select id="loadtopologyID" class="select2_single form-control" tabindex="-1">
 					{% for topology in topologies %}
 						<option value = {{ topology.pk }}>{{ topology.name }}</option>
 					{% endfor %}
@@ -319,84 +455,75 @@
       </div>
     </div>
     <!-- end LOAD -->
-    {% for groups in groups %}
-    <!--start RESERVE -->
+    
+	 <!--start RESERVE -->
     <div id="reserveDevice-{{current_user.profile.group.id}}" class="modal fade" role="dialog" aria-hidden="true" style="padding-top: 90px">
       {% csrf_token %}
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h3 style="display: inline;"><i class="fa fa-calendar"></i> Reservation Form</h3>
+
+             <h3 style="display: inline;"><i class="fa fa-calendar"></i> Reservation Form</h3>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
             </button>  
           </div>
           <div class="modal-body" style="padding-bottom: 0">
             <div class="form-horizontal form-label-left">
-              <div class="x_content" style="margin-top:0;padding-bottom:10px">
-              	<h2>Available devices:</h2>
-              	<div style="width: 100%;float: left;height: 215px;overflow:auto;" id="availableDevices" data-target-id="datesRes">
-		              <table class="table-width table table-striped jambo_table" style="width: 100%">
-		                <thead>
-		                  <tr>
-		                    <th>Device</th>
-		                    <th style="width: 70%">Dates Reserved</th>
-		                  </tr>
-		                </thead>
-		                <tbody>
-		                {% for devices in devices %}
-		                  <tr>
-		                    <td class="a-center ">
-		                    	<div class="radio">
-		                        <label style="padding-left: 0">
-		                          <input type="radio" id="deviceList-{{devices.id}}" class="flat" name="deviceList" value="{{devices.id}}"> {{devices.name}}
-		                        </label>
-		                      </div>
-		                    </td>
-		                    <td>
-		                    {% for grouptodevice in grouptodevice %}
-		                    	{% ifequal grouptodevice.device.id devices.id %}
-		                    		{% ifequal grouptodevice.type 'AP' %}
-		                    		 {% if grouptodevice.startDateTime >= today and grouptodevice.endDateTime >= today %}
-		                    			{{grouptodevice.startDateTime}} - {{grouptodevice.endDateTime}} <br>
-		                    		 {% endif %}
-		                    		{% endifequal %} 
-		                    	  
-		                    	{% endifequal %}
+              <div class="x_content" style="margin-top:0;padding-bottom:10px;border-bottom: 1px solid #DBDBDB;margin-bottom: 10px;">
+                <div class="form-group"> 
+                  <td class="a-center ">
+                    <input type="checkbox" id="singleDay" onchange="singleDay(this)"> <font style="font-size:14px"><strong>Single Day Reservation</strong></font>
+                  </td>
+                </div>
+                
+                <div class="form-group">
+                  <div class="col-md-6 col-sm-6 col-xs-12" style="padding-right: 0">
+                    <label class="control-label col-md-3" style="width: 17%" for="datetimepicker6">Date</label>
+                    <div class='input-group date' id='datetimepicker6'>
+                      <span class="input-group-addon">
+                        <span class="fa fa-calendar-o"></span>
+                      </span>
+                      <input type='text' class="form-control" name='start-date' id='start-date' />
+                      <!-- <span class="input-group-addon">to</span> -->
+                    </div>
+                  </div>   
 
-		                    {% endfor %}
-		                    </td>
-		                  </tr>
-		                 {% endfor %}
-		                </tbody>
-		              </table>
-		             </div>
-	              
-              </div>
-
-              <div class="form-group">
-                <div class="col-md-6 col-sm-6 col-xs-12" style="padding-right: 0">
-              		<label class="control-label col-md-3" style="width: 17%" for="datetimepicker6">Date</label>
-                  <div class='input-group date' id='datetimepicker6'>
-                    <span class="input-group-addon">
-                      <span class="fa fa-calendar-o"></span>
-                    </span>
-                    <input type='text' class="form-control" name='start-date' id='start-date' />
-                    <!-- <span class="input-group-addon">to</span> -->
-                  </div>
-                </div>   
-
-                <div class="col-md-6 col-sm-6 col-xs-12" style="padding-left: 0">
-                	<label class="control-label col-md-3" style="width: 12%" for="datetimepicker7">to</label>
-                  <div class='input-group date' id='datetimepicker7'>
-                    <input type='text' class="form-control" name='end-date' id='end-date' />
-                    <span class="input-group-addon">
-                      <span class="fa fa-calendar-o"></span>
-                    </span>
+                  <div class="col-md-6 col-sm-6 col-xs-12" style="padding-left: 0">
+                    <label class="control-label col-md-3" style="width: 12%" for="datetimepicker7">to</label>
+                    <div class='input-group date' id='datetimepicker7'>
+                      <input type='text' class="form-control" name='end-date' id='end-date'/>
+                      <span class="input-group-addon">
+                        <span class="fa fa-calendar-o"></span>
+                      </span>
+                    </div>
                   </div>
                 </div>
+                <strong><font id="error-search" color="red"></font></strong>
+                <div class="form-group" style="float:right"> 
+                  <button type="button" class="btn btn-success" onclick="showAvailable()">Search</button>
+                </div>
+                <!-- START TABLE -->
+                <div id="availableDevices" style="display:none">   
+                  <h2>Available devices:</h2>
+                  <div style="width: 100%;float: left;height: 215px;overflow:auto;" id="availableDevices" data-target-id="datesRes">
+                    <table id="daterangetable" class="table-width table table-striped jambo_table" style="width: 100%">
+                      <thead>
+                        <tr>
+                          <th>Device</th>        
+                        </tr>
+                      </thead>
+                      <tbody id="testingtbody">
+                      </tbody>
+                    </table>
+                  </div>
+                  
+                </div>               
               </div>
+                  <!-- END TABLE -->
+                        
             </div>
-          </div>              
+
+          </div>
           <div class="modal-footer">
             <button type="submit" onClick="reserveDeviceAjax({{current_user.id}},{{current_user.profile.group.id}})"  class="btn btn-primary">Reserve</button>
             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
@@ -406,9 +533,40 @@
      
     </div>
     <!-- end RESERVE -->
-    {% endfor %}
+	
     <!-- jQuery -->
     <script src="{% static '/vendors/jquery/dist/jquery.min.js' %}"></script>
+	
+    <script>
+      $(document).ready(function() {
+
+          $('#audittable').DataTable( {
+              
+              initComplete: function () {
+                  this.api().columns([0, 1]).every( function () {
+                      var column = this;
+                      var select = $('<select><option value=""></option></select>')
+                          .appendTo( $(column.footer()).empty() )
+                          .on( 'change', function () {
+                              var val = $.fn.dataTable.util.escapeRegex(
+                                  $(this).val()
+                              );
+
+                              column
+                                  .search( val ? '^'+val+'$' : '', true, false )
+                                  .draw();
+                          } );
+       
+                      column.data().unique().sort().each( function ( d, j ) {
+                          select.append( '<option value="'+d+'">'+d+'</option>' )
+                      } );
+                  } );
+              }
+          } );
+      } );
+
+     
+    </script>
     <!-- Bootstrap -->
     <script src="{% static '/vendors/bootstrap/dist/js/bootstrap.min.js' %}"></script>
     <!-- FastClick -->
@@ -424,6 +582,13 @@
     <script src="{% static '/vendors/bootstrap-daterangepicker/daterangepicker.js' %}"></script>
     <!-- bootstrap-datetimepicker -->    
     <script src="{% static '/vendors/bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js' %}"></script>
+    <!-- Datatables -->
+    <script src="{% static '/vendors/datatables.net/js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static '/vendors/datatables.net/js/jquery.dataTables.js' %}"></script>
+    <script src="{% static '/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js' %}"></script>
+    <script src="{% static '/vendors/datatables.net-responsive/js/dataTables.responsive.min.js' %}"></script>
+    <script src="{% static '/vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js' %}"></script>
+    <script src="{% static '/vendors/datatables.net-scroller/js/dataTables.scroller.min.js' %}"></script>
     
     <!-- Custom Theme Scripts -->
     <script src="{% static '/build/js/custom.min.js' %}"></script>
@@ -457,12 +622,60 @@
     <!-- RECON REMASTERED Script -->
     <script src="{% static '/production/js/recon.js' %}"></script>
     <script> $('input[name="deviceList"]').first().prop('checked', true) </script>
+	
+	<script>
+        function singleDay(arg){
+            var check = document.getElementById("singleDay");
+            var start = document.getElementById("start-date");
+            var end = document.getElementById("end-date");
+
+            if (check.checked == true){
+              end.disabled = true;
+              
+            }
+            else{
+              end.value="";
+              end.disabled = false;
+            }
+        }
+     </script>
+	 
+	 <script>
+      var divs = ["divNotifs","divCanvas","divAudit"];
+      var visibleDivId = null;
+
+      function toggleVisibility(divId) {
+        if(visibleDivId === divId) {
+          visibleDivId = null;
+        } else {
+          visibleDivId = divId;
+      hideNonVisibleDivs();
+        }
+      }
+      function hideNonVisibleDivs() {
+        var i, divId, div;
+        for(i = 0; i < divs.length; i++) {
+          divId = divs[i];
+          div = document.getElementById(divId);
+          if(visibleDivId === divId) {
+            div.style.display = "block";
+          } else {
+            div.style.display = "none";
+          }
+        }
+      }
+	</script>
+	
     <script>
         function reserveDeviceAjax(userid,groupid){
           	var startDate = document.getElementById('start-date').value;
           	var endDate = document.getElementById('end-date').value;
           	var deviceid;
+          	var isCheck = document.getElementById('singleDay');
           	var radios = document.getElementsByName('deviceList');
+          	if(isCheck.checked==true){
+              endDate = startDate;
+            }
            	for (var i = 0, length = radios.length; i < length; i++) {
     			if (radios[i].checked) {
     				deviceid = radios[i].value;
@@ -477,18 +690,130 @@
           	console.log(userid)
           	console.log(groupid)
           	console.log(deviceid)
-            $.ajax({url: 'http://127.0.0.1:8000/user/reserveDevice?pkid='+ userid + "&groupid=" + groupid + "&deviceList=" + deviceid + "&start-date=" + startDate + "&end-date=" + endDate,
+            $.ajax({url: '../user/reserveDevice?pkid='+ userid + "&groupid=" + groupid + "&deviceList=" + deviceid + "&start-date=" + startDate + "&end-date=" + endDate,
                 success: function(result){
                   window.location.reload();
                   // insert success message here
                 }
             });
         }
+		function convertDate(date){
+            var d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
+
+            return [year, month, day].join('-');
+      }
+		function showAvailable(){
+            var divTable = document.getElementById('availableDevices');          
+            var startDate = document.getElementById('start-date').value;
+            var endDate = document.getElementById('end-date').value;
+            var isCheck = document.getElementById('singleDay');
+            var isValid = true;
+            
+            var dateListStart = [];
+            var dateListEnd = [];
+            var availDevice = [];
+            if(isCheck.checked==true){
+              endDate = startDate;
+            }
+            if (startDate != "" || endDate != ""){
+
+
+              {% for dev in devices %}
+                 if(availDevice.indexOf("{{dev.name}}") == -1){
+                  availDevice.push("{{dev.name}}");
+                  console.log("check2 "+"{{dev.name}}");
+                 }
+              {% endfor %}
+           
+              {% for gtd in grouptodevice %}
+                
+                date1=dateListStart.push("{{gtd.startDateTime}}");
+                      date2=dateListEnd.push("{{gtd.endDateTime}}");
+                        date1 = convertDate(dateListStart[(dateListStart.length)-1]);
+                        date2 = convertDate(dateListEnd[(dateListEnd.length)-1]);
+
+                        if (date2 >= startDate && date1 <= endDate){
+                            var index = availDevice.indexOf("{{gtd.device.name}}");
+                            availDevice.splice(index,1);  
+                        }
+                   
+              {% endfor %}
+              for(var i = 0; i < availDevice.length; i++){
+                console.log("test " + availDevice[i]);
+              }
+              
+              if(availDevice.length > 0){
+                var table = document.getElementById('daterangetable').getElementsByTagName('tbody')[0];
+                // var y = document.getElementById("thisfreakintable").rows.length;
+               
+                $("#testingtbody").empty();             
+                
+                  
+                
+                for(var i = 0; i < availDevice.length; i++){
+
+                  var row = table.insertRow(i);
+
+                  var cell1 = row.insertCell(0);
+                  {% for dev in devices %}
+                    var tempDevice = "{{dev.name}}";
+                    console.log(tempDevice + " ==" + availDevice[i]);
+                    if(tempDevice == availDevice[i]){
+                      
+                      cell1.innerHTML = '<input type="radio" id="deviceList-{{dev.id}}" class="flat" name="deviceList" value="{{dev.id}}"> {{dev.name}}</label>';
+                    }
+                    
+                  {% endfor %}
+                }
+                document.getElementById("error-search").innerHTML = "";
+                divTable.style.display="block";
+              }
+              else{
+                document.getElementById("error-search").innerHTML = "No device available!";
+                divTable.style.display="none";
+              }
+            }
+		}
+		
+		function seenAjax(id){
+        var pkid = id;
+        // var pkid = document.getElementById('grouptodeviceid').value;
+        console.log(pkid);
+        $.ajax({url: '../userSeenNotif/?grouptodeviceid='+ pkid,
+                success: function(result){
+                
+                window.location.reload();
+                  // insert success message here
+                }
+            });
+       }
+	   
+	   function seenAllAjax(){
+        
+        $.ajax({url: '../userSeenAllNotif/',
+                success: function(result){
+                
+                window.location.reload();
+                  // insert success message here
+                }
+            });
+       }
 	// save/load functions
 	
 		function loadTopology(){
-			var topologyID = document.getElementById('topologyID').value;
-			window.location = "http://127.0.0.1:8000/loadTopology?topologyID=" + topologyID + "&newload=1";
+			var topologyID = document.getElementById('loadtopologyID').value;
+			if(topologyID == ""){
+				console.log("load failed")
+				document.getElementById("error-load-topology").innerHTML = "Please select a topology to load";
+			} else {
+			//window.location = "http://127.0.0.1:8000/loadTopology?topologyID=" + topologyID + "&newload=1";
+			}
 		}
 		
 		function saveTopology(){

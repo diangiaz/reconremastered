@@ -132,3 +132,8 @@ STATICFILES_FINDERS = (
 
 LOGIN_REDIRECT_URL = '/admin/'
 
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'reconremastered@gmail.com' 
+EMAIL_HOST_PASSWORD = 'DLSU1234!'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True

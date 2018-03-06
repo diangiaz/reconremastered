@@ -18,6 +18,13 @@ class Group(models.Model):
 		return self.name
 
 class Profile(models.Model):
+	ACTIVE = 'Active'
+	DISABLE = 'Disable'
+	PROFILE_TYPE_CHOICES=(
+		(ACTIVE, 'Active'),
+		(DISABLE,'Disable'),
+
+	)
 	user = models.OneToOneField(User, on_delete=models.CASCADE)
 	usertype = models.CharField(
 		max_length=10,
@@ -31,6 +38,11 @@ class Profile(models.Model):
 		null = True,
 		blank = True,
 	)
+	status = models.CharField(
+		max_length=7,
+		choices=PROFILE_TYPE_CHOICES,
+		default='Active',
+		)
 	
 	def __str__(self):
 		return "%s's profile" % self.user
@@ -145,6 +157,13 @@ class GroupToDevice(models.Model):
 		(ALLOCATION, 'Allocation'),
 		(DECLINED, 'Declined'),
 	)
+
+	SEEN = 'SE'
+	UNSEEN = 'US'
+	STATUS_CHOICES = (
+		(SEEN, 'SE'),
+		(UNSEEN, 'US'),
+	)
 	group = models.ForeignKey(
 		Group,
 		on_delete=models.CASCADE,
@@ -165,9 +184,28 @@ class GroupToDevice(models.Model):
 		max_length = 2,
 		choices = TYPE_CHOICES,
 	)
-	
+	adminNotifStatus = models.CharField(
+		max_length = 2,
+		choices = STATUS_CHOICES,
+		default = "US",
+		null = True,
+	)
+	admintimestamp = models.DateTimeField(
+		auto_now_add=True, 
+		blank=True,
+	)
+	userNotifStatus = models.CharField(
+		max_length = 2,
+		choices = STATUS_CHOICES,
+		default = "SE",
+		null = True,
+	)
+	usertimestamp = models.DateTimeField(
+		auto_now_add=True, 
+		blank=True,
+	)
 	def __str__(self):
-		return self.group.name + " to " + self.device.name
+		return self.type + " " + self.device.name + " from " + str(self.startDateTime) + " to " + str(self.endDateTime)
 
 class Connection(models.Model):
 	CONSOLE = 'Console'
@@ -296,6 +334,10 @@ class Log(models.Model):
 	)
 	action = models.CharField(
 		max_length = 50,
+	)
+	group = models.ForeignKey(
+		Group,
+		on_delete=models.CASCADE,
 	)
 	def __str__(self):
 		return self.user.username + "(" + str(self.timestamp) + "): " + self.action
