@@ -435,13 +435,13 @@
                       <div class="form-horizontal form-label-left">
                         <div class="form-group">
                           <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-                            <input id="createEmployeeID" type="number" class="form-control has-feedback-left" placeholder="Employee ID *" required="required">
+                            <input id="createEmployeeID" type="number" class="form-control has-feedback-left" placeholder="Employee ID *" required="required" onchange="clearerroremployeeid()">
                             <font id="error-employee-id"></font>
                             <span class="fa fa-hashtag form-control-feedback left" aria-hidden="true"></span>
                           </div>
 
                           <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-                            <input id="createEmail" type="mail" class="form-control has-feedback"  placeholder="Email *" required="required" data-validate-linked="email">
+                            <input id="createEmail" type="mail" class="form-control has-feedback"  placeholder="Email *" required="required" data-validate-linked="email" onchange="clearerroremployeeemail()">
                             <font id="error-employee-email"></font>
                             <span class="fa fa-envelope form-control-feedback right" aria-hidden="true"></span>
                           </div>                                                  
@@ -449,13 +449,13 @@
 
                         <div class="form-group">                        
                           <div class="col-md-6 col-sm-6 col-xs-12 item form-group has-feedback">
-                            <input id="createFirstName" type="text" class="form-control has-feedback-left" placeholder="First Name *" required="required">
+                            <input id="createFirstName" type="text" class="form-control has-feedback-left" placeholder="First Name *" required="required" onchange="clearerroremployeefirstname()">
                             <font id="error-employee-first-name"></font>
                             <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
                           </div>
 
                           <div class="col-md-6 col-sm-6 col-xs-12 item form-group has-feedback">
-                            <input id="createLastName" type="text" class="form-control has-feedback" placeholder="Last Name *" required="required">
+                            <input id="createLastName" type="text" class="form-control has-feedback" placeholder="Last Name *" required="required" onchange="clearerroremployeelastname()">
                             <font id="error-employee-last-name"></font>
                             <span class="fa fa-user form-control-feedback right" aria-hidden="true"></span>
                           </div>  
@@ -463,7 +463,7 @@
 
                         <div class="form-group">
                           <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-                            <input id="createUserName" type="text" class="form-control has-feedback-left" placeholder="Username *" required="required">
+                            <input id="createUserName" type="text" class="form-control has-feedback-left" placeholder="Username *" required="required" onchange="clearerroremployeeusername()">
                             <font id="error-employee-username"></font>
                             <span class="fa fa-at form-control-feedback left" aria-hidden="true"></span>
                           </div>
@@ -479,13 +479,13 @@
 
                         <div class="form-group">
                           <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-                            <input type="password" class="form-control has-feedback-left" id="createPassword" name="password" data-validate-length="6,8" placeholder="Password *" required="required">
+                            <input type="password" class="form-control has-feedback-left" id="createPassword" name="password" data-validate-length="6,8" placeholder="Password *" required="required" onchange="clearerroremployeepassword()">
                             <font id="error-employee-password"></font>
 							<span class="fa fa-lock form-control-feedback left" aria-hidden="true"></span>
                           </div>
 
                           <div class="col-md-6 col-sm-6 col-xs-12 item form-group has-feedback">
-                            <input type="password" class="form-control" id="createPassword2" name="password2" data-validate-linked="password" placeholder="Repeat Password *" required="required">
+                            <input type="password" class="form-control" id="createPassword2" name="password2" data-validate-linked="password" placeholder="Repeat Password *" required="required" onchange="clearerroremployeepassword2()">
 							<font id="error-employee-password2"></font>
                             <span class="fa fa-lock form-control-feedback right" aria-hidden="true"></span>
                           </div>
@@ -549,7 +549,7 @@
                                 <th style="font-weight: 700;width: 50%">Device Name</th>
                                 <th style="font-weight: 700;">Device Type</th>
                                 <th style="font-weight: 700;">Ports</th>  
-                                <th style="font-weight: 700;width: 15%">Location</th>              
+                                <th style="font-weight: 700;width: 15%">Description</th>              
                               </tr>
                             </thead>
                             <tbody>
@@ -565,7 +565,7 @@
 										tangalin nalang natin to hehe
 									</td>
 									<td>
-										hehe lels
+										{{ device.description }}
 									</td>
 								
 								<tr>							
@@ -588,16 +588,16 @@
 
                             <!-- ROUTER ADDITIONAL PORT -->
                             <div class="form-group">
-								<font id="error-device-ports"></font>
                               <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12">Device Type</label>
                                 <div class="col-md-8 col-sm-6 col-xs-12">
-                                  <select id="devType" name="devList" class="form-control" onchange="java_script_:show(this.options[this.selectedIndex].value)" required>
-                                    <option value="">*Choose a device*</option>         
+                                  <select id="devType" name="devList" class="form-control" onchange="java_script_:show(this.options[this.selectedIndex].value); cleardevtypeerror()" required>
+                                    <option value="error">*Choose a device*</option>         
                                     <option value="1">Router</option>
                                     <option value="2">Switch</option>
                                     <option value="3">Terminal</option>
                                   </select>
+								<strong><font style="color: #F00000;" id="error-add-devType"></font></strong>
                                 </div>
                               </div>                                                
                             </div>
@@ -605,10 +605,10 @@
 
                             <div class="form-group">
                               <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Location
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Description
                                 </label>
                                 <div class="col-md-8 col-sm-6 col-xs-12">
-                                  <input type="text" id="devLocation" name="devLoc" class="form-control" required>
+                                  <input type="text" id="devDescription" name="devLoc" class="form-control" required>
                                 </div>
                               </div>
                             </div> 
@@ -619,13 +619,14 @@
                               </label>
                                 <div class="col-md-8 col-sm-6 col-xs-12">
                                   <select id="devComport" class="form-control" required>
-                                    <!-- <option value="1">*Select an option*</option> -->
+                                    <option value="error">*Select an option*</option>
 									{% for comport in comport %}
 										{% ifequal comport.istaken '0' %}
 											<option value="{{comport.name}}">{{comport.name}}</option>
 										{% endifequal %}
 									{% endfor %}
                                   </select>
+								<strong><font style="color: #F00000;" id="error-add-devComport"></font></strong>
                                 </div>
                               </div>  
                             </div>
@@ -637,6 +638,7 @@
                               </label>
                               <div class="col-md-8 col-sm-6 col-xs-12">
                                 <p style="font-style: italic;">*Check active ports | Choose port on main switch from dropdown option*</p>
+								<strong><font style="color: #F00000;" id="error-device-ports"></font></strong>
                                 <table class="table-width table table-striped jambo_table" style="width: 100%;margin: 0">
                                   <thead>
                                     <tr>
@@ -652,7 +654,7 @@
                                       </td>
                                       <td>fa0/0</td>
                                       <td>
-                                        <select id="rp0" class="form-control" style="width: 150px" required>
+                                        <select id="rp0" class="form-control" style="width: 150px" required onchange="clearMPSerror()">
                                         {% for port in mainswitchports %}
 													{% ifequal port.istaken '0' %}
 													<option value="{{port.pk}}">{{port.name}}</option>
@@ -703,6 +705,7 @@
                                 <div class="col-md-12 col-sm-6 col-xs-12" style="float: right">
                                   
                                   <p style="font-style: italic;">*Check active ports | Choose port on main switch from dropdown option*</p>
+								<strong><font style="color: #F00000;" id="error-device-switchports"></font></strong>
 
                                   <div style="margin:auto">
                                     <!-- TABLE 1 FOR PORTS -->
@@ -1500,7 +1503,7 @@
                             <div class="ln_solid"></div>
                             <div class="form-group">
                               <div class="col-md-8 col-sm-6 col-xs-12 col-md-offset-4">
-                                <button type="submit" class="btn btn-success" name="editDevice" onclick="addDevice()">Add Device</button>
+                                <button type="submit" class="btn btn-success" name="addDevice" onclick="addDevice()">Add Device</button>
                                 <button class="btn btn-primary" onclick="clearUserFields()">Cancel</button> 
                               </div>
                             </div>
@@ -1541,10 +1544,10 @@
                       </div>
 
                       <div class="form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="devLoc">Location
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="devLoc">Description
                         </label>
                         <div class="col-md-8 col-sm-6 col-xs-12">
-                          <input type="text" id="edit-dev-loc-{{ device.id }}" name="dev-loc" class="form-control" value=" lels " required>
+                          <input type="text" id="edit-dev-desc-{{ device.id }}" name="dev-loc" class="form-control" value="{{ device.description }}" required>
                           <!-- <font id="error-first-name-{{ user.id }}"></font> -->
                         </div>
                       </div>
@@ -1581,11 +1584,15 @@
 								{% ifequal port.device.id device.id %}
                               <tr>
                                 <td class="a-center ">
-                                  <input type="checkbox" name="switchPort" class="flat" id="edit-f{{ port_counter }}-{{ device.id }}">
+                                  <div><input type="checkbox" name="switchPort{{ port.id }}" class="flat" id="edit-f{{ port_counter }}-{{ device.id }}" 
+								  {% ifequal port.isactive '1' %}
+								  checked="checked"
+								  {% endifequal %}
+								  ></div>
                                 </td>
                                 <td>{{ port.name }}</td>
                                 <td>
-                                  <select style="width:100px" id="edit-p{{ port_counter }}-{{ device.id }}" required>
+                                 <select style="width:100px" id="edit-p{{ port_counter }}-{{ device.id }}" required>
 								  <option value="{{ port.mainswitchport.id }}">{{ port.mainswitchport.name }}</option>
 									{% for msport in mainswitchports %}
 										{% ifequal msport.istaken '0' %}
@@ -2499,7 +2506,6 @@
     
     <!-- end ALLOCATE MODAL -->
 
-
         <script>
       var x = false;
       function showAddDev(e) {
@@ -2717,8 +2723,6 @@
             });
        }
     </script>
-
-
 
     <script>
         function editGrpAjax(id,groupid){
@@ -2995,13 +2999,6 @@
                 }
                 
                 
-              
-
-
-
-              
-              
-
                 divTable.style.display="block";
                 document.getElementById("error-search").innerHTML = "";
               }
@@ -3010,7 +3007,6 @@
                 document.getElementById("error-search").innerHTML = "No available devices!";
               }
             }
-
       }
     </script>
 
@@ -3026,13 +3022,13 @@
               endDate = startDate;
             }
             for (var i = 0, length = radios.length; i < length; i++) {
-          if (radios[i].checked) {
-            deviceid = radios[i].value;
-            
-            
-              break;
-          }
-      }
+			  if (radios[i].checked) {
+				deviceid = radios[i].value;
+				
+				
+				  break;
+			  }
+			}
       
             console.log(startDate)
             console.log(endDate)
@@ -3048,327 +3044,330 @@
                 }
             });
         }
+		
+		function cleardevtypeerror(){
+			document.getElementById("error-add-devType").innerHTML="";
+		}
+		
+		function clearMPSerror(){
+			document.getElementById("error-device-ports").innerHTML="";
+		}
+		
+		function hasDuplicates(array) {
+		  return (new Set(array)).size !== array.length;
+		}
+    
     </script>
-
-    <script>
-    function addDevice(){
-      console.log("add device")
-      var deviceType = document.getElementById("devType").value;
-      var deviceComport = document.getElementById("devComport").value;
-      var deviceLocation = document.getElementById("devLocation").value;
-      if(deviceType=='2'){
-        var portNumber = document.getElementById("switchportnum").value;
-        switch(portNumber){
-          case '12':{
-            var p1 = document.getElementById("p1").value;
-            var p2 = document.getElementById("p2").value;
-            var p3 = document.getElementById("p3").value;
-            var p4 = document.getElementById("p4").value;
-            var p5 = document.getElementById("p5").value;
-            var p6 = document.getElementById("p6").value;
-            var p7 = document.getElementById("p7").value;
-            var p8 = document.getElementById("p8").value;
-            var p9 = document.getElementById("p9").value;
-            var p10 = document.getElementById("p10").value;
-            var p11 = document.getElementById("p11").value;
-            var p12 = document.getElementById("p12").value;
-            var f1 = document.getElementById("f1").checked;
-            var f2 = document.getElementById("f2").checked;
-            var f3 = document.getElementById("f3").checked;
-            var f4 = document.getElementById("f4").checked;
-            var f5 = document.getElementById("f5").checked;
-            var f6 = document.getElementById("f6").checked;
-            var f7 = document.getElementById("f7").checked;
-            var f8 = document.getElementById("f8").checked;
-            var f9 = document.getElementById("f9").checked;
-            var f10 = document.getElementById("f10").checked;
-            var f11 = document.getElementById("f11").checked;
-            var f12 = document.getElementById("f12").checked;
-            }
-            $.ajax({url: 'addDevice?type=' + deviceType + '&portnumber=12' + '&comport=' +  deviceComport + '&location=' + deviceLocation + 
-                  '&p1=' + p1 + '&p2=' + p2 + '&p3=' + p3 + '&p4=' + p4 + '&p5=' + p5 + '&p6=' + p6 + '&p7=' + p7 + '&p8=' + p8 + '&p9=' + p9 + '&p10=' + p10 + '&p11=' + p11 + '&p12=' + p12 + 
-                  '&f1=' + f1 + '&f2=' + f2 + '&f3=' + f3 + '&f4=' + f4 + '&f5=' + f5 + '&f6=' + f6 + '&f7=' + f7 + '&f8=' + f8 + '&f9=' + f9 + '&f10=' + f10 + '&f11=' + f11 + '&f12=' + f12,
-              success: function(result){
-                var data = JSON.parse(data);
-                console.log(data['valid'])
-                if (data['valid'] == false){
-                  document.getElementById("error-device-ports").innerHTML = "Error: Active device ports must be unique";
-                  console.log('alaws');
-                } else {
-                  console.log('goods');
-                  window.location.reload();
-                }
-              }
-            });
-            break;
-          case '24':{
-            var p1 = document.getElementById("p1").value;
-            var p2 = document.getElementById("p2").value;
-            var p3 = document.getElementById("p3").value;
-            var p4 = document.getElementById("p4").value;
-            var p5 = document.getElementById("p5").value;
-            var p6 = document.getElementById("p6").value;
-            var p7 = document.getElementById("p7").value;
-            var p8 = document.getElementById("p8").value;
-            var p9 = document.getElementById("p9").value;
-            var p10 = document.getElementById("p10").value;
-            var p11 = document.getElementById("p11").value;
-            var p12 = document.getElementById("p12").value;
-            var p13 = document.getElementById("p13").value;
-            var p14 = document.getElementById("p14").value;
-            var p15 = document.getElementById("p15").value;
-            var p16 = document.getElementById("p16").value;
-            var p17 = document.getElementById("p17").value;
-            var p18 = document.getElementById("p18").value;
-            var p19 = document.getElementById("p19").value;
-            var p20 = document.getElementById("p20").value;
-            var p21 = document.getElementById("p21").value;
-            var p22 = document.getElementById("p22").value;
-            var p23 = document.getElementById("p23").value;
-            var p24 = document.getElementById("p24").value;
-            var f1 = document.getElementById("f1").checked;
-            var f2 = document.getElementById("f2").checked;
-            var f3 = document.getElementById("f3").checked;
-            var f4 = document.getElementById("f4").checked;
-            var f5 = document.getElementById("f5").checked;
-            var f6 = document.getElementById("f6").checked;
-            var f7 = document.getElementById("f7").checked;
-            var f8 = document.getElementById("f8").checked;
-            var f9 = document.getElementById("f9").checked;
-            var f10 = document.getElementById("f10").checked;
-            var f11 = document.getElementById("f11").checked;
-            var f12 = document.getElementById("f12").checked;
-            var f13 = document.getElementById("f13").checked;
-            var f14 = document.getElementById("f14").checked;
-            var f15 = document.getElementById("f15").checked;
-            var f16 = document.getElementById("f16").checked;
-            var f17 = document.getElementById("f17").checked;
-            var f18 = document.getElementById("f18").checked;
-            var f19 = document.getElementById("f19").checked;
-            var f20 = document.getElementById("f20").checked;
-            var f21 = document.getElementById("f21").checked;
-            var f22 = document.getElementById("f22").checked;
-            var f23 = document.getElementById("f23").checked;
-            var f24 = document.getElementById("f24").checked;
-            }
-            $.ajax({url: 'addDevice?type=' + deviceType + '&portnumber=24' + '&comport=' +  deviceComport + '&location=' + deviceLocation + 
-                  '&p1=' + p1 + '&p2=' + p2 + '&p3=' + p3 + '&p4=' + p4 + '&p5=' + p5 + '&p6=' + p6 + '&p7=' + p7 + '&p8=' + p8 + '&p9=' + p9 + '&p10=' + p10 + '&p11=' + p11 + '&p12=' + p12 + 
-                  '&p13=' + p13 + '&p14=' + p14 + '&p15=' + p15 + '&p16=' + p16 + '&p17=' + p17 + '&p18=' + p18 + '&p19=' + p19 + '&p20=' + p20 + '&p21=' + p21 + '&p22=' + p22 + '&p23=' + p23 + '&p24=' + p24 + 
-                  '&f1=' + f1 + '&f2=' + f2 + '&f3=' + f3 + '&f4=' + f4 + '&f5=' + f5 + '&f6=' + f6 + '&f7=' + f7 + '&f8=' + f8 + '&f9=' + f9 + '&f10=' + f10 + '&f11=' + f11 + '&f12=' + f12 +
-                  '&f13=' + f13 + '&f14=' + f14 + '&f15=' + f15 + '&f16=' + f16 + '&f17=' + f17 + '&f18=' + f18 + '&f19=' + f19 + '&f20=' + f20 + '&f21=' + f21 + '&f22=' + f22 + '&f23=' + f23 + '&f24=' + f24,
-              success: function(result){
-                var data = JSON.parse(data);
-                if (data['valid'] == false){
-                  document.getElementById("error-device-ports").innerHTML = "Error: Active device ports must be unique";
-                  console.log("alaws")
-                } else {
-                  console.log("goods");
-                  window.location.reload();
-                }
-              }
-            });
-            break;
-          case '48':{
-            var p1 = document.getElementById("p1").value;
-            var p2 = document.getElementById("p2").value;
-            var p3 = document.getElementById("p3").value;
-            var p4 = document.getElementById("p4").value;
-            var p5 = document.getElementById("p5").value;
-            var p6 = document.getElementById("p6").value;
-            var p7 = document.getElementById("p7").value;
-            var p8 = document.getElementById("p8").value;
-            var p9 = document.getElementById("p9").value;
-            var p10 = document.getElementById("p10").value;
-            var p11 = document.getElementById("p11").value;
-            var p12 = document.getElementById("p12").value;
-            var p13 = document.getElementById("p13").value;
-            var p14 = document.getElementById("p14").value;
-            var p15 = document.getElementById("p15").value;
-            var p16 = document.getElementById("p16").value;
-            var p17 = document.getElementById("p17").value;
-            var p18 = document.getElementById("p18").value;
-            var p19 = document.getElementById("p19").value;
-            var p20 = document.getElementById("p20").value;
-            var p21 = document.getElementById("p21").value;
-            var p22 = document.getElementById("p22").value;
-            var p23 = document.getElementById("p23").value;
-            var p24 = document.getElementById("p24").value;
-            var p25 = document.getElementById("p25").value;
-            var p26 = document.getElementById("p26").value;
-            var p27 = document.getElementById("p27").value;
-            var p28 = document.getElementById("p28").value;
-            var p29 = document.getElementById("p29").value;
-            var p30 = document.getElementById("p30").value;
-            var p31 = document.getElementById("p31").value;
-            var p32 = document.getElementById("p32").value;
-            var p33 = document.getElementById("p33").value;
-            var p34 = document.getElementById("p34").value;
-            var p35 = document.getElementById("p35").value;
-            var p36 = document.getElementById("p36").value;
-            var p37 = document.getElementById("p37").value;
-            var p38 = document.getElementById("p38").value;
-            var p39 = document.getElementById("p39").value;
-            var p40 = document.getElementById("p40").value;
-            var p41 = document.getElementById("p41").value;
-            var p42 = document.getElementById("p42").value;
-            var p43 = document.getElementById("p43").value;
-            var p44 = document.getElementById("p44").value;
-            var p45 = document.getElementById("p45").value;
-            var p46 = document.getElementById("p46").value;
-            var p47 = document.getElementById("p47").value;
-            var p48 = document.getElementById("p48").value;
-            var f1 = document.getElementById("f1").checked;
-            var f2 = document.getElementById("f2").checked;
-            var f3 = document.getElementById("f3").checked;
-            var f4 = document.getElementById("f4").checked;
-            var f5 = document.getElementById("f5").checked;
-            var f6 = document.getElementById("f6").checked;
-            var f7 = document.getElementById("f7").checked;
-            var f8 = document.getElementById("f8").checked;
-            var f9 = document.getElementById("f9").checked;
-            var f10 = document.getElementById("f10").checked;
-            var f11 = document.getElementById("f11").checked;
-            var f12 = document.getElementById("f12").checked;
-            var f13 = document.getElementById("f13").checked;
-            var f14 = document.getElementById("f14").checked;
-            var f15 = document.getElementById("f15").checked;
-            var f16 = document.getElementById("f16").checked;
-            var f17 = document.getElementById("f17").checked;
-            var f18 = document.getElementById("f18").checked;
-            var f19 = document.getElementById("f19").checked;
-            var f20 = document.getElementById("f20").checked;
-            var f21 = document.getElementById("f21").checked;
-            var f22 = document.getElementById("f22").checked;
-            var f23 = document.getElementById("f23").checked;
-            var f24 = document.getElementById("f24").checked;
-            var f25 = document.getElementById("f25").checked;
-            var f26 = document.getElementById("f26").checked;
-            var f27 = document.getElementById("f27").checked;
-            var f28 = document.getElementById("f28").checked;
-            var f29 = document.getElementById("f29").checked;
-            var f30 = document.getElementById("f30").checked;
-            var f31 = document.getElementById("f31").checked;
-            var f32 = document.getElementById("f32").checked;
-            var f33 = document.getElementById("f33").checked;
-            var f34 = document.getElementById("f34").checked;
-            var f35 = document.getElementById("f35").checked;
-            var f36 = document.getElementById("f36").checked;
-            var f37 = document.getElementById("f37").checked;
-            var f38 = document.getElementById("f38").checked;
-            var f39 = document.getElementById("f39").checked;
-            var f40 = document.getElementById("f40").checked;
-            var f41 = document.getElementById("f41").checked;
-            var f42 = document.getElementById("f42").checked;
-            var f43 = document.getElementById("f43").checked;
-            var f44 = document.getElementById("f44").checked;
-            var f45 = document.getElementById("f45").checked;
-            var f46 = document.getElementById("f46").checked;
-            var f47 = document.getElementById("f47").checked;
-            var f48 = document.getElementById("f48").checked;
-            }
-            $.ajax({url: 'addDevice?type=' + deviceType + '&portnumber=48' + '&comport=' +  deviceComport + '&location=' + deviceLocation + 
-                  '&p1=' + p1 + '&p2=' + p2 + '&p3=' + p3 + '&p4=' + p4 + '&p5=' + p5 + '&p6=' + p6 + '&p7=' + p7 + '&p8=' + p8 + '&p9=' + p9 + '&p10=' + p10 + '&p11=' + p11 + '&p12=' + p12 + 
-                  '&p13=' + p13 + '&p14=' + p14 + '&p15=' + p15 + '&p16=' + p16 + '&p17=' + p17 + '&p18=' + p18 + '&p19=' + p19 + '&p20=' + p20 + '&p21=' + p21 + '&p22=' + p22 + '&p23=' + p23 + '&p24=' + p24 + 
-                  '&p25=' + p25 + '&p26=' + p26 + '&p27=' + p27 + '&p28=' + p28 + '&p29=' + p29 + '&p30=' + p30 + '&p31=' + p31 + '&p32=' + p32 + '&p33=' + p33 + '&p34=' + p34 + '&p35=' + p35 + '&p36=' + p36 + 
-                  '&p37=' + p37 + '&p38=' + p38 + '&p39=' + p39 + '&p40=' + p40 + '&p41=' + p41 + '&p42=' + p42 + '&p43=' + p43 + '&p44=' + p44 + '&p45=' + p45 + '&p46=' + p46 + '&p47=' + p47 + '&p48=' + p48 +
-                  '&f1=' + f1 + '&f2=' + f2 + '&f3=' + f3 + '&f4=' + f4 + '&f5=' + f5 + '&f6=' + f6 + '&f7=' + f7 + '&f8=' + f8 + '&f9=' + f9 + '&f10=' + f10 + '&f11=' + f11 + '&f12=' + f12 + 
-                  '&f13=' + f13 + '&f14=' + f14 + '&f15=' + f15 + '&f16=' + f16 + '&f17=' + f17 + '&f18=' + f18 + '&f19=' + f19 + '&f20=' + f20 + '&f21=' + f21 + '&f22=' + f22 + '&f23=' + f23 + '&f24=' + f24 + 
-                  '&f25=' + f25 + '&f26=' + f26 + '&f27=' + f27 + '&f28=' + f28 + '&f29=' + f29 + '&f30=' + f30 + '&f31=' + f31 + '&f32=' + f32 + '&f33=' + f33 + '&f34=' + f34 + '&f35=' + f35 + '&f36=' + f36 + 
-                  '&f37=' + f37 + '&f38=' + f38 + '&f39=' + f39 + '&f40=' + f40 + '&f41=' + f41 + '&f42=' + f42 + '&f43=' + f43 + '&f44=' + f44 + '&f45=' + f45 + '&f46=' + f46 + '&f47=' + f47 + '&f48=' + f48,
-              success: function(result){
-                var data = JSON.parse(data);
-                if (data['valid'] == false){
-                  document.getElementById("error-device-ports").innerHTML = "Error: Active device ports must be unique";
-                  console.log(data['valid'])
-                } else {
-                  console.log("goods")
-                  window.location.reload();
-                }
-              }
-            });
-            break
-          default:
-            break;
-        }       
-      } else if(deviceType=='1'){
-            var rp0 = document.getElementById("rp0").value;
-            var rp1 = document.getElementById("rp1").value;
-            var rf0 = document.getElementById("rf0").checked;
-            var rf1 = document.getElementById("rf1").checked;
-            $.ajax({url: 'addDevice?type=' + deviceType + '&comport=' +  deviceComport + '&location=' + deviceLocation + 
-                  '&rp0=' + rp0 + '&rp1=' + rp1 + '&rf0=' + rf0 + '&rf1=' + rf1,
-              success: function(result){
-                var data = JSON.parse(result);
-                if (data['valid'] == false){
-                  document.getElementById("error-device-ports").innerHTML = "Error: Active device ports must be unique";
-                  console.log("alaws")
-                } else {
-                  console.log("goods");
-                  windows.location.reload();
-                }
-              }
-            });
-      }
-      //$.ajax({url: 'addDevice?type=' + deviceType + '&comport=' +  deviceComport + '&location=' + deviceLocation,
-      //  success: function(result){
-      //  var data = JSON.parse(data);
-      //  }
-      //});
-    }
-    </script>
-    <script>
-        {% for device in devices %}
-			function editDevice{{ device.id }}(){
-				var location = document.getElementById('edit-dev-loc-{{ device.id }}').value;
-				var comport = document.getElementById('edit-device-comport-{{ device.id }}').value;
-				var portactivity = []
-				var mainportchoices = []
-				{% for port in ports %}
-					{% with forloop.counter as port_counter %}
-					{% ifequal port.device.id device.id %}
-						portactivity.push(document.getElementById("edit-f{{ port_counter }}-{{ device.id }}").checked);
-						mainportchoices.push(document.getElementById("edit-p{{ port_counter }}-{{ device.id }}").value);
-					{% endifequal %}
-					{% endwith %}
-				{% endfor %}
-			
-				console.log(portactivity)
-				console.log(mainportchoices)
-				var activeswitchports = []
-				for(var x = 0; x < mainportchoices.length; x++){
-					if(portactivity[x] == true){
-						activeswitchports.push(mainportchoices[x]);
+	
+	<!-- GIAN's SCRIPTS START -->
+	<script>
+		function addDevice(){
+		  var deviceType = document.getElementById("devType").value;
+		  var deviceComport = document.getElementById("devComport").value;
+		  var deviceDescription = document.getElementById("devDescription").value;
+		  if(deviceDescription == null || deviceDescription.value == null)
+			deviceDescription = " ";
+		  if(deviceType=='error'){
+			document.getElementById("error-add-devType").innerHTML="Please choose a device type";
+		  } else if(deviceComport=='error'){
+			document.getElementById("error-add-devComport").innerHTML="Please choose a COMPORT";
+		  } else {
+			  if(deviceType=='2'){
+				var portNumber = document.getElementById("switchportnum").value;
+				switch(portNumber){
+				  case '12':{
+					var p1 = document.getElementById("p1").value;
+					var p2 = document.getElementById("p2").value;
+					var p3 = document.getElementById("p3").value;
+					var p4 = document.getElementById("p4").value;
+					var p5 = document.getElementById("p5").value;
+					var p6 = document.getElementById("p6").value;
+					var p7 = document.getElementById("p7").value;
+					var p8 = document.getElementById("p8").value;
+					var p9 = document.getElementById("p9").value;
+					var p10 = document.getElementById("p10").value;
+					var p11 = document.getElementById("p11").value;
+					var p12 = document.getElementById("p12").value;
+					var f1 = document.getElementById("f1").checked;
+					var f2 = document.getElementById("f2").checked;
+					var f3 = document.getElementById("f3").checked;
+					var f4 = document.getElementById("f4").checked;
+					var f5 = document.getElementById("f5").checked;
+					var f6 = document.getElementById("f6").checked;
+					var f7 = document.getElementById("f7").checked;
+					var f8 = document.getElementById("f8").checked;
+					var f9 = document.getElementById("f9").checked;
+					var f10 = document.getElementById("f10").checked;
+					var f11 = document.getElementById("f11").checked;
+					var f12 = document.getElementById("f12").checked;
 					}
-				}
-				console.log(activeswitchports)
-				
-				if(hasDuplicates(activeswitchports)){
-					console.log("Choices are not unique")
-					document.getElementById("error-editdevice-{{ device.id }}").innerHTML = "Erorr: active main switch ports are not unique";										
-				} else { 
-					console.log("Choices are unique")
-					var url='editDevice?deviceID={{ device.id }}&portCount=' + String(mainportchoices.length);
-					for(var x = 0; x < mainportchoices.length;x++){
-						url+= '&f' + String(x) + '=' + String(portactivity[x]) + '&p' + String(x) + '=' + String(mainportchoices[x]);
-					}
-					console.log(url)
-					$.ajax({url: url,
-						success: function(data){
+					$.ajax({url: 'addDevice?type=' + deviceType + '&portnumber=12' + '&comport=' +  deviceComport + '&description=' + deviceDescription + 
+						  '&p1=' + p1 + '&p2=' + p2 + '&p3=' + p3 + '&p4=' + p4 + '&p5=' + p5 + '&p6=' + p6 + '&p7=' + p7 + '&p8=' + p8 + '&p9=' + p9 + '&p10=' + p10 + '&p11=' + p11 + '&p12=' + p12 + 
+						  '&f1=' + f1 + '&f2=' + f2 + '&f3=' + f3 + '&f4=' + f4 + '&f5=' + f5 + '&f6=' + f6 + '&f7=' + f7 + '&f8=' + f8 + '&f9=' + f9 + '&f10=' + f10 + '&f11=' + f11 + '&f12=' + f12,
+					  success: function(result){
+						var data = JSON.parse(result);
+						if (data['valid'] == false){
+						  document.getElementById("error-device-switchports").innerHTML = "Error: Active device ports must be unique";
+						} else {
+						  console.log("goods")
+						  window.location.reload();
 						}
-					})
-				}		
-			}		
-		{% endfor %}
-    
-    function hasDuplicates(array) {
-      return (new Set(array)).size !== array.length;
-    }
-    
-    </script>
-    </script>
-	<!-- Create Group and User scripts Start -->
-		<script>
-			function createGroup(){
+					  }
+					});
+					break;
+				  case '24':{
+					var p1 = document.getElementById("p1").value;
+					var p2 = document.getElementById("p2").value;
+					var p3 = document.getElementById("p3").value;
+					var p4 = document.getElementById("p4").value;
+					var p5 = document.getElementById("p5").value;
+					var p6 = document.getElementById("p6").value;
+					var p7 = document.getElementById("p7").value;
+					var p8 = document.getElementById("p8").value;
+					var p9 = document.getElementById("p9").value;
+					var p10 = document.getElementById("p10").value;
+					var p11 = document.getElementById("p11").value;
+					var p12 = document.getElementById("p12").value;
+					var p13 = document.getElementById("p13").value;
+					var p14 = document.getElementById("p14").value;
+					var p15 = document.getElementById("p15").value;
+					var p16 = document.getElementById("p16").value;
+					var p17 = document.getElementById("p17").value;
+					var p18 = document.getElementById("p18").value;
+					var p19 = document.getElementById("p19").value;
+					var p20 = document.getElementById("p20").value;
+					var p21 = document.getElementById("p21").value;
+					var p22 = document.getElementById("p22").value;
+					var p23 = document.getElementById("p23").value;
+					var p24 = document.getElementById("p24").value;
+					var f1 = document.getElementById("f1").checked;
+					var f2 = document.getElementById("f2").checked;
+					var f3 = document.getElementById("f3").checked;
+					var f4 = document.getElementById("f4").checked;
+					var f5 = document.getElementById("f5").checked;
+					var f6 = document.getElementById("f6").checked;
+					var f7 = document.getElementById("f7").checked;
+					var f8 = document.getElementById("f8").checked;
+					var f9 = document.getElementById("f9").checked;
+					var f10 = document.getElementById("f10").checked;
+					var f11 = document.getElementById("f11").checked;
+					var f12 = document.getElementById("f12").checked;
+					var f13 = document.getElementById("f13").checked;
+					var f14 = document.getElementById("f14").checked;
+					var f15 = document.getElementById("f15").checked;
+					var f16 = document.getElementById("f16").checked;
+					var f17 = document.getElementById("f17").checked;
+					var f18 = document.getElementById("f18").checked;
+					var f19 = document.getElementById("f19").checked;
+					var f20 = document.getElementById("f20").checked;
+					var f21 = document.getElementById("f21").checked;
+					var f22 = document.getElementById("f22").checked;
+					var f23 = document.getElementById("f23").checked;
+					var f24 = document.getElementById("f24").checked;
+					}
+					$.ajax({url: 'addDevice?type=' + deviceType + '&portnumber=24' + '&comport=' +  deviceComport + '&description=' + deviceDescription + 
+						  '&p1=' + p1 + '&p2=' + p2 + '&p3=' + p3 + '&p4=' + p4 + '&p5=' + p5 + '&p6=' + p6 + '&p7=' + p7 + '&p8=' + p8 + '&p9=' + p9 + '&p10=' + p10 + '&p11=' + p11 + '&p12=' + p12 + 
+						  '&p13=' + p13 + '&p14=' + p14 + '&p15=' + p15 + '&p16=' + p16 + '&p17=' + p17 + '&p18=' + p18 + '&p19=' + p19 + '&p20=' + p20 + '&p21=' + p21 + '&p22=' + p22 + '&p23=' + p23 + '&p24=' + p24 + 
+						  '&f1=' + f1 + '&f2=' + f2 + '&f3=' + f3 + '&f4=' + f4 + '&f5=' + f5 + '&f6=' + f6 + '&f7=' + f7 + '&f8=' + f8 + '&f9=' + f9 + '&f10=' + f10 + '&f11=' + f11 + '&f12=' + f12 +
+						  '&f13=' + f13 + '&f14=' + f14 + '&f15=' + f15 + '&f16=' + f16 + '&f17=' + f17 + '&f18=' + f18 + '&f19=' + f19 + '&f20=' + f20 + '&f21=' + f21 + '&f22=' + f22 + '&f23=' + f23 + '&f24=' + f24,
+					  success: function(result){
+						var data = JSON.parse(result);
+						if (data['valid'] == false){
+						  document.getElementById("error-device-switchports").innerHTML = "Error: Active device ports must be unique";
+						} else {
+						  console.log("goods")
+						  window.location.reload();
+						}
+					  }
+					});
+					break;
+				  case '48':{
+					var p1 = document.getElementById("p1").value;
+					var p2 = document.getElementById("p2").value;
+					var p3 = document.getElementById("p3").value;
+					var p4 = document.getElementById("p4").value;
+					var p5 = document.getElementById("p5").value;
+					var p6 = document.getElementById("p6").value;
+					var p7 = document.getElementById("p7").value;
+					var p8 = document.getElementById("p8").value;
+					var p9 = document.getElementById("p9").value;
+					var p10 = document.getElementById("p10").value;
+					var p11 = document.getElementById("p11").value;
+					var p12 = document.getElementById("p12").value;
+					var p13 = document.getElementById("p13").value;
+					var p14 = document.getElementById("p14").value;
+					var p15 = document.getElementById("p15").value;
+					var p16 = document.getElementById("p16").value;
+					var p17 = document.getElementById("p17").value;
+					var p18 = document.getElementById("p18").value;
+					var p19 = document.getElementById("p19").value;
+					var p20 = document.getElementById("p20").value;
+					var p21 = document.getElementById("p21").value;
+					var p22 = document.getElementById("p22").value;
+					var p23 = document.getElementById("p23").value;
+					var p24 = document.getElementById("p24").value;
+					var p25 = document.getElementById("p25").value;
+					var p26 = document.getElementById("p26").value;
+					var p27 = document.getElementById("p27").value;
+					var p28 = document.getElementById("p28").value;
+					var p29 = document.getElementById("p29").value;
+					var p30 = document.getElementById("p30").value;
+					var p31 = document.getElementById("p31").value;
+					var p32 = document.getElementById("p32").value;
+					var p33 = document.getElementById("p33").value;
+					var p34 = document.getElementById("p34").value;
+					var p35 = document.getElementById("p35").value;
+					var p36 = document.getElementById("p36").value;
+					var p37 = document.getElementById("p37").value;
+					var p38 = document.getElementById("p38").value;
+					var p39 = document.getElementById("p39").value;
+					var p40 = document.getElementById("p40").value;
+					var p41 = document.getElementById("p41").value;
+					var p42 = document.getElementById("p42").value;
+					var p43 = document.getElementById("p43").value;
+					var p44 = document.getElementById("p44").value;
+					var p45 = document.getElementById("p45").value;
+					var p46 = document.getElementById("p46").value;
+					var p47 = document.getElementById("p47").value;
+					var p48 = document.getElementById("p48").value;
+					var f1 = document.getElementById("f1").checked;
+					var f2 = document.getElementById("f2").checked;
+					var f3 = document.getElementById("f3").checked;
+					var f4 = document.getElementById("f4").checked;
+					var f5 = document.getElementById("f5").checked;
+					var f6 = document.getElementById("f6").checked;
+					var f7 = document.getElementById("f7").checked;
+					var f8 = document.getElementById("f8").checked;
+					var f9 = document.getElementById("f9").checked;
+					var f10 = document.getElementById("f10").checked;
+					var f11 = document.getElementById("f11").checked;
+					var f12 = document.getElementById("f12").checked;
+					var f13 = document.getElementById("f13").checked;
+					var f14 = document.getElementById("f14").checked;
+					var f15 = document.getElementById("f15").checked;
+					var f16 = document.getElementById("f16").checked;
+					var f17 = document.getElementById("f17").checked;
+					var f18 = document.getElementById("f18").checked;
+					var f19 = document.getElementById("f19").checked;
+					var f20 = document.getElementById("f20").checked;
+					var f21 = document.getElementById("f21").checked;
+					var f22 = document.getElementById("f22").checked;
+					var f23 = document.getElementById("f23").checked;
+					var f24 = document.getElementById("f24").checked;
+					var f25 = document.getElementById("f25").checked;
+					var f26 = document.getElementById("f26").checked;
+					var f27 = document.getElementById("f27").checked;
+					var f28 = document.getElementById("f28").checked;
+					var f29 = document.getElementById("f29").checked;
+					var f30 = document.getElementById("f30").checked;
+					var f31 = document.getElementById("f31").checked;
+					var f32 = document.getElementById("f32").checked;
+					var f33 = document.getElementById("f33").checked;
+					var f34 = document.getElementById("f34").checked;
+					var f35 = document.getElementById("f35").checked;
+					var f36 = document.getElementById("f36").checked;
+					var f37 = document.getElementById("f37").checked;
+					var f38 = document.getElementById("f38").checked;
+					var f39 = document.getElementById("f39").checked;
+					var f40 = document.getElementById("f40").checked;
+					var f41 = document.getElementById("f41").checked;
+					var f42 = document.getElementById("f42").checked;
+					var f43 = document.getElementById("f43").checked;
+					var f44 = document.getElementById("f44").checked;
+					var f45 = document.getElementById("f45").checked;
+					var f46 = document.getElementById("f46").checked;
+					var f47 = document.getElementById("f47").checked;
+					var f48 = document.getElementById("f48").checked;
+					}
+					$.ajax({url: 'addDevice?type=' + deviceType + '&portnumber=48' + '&comport=' +  deviceComport + '&description=' + deviceDescription + 
+						  '&p1=' + p1 + '&p2=' + p2 + '&p3=' + p3 + '&p4=' + p4 + '&p5=' + p5 + '&p6=' + p6 + '&p7=' + p7 + '&p8=' + p8 + '&p9=' + p9 + '&p10=' + p10 + '&p11=' + p11 + '&p12=' + p12 + 
+						  '&p13=' + p13 + '&p14=' + p14 + '&p15=' + p15 + '&p16=' + p16 + '&p17=' + p17 + '&p18=' + p18 + '&p19=' + p19 + '&p20=' + p20 + '&p21=' + p21 + '&p22=' + p22 + '&p23=' + p23 + '&p24=' + p24 + 
+						  '&p25=' + p25 + '&p26=' + p26 + '&p27=' + p27 + '&p28=' + p28 + '&p29=' + p29 + '&p30=' + p30 + '&p31=' + p31 + '&p32=' + p32 + '&p33=' + p33 + '&p34=' + p34 + '&p35=' + p35 + '&p36=' + p36 + 
+						  '&p37=' + p37 + '&p38=' + p38 + '&p39=' + p39 + '&p40=' + p40 + '&p41=' + p41 + '&p42=' + p42 + '&p43=' + p43 + '&p44=' + p44 + '&p45=' + p45 + '&p46=' + p46 + '&p47=' + p47 + '&p48=' + p48 +
+						  '&f1=' + f1 + '&f2=' + f2 + '&f3=' + f3 + '&f4=' + f4 + '&f5=' + f5 + '&f6=' + f6 + '&f7=' + f7 + '&f8=' + f8 + '&f9=' + f9 + '&f10=' + f10 + '&f11=' + f11 + '&f12=' + f12 + 
+						  '&f13=' + f13 + '&f14=' + f14 + '&f15=' + f15 + '&f16=' + f16 + '&f17=' + f17 + '&f18=' + f18 + '&f19=' + f19 + '&f20=' + f20 + '&f21=' + f21 + '&f22=' + f22 + '&f23=' + f23 + '&f24=' + f24 + 
+						  '&f25=' + f25 + '&f26=' + f26 + '&f27=' + f27 + '&f28=' + f28 + '&f29=' + f29 + '&f30=' + f30 + '&f31=' + f31 + '&f32=' + f32 + '&f33=' + f33 + '&f34=' + f34 + '&f35=' + f35 + '&f36=' + f36 + 
+						  '&f37=' + f37 + '&f38=' + f38 + '&f39=' + f39 + '&f40=' + f40 + '&f41=' + f41 + '&f42=' + f42 + '&f43=' + f43 + '&f44=' + f44 + '&f45=' + f45 + '&f46=' + f46 + '&f47=' + f47 + '&f48=' + f48,
+					  success: function(result){
+						var data = JSON.parse(result);
+						if (data['valid'] == false){
+						  document.getElementById("error-device-switchports").innerHTML = "Error: Active device ports must be unique";
+						  console.log(data['valid'])
+						} else {
+						  console.log("goods")
+						  window.location.reload();
+						}
+					  }
+					});
+					break
+				  default:
+					break;
+				}       
+			  } else if(deviceType=='1'){
+					var rp0 = document.getElementById("rp0").value;
+					var rp1 = document.getElementById("rp1").value;
+					var rf0 = document.getElementById("rf0").checked;
+					var rf1 = document.getElementById("rf1").checked;
+					var deviceDescription = document.getElementById("devDescription").value;
+					if(deviceDescription == null || deviceDescription.value == null)
+						deviceDescription = " ";
+					$.ajax({url: 'addDevice?type=' + deviceType + '&comport=' +  deviceComport + '&description=' + deviceDescription + 
+						  '&rp0=' + rp0 + '&rp1=' + rp1 + '&rf0=' + rf0 + '&rf1=' + rf1,
+					  success: function(result){
+						var data = JSON.parse(result);
+						if (data['valid'] == false){
+						  document.getElementById("error-device-ports").innerHTML = "Error: Active device ports must be unique";
+						  console.log("alaws")
+						} else {
+						  console.log("goods");
+						  window.location.reload();
+						}
+					  }
+					});
+				}
+			}
+		  //});
+		}
+		
+        {% for device in devices %}
+		function editDevice{{ device.id }}(){
+			var description = document.getElementById('edit-dev-desc-{{ device.id }}').value;
+			var comport = document.getElementById('edit-device-comport-{{ device.id }}').value;
+			var portactivity = []
+			var mainportchoices = []
+			{% for port in ports %}
+				{% with forloop.counter as port_counter %}
+				{% ifequal port.device.id device.id %}
+					portactivity.push(document.getElementById("edit-f{{ port_counter }}-{{ device.id }}").checked);
+					mainportchoices.push(document.getElementById("edit-p{{ port_counter }}-{{ device.id }}").value);
+				{% endifequal %}
+				{% endwith %}
+			{% endfor %}
+			var activeswitchports = []
+			for(var x = 0; x < mainportchoices.length; x++){
+				if(portactivity[x] == true){
+					activeswitchports.push(mainportchoices[x]);
+				}
+			}
+			if(hasDuplicates(activeswitchports)){
+				document.getElementById("error-editdevice-{{ device.id }}").innerHTML = "Erorr: active main switch ports are not unique";										
+			} else {
+				console.log("Choices are unique")
+				var url='editDevice?description=' + description + '&comport=' + comport + '&deviceID={{ device.id }}&portCount=' + String(mainportchoices.length);
+				for(var x = 0; x < mainportchoices.length;x++){
+					url+= '&f' + String(x) + '=' + String(portactivity[x]) + '&p' + String(x) + '=' + String(mainportchoices[x]);
+				}
+				console.log(url)
+				$.ajax({url: url,
+					success: function(data){
+						window.location.reload();
+					}
+				})
+			}
+		}		
+		{% endfor %}		
+	
+		function createGroup(){
 				var groupName = document.getElementById("group-name").value;
 				$.ajax({url: '../createGroup?groupName=' + groupName,
 					success: function(data){
@@ -3384,56 +3383,82 @@
 					},});
 				}
 	
-			function clearUserFields(){
-				document.getElementById("createFirstName").value = "";
-				document.getElementById("createLastName").value = "";
-				document.getElementById("createUserName").value = "";
-				document.getElementById("createEmployeeID").value = "";
-				document.getElementById("createEmail").value = "";
-				document.getElementById("createPassword").value = "";
-				document.getElementById("createPassword2").value = "";
-			}
+		function clearUserFields(){
+			document.getElementById("createFirstName").value = "";
+			document.getElementById("createLastName").value = "";
+			document.getElementById("createUserName").value = "";
+			document.getElementById("createEmployeeID").value = "";
+			document.getElementById("createEmail").value = "";
+			document.getElementById("createPassword").value = "";
+			document.getElementById("createPassword2").value = "";
+		}
 			
-			function createUser(){
-				var firstName = document.getElementById("createFirstName").value;
-				var lastName = document.getElementById("createLastName").value;
-				var userName = document.getElementById("createUserName").value;
-				var employeeID = document.getElementById("createEmployeeID").value;
-				var password = document.getElementById("createPassword").value;
-				var password2 = document.getElementById("createPassword2").value;
-				var email = document.getElementById("createEmail").value;
-				var groupName = document.getElementById("createUserGroup").value;
-					
-				$.ajax({url: "../createUser?firstName=" + firstName + "&lastName=" + lastName + "&userName=" + userName + "&employeeID=" + employeeID + "&email=" + email + "&groupName=" + groupName + "&password=" + password + "&password2=" + password2,
-					success: function(data){
-						var res = JSON.parse(data);
-							var signupformisvalid = "{{signupformisvalid}}";
-							if (res['signupformisvalid'] == false){
-								document.getElementById("error-employee-id").innerHTML = res['signupIDerr'];							
-								document.getElementById("error-employee-username").innerHTML = res['signupUsererr'];							
-								document.getElementById("error-employee-email").innerHTML = res['signupEmailerr'];							
-								document.getElementById("error-employee-password").innerHTML = res['signupPasserr'];							
-								document.getElementById("error-employee-password2").innerHTML = res['signupPasserr2'];
-								document.getElementById("error-employee-first-name").innerHTML = res['signupFirstnameerr'];
-								document.getElementById("error-employee-last-name").innerHTML = res['signupLastnameerr'];
-							} else {	
-								window.location.reload();
-								document.getElementById("createFirstName").value = "";
-								document.getElementById("createLastName").value = "";
-								document.getElementById("createUserName").value = "";
-								document.getElementById("createEmployeeID").value = "";
-								document.getElementById("createEmail").value = "";
-								document.getElementById("createUserGroup").value = "";
-								document.getElementById("createPassword").value = "";
-								document.getElementById("createPassword2").value = "";
-								
-							}					
-					},
-				});
+		function createUser(){
+			var firstName = document.getElementById("createFirstName").value;
+			var lastName = document.getElementById("createLastName").value;
+			var userName = document.getElementById("createUserName").value;
+			var employeeID = document.getElementById("createEmployeeID").value;
+			var password = document.getElementById("createPassword").value;
+			var password2 = document.getElementById("createPassword2").value;
+			var email = document.getElementById("createEmail").value;
+			var groupName = document.getElementById("createUserGroup").value;
 				
-			}
-		</script>
-	<!-- Create Group and user script end -->
+			$.ajax({url: "../createUser?firstName=" + firstName + "&lastName=" + lastName + "&userName=" + userName + "&employeeID=" + employeeID + "&email=" + email + "&groupName=" + groupName + "&password=" + password + "&password2=" + password2,
+				success: function(data){
+					var res = JSON.parse(data);
+						var signupformisvalid = "{{signupformisvalid}}";
+						if (res['signupformisvalid'] == false){
+							document.getElementById("error-employee-id").innerHTML = res['signupIDerr'];							
+							document.getElementById("error-employee-username").innerHTML = res['signupUsererr'];							
+							document.getElementById("error-employee-email").innerHTML = res['signupEmailerr'];							
+							document.getElementById("error-employee-password").innerHTML = res['signupPasserr'];							
+							document.getElementById("error-employee-password2").innerHTML = res['signupPasserr2'];
+							document.getElementById("error-employee-first-name").innerHTML = res['signupFirstnameerr'];
+							document.getElementById("error-employee-last-name").innerHTML = res['signupLastnameerr'];
+						} else {
+							window.location.reload();
+							document.getElementById("createFirstName").value = "";
+							document.getElementById("createLastName").value = "";
+							document.getElementById("createUserName").value = "";
+							document.getElementById("createEmployeeID").value = "";
+							document.getElementById("createEmail").value = "";
+							document.getElementById("createUserGroup").value = "";
+							document.getElementById("createPassword").value = "";
+							document.getElementById("createPassword2").value = "";
+						}					
+				},
+			});
+		}
+		<!-- CLEAR ERRORS FUNCTIONS -->
+		{
+		
+		function clearerroremployeeid(){
+			document.getElementById("error-employee-id").innerHTML = "";
+		}
+		function clearerroremployeeusername(){
+			document.getElementById("error-employee-username").innerHTML = "";
+		}
+		function clearerroremployeeemail(){
+			document.getElementById("error-employee-email").innerHTML = "";
+		}
+		function clearerroremployeepassword(){
+			document.getElementById("error-employee-password").innerHTML = "";
+		}
+		function clearerroremployeepassword2(){
+			document.getElementById("error-employee-password2").innerHTML = "";
+		}
+		function clearerroremployeefirstname(){
+			document.getElementById("error-employee-first-name").innerHTML = "";
+		}
+		function clearerroremployeelastname(){
+			document.getElementById("error-employee-last-name").innerHTML = "";
+		}
+		
+		}
+		<!-- END CLEAR ERRORS -->
+	</script>
+	<!-- GIAN's SCRIPTS END -->
+	
     <!-- Calendar -->
     <!-- <script src="js/jquery-1.11.1.min.js"></script> -->
     <script src="{% static '/production/js/underscore-min.js' %}"></script>

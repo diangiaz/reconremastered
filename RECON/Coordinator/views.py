@@ -389,11 +389,16 @@ def saveTopologyFunc(request):
 	topName = (urlparse.parse_qs(parsedData.query)['topologyName'][0])
 	
 	if (SaveTopology.objects.filter(name = topName).count() > 0):
-		savedTopology = SaveTopology.objects.filter(name = topName)[0]
-		SaveDev.objects.filter(saveTopology = savedTopology).delete()
-		SaveConn.objects.filter(saveTopology = savedTopology).delete()
-		JSONer['tId'] = savedTopology.pk
-		print("Overwrite " + savedTopology.name)
+		JSONer['error'] = 'Topology name is taken'
+		JSONer['valid'] = "False"
+		
+		return HttpResponse(json.dumps(JSONer))
+		
+		# savedTopology = SaveTopology.objects.filter(name = topName)[0]
+		# SaveDev.objects.filter(saveTopology = savedTopology).delete()
+		# SaveConn.objects.filter(saveTopology = savedTopology).delete()
+		# JSONer['tId'] = savedTopology.pk
+		# print("Overwrite " + savedTopology.name)
 	else:
 		newTopology = SaveTopology()	
 		newTopology.name = topName
@@ -402,6 +407,7 @@ def saveTopologyFunc(request):
 		newTopology.refresh_from_db()
 		print("Created " + newTopology.name)
 		JSONer['tId'] = newTopology.pk
+		JSONer['valid'] = "True"
 		
 	return HttpResponse(json.dumps(JSONer))
 	
@@ -1017,10 +1023,6 @@ def editModal(request):
 		valid = False
 		error_email = "This field is required!"
 
-
-
-	
-
 	if User.objects.filter(id=pkid).count() > 0:
 		
 
@@ -1094,6 +1096,7 @@ def addDevice(request):
 	parsedData = urlparse.urlparse(request.get_full_path())
 	type = (urlparse.parse_qs(parsedData.query)['type'][0])
 	comportname = (urlparse.parse_qs(parsedData.query)['comport'][0])
+	description = (urlparse.parse_qs(parsedData.query)['description'][0])
 	comport = Comport.objects.filter(name=comportname)[0]
 	deviceisvalid = True
 	error = ""
@@ -1298,6 +1301,7 @@ def addDevice(request):
 			nDevice.type = 'Switch'
 			nDevice.name = 'Switch ' + str(Device.objects.filter(type='Switch').count() + 1)
 			nDevice.comport = comport
+			nDevice.description = description
 			nDevice.save()
 		
 			comport.istaken = '1'
@@ -1319,7 +1323,7 @@ def addDevice(request):
 				
 			# AddSerialConnection(comport, nDevice)
 			
-			print('saved')
+			print('saved switch')
 			
 	elif type == '1':
 		mainswitchports = []
@@ -1353,6 +1357,7 @@ def addDevice(request):
 			nDevice.type = 'Router'
 			nDevice.name = 'Router ' + str(Device.objects.filter(type='Router').count() + 1)
 			nDevice.comport = comport
+			nDevice.description = description
 			nDevice.save()
 			
 			comport.istaken = '1'
@@ -1382,6 +1387,7 @@ def editDevice(request):
 	parsedData = urlparse.urlparse(request.get_full_path())
 	devID = (urlparse.parse_qs(parsedData.query)['deviceID'][0])
 	portCount = (urlparse.parse_qs(parsedData.query)['portCount'][0])
+	comport = (urlparse.parse_qs(parsedData.query)['comport'][0])
 	device = Device.objects.filter(id = devID)[0]
 	
 	#reminder: write code that frees up old comports and switch ports

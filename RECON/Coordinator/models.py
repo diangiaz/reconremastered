@@ -94,6 +94,10 @@ class Device(models.Model):
 		Comport,
 		on_delete=models.CASCADE,
 	)
+	description = models.CharField(
+		max_length=100,
+		null = True
+	)
 	def __str__(self):
 		return self.name
 		

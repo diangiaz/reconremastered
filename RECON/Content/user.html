@@ -403,12 +403,13 @@
             </button>            
           </div>
           <div class="modal-body">
+		  <strong><font style="color: #F00000;" id="error-save-topology"></font></strong>
             <div class="form-horizontal form-label-left">
             	<div class="form-group">
 	              <label class="control-label col-md-3" for="filename">File name: 
 	              </label>
 	              <div class="col-md-7">
-	              	<input type="text" id="saveTopologyInput" class="form-control">
+	              	<input type="text" id="saveTopologyInput" class="form-control" onchange="clearSaveTopoInput()">
 	              </div>
             	</div>
             </div>
@@ -432,7 +433,7 @@
             </button>  
           </div>
           <div class="modal-body">
-		<strong><font style="color: #F00000;" id="error-load-topology"></font></strong>
+		<strong><font style="color: #F00000;" id="error-load-topology"></font>error</strong>
             <div class="form-horizontal form-label-left">
             	<div class="form-group">
 	              <label class="control-label col-md-3" for="filename">File name: 
@@ -804,200 +805,203 @@
                 }
             });
        }
-	// save/load functions
-	
-		function loadTopology(){
-			var topologyID = document.getElementById('loadtopologyID').value;
-			if(topologyID == ""){
-				console.log("load failed")
-				document.getElementById("error-load-topology").innerHTML = "Please select a topology to load";
-			} else {
-			//window.location = "http://127.0.0.1:8000/loadTopology?topologyID=" + topologyID + "&newload=1";
+	   
+	   </script>
+	   
+	   
+	   <!-- GIAN's SCRIPTS STARTS -->
+	   
+	   <script>
+			function clearSaveTopoInput(){
+					document.getElementById("error-save-topology").innerHTML = "";
 			}
-		}
-		
-		function saveTopology(){
-			var topologyName = document.getElementById('saveTopologyInput').value;
-			console.log("1")
-			var tId;
-			$.ajax({url: "saveTopology?topologyName=" + topologyName,
-					success: function(result){
-						data = JSON.parse(result);
-						tId = data['tId'];
-						console.log('2')
-						window.setTimeout(saveDevices(tId), 200);
-						window.setTimeout(saveConnections(tId), 200);	
-					}
-				});
-		}
-		
-		function saveDevices(tId){
-			var deviceArrayLength = Devices.length;
-			console.log('3')
-			for (var ctr = 0; ctr < deviceArrayLength; ctr++) {		
-				$.ajax({url: "saveDevice?tId=" + tId + "&deviceName=" + Devices[ctr].name + "&x=" + Devices[ctr].x + "&y=" + Devices[ctr].y,
-				});
-			}
-		}
-		
-		function saveConnections(tId){
-			var connectionsArrayLength = Cables.length;
-			console.log('4')
-			for (var ctr = 0; ctr < connectionsArrayLength; ctr++) {		
-				$.ajax({url: "saveConnection?tId=" + tId + "&startX=" + Cables[ctr].startpointx + "&startY=" + Cables[ctr].startpointy + "&endX=" + Cables[ctr].endpointx + "&endY=" + Cables[ctr].endpointy +
-				"&srcDevice=" + Cables[ctr].startdevice + "&endDevice=" + Cables[ctr].enddevice + "&srcPort=" + Cables[ctr].startport + "&endPort=" + Cables[ctr].endport + "&connectionName=" + Cables[ctr].name,
-				});
-			}
-		}
-    </script>
-	<!-- Receiver Scripts Start -->
-	{% for gtd in grouptodevice %}	
-		{% ifequal current_user.profile.group.id gtd.group.id %}
-		{% ifequal gtd.type 'AP' %}
-		{% if gtd.startDateTime <= today and gtd.endDateTime >= today %}
-	<script>
-		setInterval(function(){reloader{{gtd.device.id}}();},1000);
-		function reloader{{gtd.device.id}}(){
-			// if(document.getElementById('configTextArea {{gtd.device.id}}').innerHTML != res['config{{gtd.device.id}}']
-			$.ajax({url: 'getouts',
-				dataType: 'json',
-				success: function(result){
-					var res = result;
-					document.getElementById('configTextArea {{gtd.device.id}}').innerHTML = res[{{gtd.device.serialIndex}}];
+	   
+			// save/load functions
+			function loadTopology(){
+				var topologyID = document.getElementById('loadtopologyID').value;
+				if(topologyID == ""){
+					console.log("load failed")
+					document.getElementById("error-load-topology").innerHTML = "Please select a topology to load";
+				} else {
+				window.location = "http://127.0.0.1:8000/loadTopology?topologyID=" + topologyID + "&newload=1";
 				}
-			});
-        }
-    </script>
-		{% endif %}
-		{% endifequal %}
-		{% endifequal %}
-	{% endfor %}
-	<!-- Receiver Scripts End -->
-	
-	<!-- Serial Sender Scripts Start -->
-	{% for gtd in grouptodevice %}	
-		{% ifequal current_user.profile.group.id gtd.group.id %}
-		{% ifequal gtd.type 'AP' %}
-		{% if gtd.startDateTime <= today and gtd.endDateTime >= today %}
-			<script>
-				var inputField = document.getElementById("deviceInput {{gtd.device.id}}");
-				inputField.addEventListener("keydown", function (e) {
-					if (e.keyCode == 13){
-						inputSend{{gtd.device.id}}();
-						}
-				});	
-				function inputSend{{gtd.device.id}}(){
-					var textarea = document.getElementById('configTextArea {{gtd.device.id}}');
-					textarea.scrollTop = textarea.scrollHeight;
-					
-					var command = document.getElementById("deviceInput {{gtd.device.id}}");
-					var cmd = command.value;
-					if (!cmd){
-						cmd = "return"	
-						console.log("Command is empty")
-					}
-					
-					$.ajax({url: "http://127.0.0.1:8000/inputSend?input=" + cmd + "&deviceId={{gtd.device.id}}",
-					});
-					
-					document.getElementById("deviceInput {{gtd.device.id}}").value = "";
-					
-					console.log("Input: " + cmd)
-	
-					var textarea = document.getElementById('configTextArea {{gtd.device.id}}');
-					textarea.scrollTop = textarea.scrollHeight;
-				}
-			</script>
-		{% endif %}
-		{% endifequal %}
-		{% endifequal %}
-	{% endfor %}
-	
-	<!-- Serial Sender Scripts End -->
-	<!-- Canvass Loader -->		
-	<script>
-		if ("{{currTopology}}" != "")
-			console.log("Loaded {{ currTopology }}");
-		document.getElementById("saveTopologyInput").value="{{ currTopology }}";
-	</script>
-	
-	{% for device in loadDevices %}
-	<script>
-		var loaddeviceImage = new Image();
-		var loaddeviceName = "{{ device.deviceName }}";
-		var loaddeviceHeight;
-		var loaddeviceWidth;
-		var loadPosX = {{ device.xCord }};
-		var loadPosY = {{ device.yCord}};
-		if(loaddeviceName.includes("Router")){
-			loaddeviceImage.src = "{% static '/production/images/Router.png' %}";
-			loaddeviceHeight = 38;
-			loaddeviceWidth = 64;
-		} else if(loaddeviceName.includes("Switch")){
-			loaddeviceImage.src = "{% static '/production/images/Switch.png' %}";
-			loaddeviceHeight = 38;
-			loaddeviceWidth = 64;
-		} else if(loaddeviceName.includes("Terminal")){
-			loaddeviceImage.src = "{% static '/production/images/Terminal.png' %}";
-			loaddeviceHeight = 54;
-			loaddeviceWidth = 62;
-		}
-		
-		
-		var loadedDevice = { object:loaddeviceImage, x:loadPosX, y:loadPosY, height:loaddeviceHeight, width:loaddeviceWidth, name:loaddeviceName};
-		
-		Devices.push(loadedDevice);	
-		
-		var i = document.getElementById(loaddeviceName);
-		i.draggable = false;
-		i.onclick = false;	
-		
-		WorkspaceRepaint();
-		
-		
-		
-	</script>
-	{% endfor %}
-	
-	{% for connection in connections %}
-	<script>
-		var name = "{{ connection.connectionName }}";
-		var srcDevice = "{{ connection.srcDevice }}";
-		var endDevice = "{{ connection.endDevice }}";
-		var srcPort = "{{ connection.srcPort }}";
-		var endPort = "{{ connection.endPort }}";
-		var cableType = {{ connection.cableType }};
-		var startX = {{ connection.startX }};
-		var startY = {{ connection.startY }};
-		var endX = {{ connection.endX }};
-		var endY = {{ connection.endY }};
-		
-		var loadCable = {startpointx: startX, startpointy: startY, endpointx: endX, endpointy: endY, startdevice: srcDevice, enddevice: endDevice, startport:srcPort, endport:endPort, name:name};
-		Cables.push(loadCable);
-		
-		console.log("Saved a cable")
-		
-		WorkspaceRepaint();
-	</script>
-	{% endfor %}
-	
-	<script>
-		var load = "{{load}}";
-		if (load == "")
-			loadInt = 0;
-		else if (load == "1")
-			loadInt = 1;
-		else if (load == "0")
-			loadInt = 0;
+			}
 			
-		if (loadInt == 1)
-			window.location = "http://127.0.0.1:8000/loadTopology?topologyID={{currTopologyID}}&newload=0";
-	</script>
-	<!-- Canvass Loader End -->
-	
-	<!-- recon.js -->
-	
-	<!-- recon.js end -->
-	
+			function saveTopology(){
+				var topologyName = document.getElementById('saveTopologyInput');
+				var tId;
+				if (topologyName.value == ""){
+					document.getElementById("error-save-topology").innerHTML = "Please enter a file name";
+				} else {
+					$.ajax({url: "saveTopology?topologyName=" + topologyName.value,
+							success: function(result){
+								var data = JSON.parse(result);
+								if(data['valid'] == 'False'){
+									console.log('invalid')
+									console.log(data['error'])
+									document.getElementById("error-save-topology").innerHTML = data['error']
+								} else {
+									console.log('valid')
+									tId = data['tId'];
+									window.setTimeout(saveDevices(tId), 200);
+									window.setTimeout(saveConnections(tId), 200);
+									window.location = "http://127.0.0.1:8000/loadTopology?topologyID=" + tId + "&newload=1";
+								}
+							}
+						});
+				}
+			}
+			
+			function saveDevices(tId){
+				var deviceArrayLength = Devices.length;
+				console.log('3')
+				for (var ctr = 0; ctr < deviceArrayLength; ctr++) {		
+					$.ajax({url: "saveDevice?tId=" + tId + "&deviceName=" + Devices[ctr].name + "&x=" + Devices[ctr].x + "&y=" + Devices[ctr].y,
+					});
+				}
+			}
+			
+			function saveConnections(tId){
+				var connectionsArrayLength = Cables.length;
+				console.log('4')
+				for (var ctr = 0; ctr < connectionsArrayLength; ctr++) {		
+					$.ajax({url: "saveConnection?tId=" + tId + "&startX=" + Cables[ctr].startpointx + "&startY=" + Cables[ctr].startpointy + "&endX=" + Cables[ctr].endpointx + "&endY=" + Cables[ctr].endpointy +
+					"&srcDevice=" + Cables[ctr].startdevice + "&endDevice=" + Cables[ctr].enddevice + "&srcPort=" + Cables[ctr].startport + "&endPort=" + Cables[ctr].endport + "&connectionName=" + Cables[ctr].name,
+					});
+				}
+			}
+			<!-- Receiver Scripts Start -->
+			{% for gtd in grouptodevice %}	
+				{% ifequal current_user.profile.group.id gtd.group.id %}
+				{% ifequal gtd.type 'AP' %}
+				{% if gtd.startDateTime <= today and gtd.endDateTime >= today %}
+				setInterval(function(){reloader{{gtd.device.id}}();},1000);
+				function reloader{{gtd.device.id}}(){
+					// if(document.getElementById('configTextArea {{gtd.device.id}}').innerHTML != res['config{{gtd.device.id}}']
+					$.ajax({url: 'getouts',
+						dataType: 'json',
+						success: function(result){
+							var res = result;
+							document.getElementById('configTextArea {{gtd.device.id}}').innerHTML = res[{{gtd.device.serialIndex}}];
+						}
+					});
+				}
+				{% endif %}
+				{% endifequal %}
+				{% endifequal %}
+			{% endfor %}
+			<!-- Receiver Scripts End -->
+			
+			<!-- Serial Sender Scripts Start -->
+			{% for gtd in grouptodevice %}	
+				{% ifequal current_user.profile.group.id gtd.group.id %}
+				{% ifequal gtd.type 'AP' %}
+				{% if gtd.startDateTime <= today and gtd.endDateTime >= today %}
+						var inputField = document.getElementById("deviceInput {{gtd.device.id}}");
+						inputField.addEventListener("keydown", function (e) {
+							if (e.keyCode == 13){
+								inputSend{{gtd.device.id}}();
+								}
+						});	
+						function inputSend{{gtd.device.id}}(){
+							var textarea = document.getElementById('configTextArea {{gtd.device.id}}');
+							textarea.scrollTop = textarea.scrollHeight;
+							
+							var command = document.getElementById("deviceInput {{gtd.device.id}}");
+							var cmd = command.value;
+							if (!cmd){
+								cmd = "return"	
+								console.log("Command is empty")
+							}
+							
+							$.ajax({url: "http://127.0.0.1:8000/inputSend?input=" + cmd + "&deviceId={{gtd.device.id}}",
+							});
+							
+							document.getElementById("deviceInput {{gtd.device.id}}").value = "";
+							
+							console.log("Input: " + cmd)
+			
+							var textarea = document.getElementById('configTextArea {{gtd.device.id}}');
+							textarea.scrollTop = textarea.scrollHeight;
+						}
+				{% endif %}
+				{% endifequal %}
+				{% endifequal %}
+			{% endfor %}
+			<!-- Serial Sender Scripts End -->
+			
+			<!-- Canvass Loader -->		
+				if ("{{currTopology}}" != "")
+					console.log("Loaded {{ currTopology }}");
+				document.getElementById("saveTopologyInput").value="{{ currTopology }}";
+			
+			{% for device in loadDevices %}
+				var loaddeviceImage = new Image();
+				var loaddeviceName = "{{ device.deviceName }}";
+				var loaddeviceHeight;
+				var loaddeviceWidth;
+				var loadPosX = {{ device.xCord }};
+				var loadPosY = {{ device.yCord}};
+				if(loaddeviceName.includes("Router")){
+					loaddeviceImage.src = "{% static '/production/images/Router.png' %}";
+					loaddeviceHeight = 38;
+					loaddeviceWidth = 64;
+				} else if(loaddeviceName.includes("Switch")){
+					loaddeviceImage.src = "{% static '/production/images/Switch.png' %}";
+					loaddeviceHeight = 38;
+					loaddeviceWidth = 64;
+				} else if(loaddeviceName.includes("Terminal")){
+					loaddeviceImage.src = "{% static '/production/images/Terminal.png' %}";
+					loaddeviceHeight = 54;
+					loaddeviceWidth = 62;
+				}
+				
+				
+				var loadedDevice = { object:loaddeviceImage, x:loadPosX, y:loadPosY, height:loaddeviceHeight, width:loaddeviceWidth, name:loaddeviceName};
+				
+				Devices.push(loadedDevice);	
+				
+				var i = document.getElementById(loaddeviceName);
+				i.draggable = false;
+				i.onclick = false;	
+				
+				WorkspaceRepaint();
+			{% endfor %}
+			
+			{% for connection in connections %}
+				var name = "{{ connection.connectionName }}";
+				var srcDevice = "{{ connection.srcDevice }}";
+				var endDevice = "{{ connection.endDevice }}";
+				var srcPort = "{{ connection.srcPort }}";
+				var endPort = "{{ connection.endPort }}";
+				var cableType = {{ connection.cableType }};
+				var startX = {{ connection.startX }};
+				var startY = {{ connection.startY }};
+				var endX = {{ connection.endX }};
+				var endY = {{ connection.endY }};
+				
+				var loadCable = {startpointx: startX, startpointy: startY, endpointx: endX, endpointy: endY, startdevice: srcDevice, enddevice: endDevice, startport:srcPort, endport:endPort, name:name};
+				Cables.push(loadCable);
+				
+				console.log("Saved a cable")
+				
+				WorkspaceRepaint();
+			{% endfor %}
+			
+				var load = "{{load}}";
+				if (load == "")
+					loadInt = 0;
+				else if (load == "1")
+					loadInt = 1;
+				else if (load == "0")
+					loadInt = 0;
+					
+				if (loadInt == 1)
+					window.location = "http://127.0.0.1:8000/loadTopology?topologyID={{currTopologyID}}&newload=0";
+			<!-- Canvass Loader End -->
+		</script>
+		
+		<!-- GIAN's SCRIPTS END -->
+		
   </body>
 </html>
