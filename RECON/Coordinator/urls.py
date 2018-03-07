@@ -6,8 +6,8 @@ from .forms import LoginForm
 urlpatterns = [
 	url(r'^login/$', authViews.login, {'template_name': 'login.html', 'authentication_form': LoginForm}, name='login'),
 	url(r'^logout/$', authViews.logout, {'template_name': 'logout.html', 'next_page': views.adminPage}, name='logout'),
+	url(r'^denied/$', views.deniedPage, name='denied'),
 	url(r'^admin/$', views.adminPage, name='adminPage'),
-	# url(r'^denied/$', views.denied, name='denied'),
 	url(r'^createUser$', views.createUser, name='createuser'),
 	url(r'^createGroup$', views.createGroup, name='creategroup'),
 	url(r'^user/reserveDevice$', views.reserveDevice, name='reserveDevice'),

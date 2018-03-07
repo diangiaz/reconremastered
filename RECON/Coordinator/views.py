@@ -23,9 +23,9 @@ import urllib.parse as urlparse
 # fill comports and mainswitchports
 
 comports = Comport.objects.all().count()
-x = 5
+x = 14
 if comports == 0:
-	while x <= 6:
+	while x <= 16:
 		c = Comport()
 		c.name = "COM" + str(x)
 		c.save()
@@ -41,61 +41,21 @@ if mainswitchports == 0:
 		m.save()
 		print("added" + str(m))
 		x+=1
-	# nDevice = Device()
-	# nDevice.type = 'Router'
-	# nDevice.name = 'Router 1'
-	# nDevice.comport = Comport.objects.filter(name = 'COM5')[0]
-	# nDevice.save()
-	# nDevice2 = Device()
-	# nDevice2.type = 'Switch'
-	# nDevice2.name = 'Switch 1'
-	# nDevice2.comport = Comport.objects.filter(name = 'COM6')[0]
-	# nDevice2.save()
-	# p1 = Port()
-	# p1.type = 'Fast Ethernet'
-	# p1.name = 'fa0/0'
-	# p1.device = nDevice
-	# p1.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/1')[0]
-	# p1.save()
-	# p2 = Port()
-	# p2.type = 'Fast Ethernet'
-	# p2.name = 'fa0/1'
-	# p2.device = nDevice
-	# p2.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/2')[0]
-	# p2.save()
-	# p3 = Port()
-	# p3.type = 'Fast Ethernet'
-	# p3.name = 'fa0/1'
-	# p3.device = nDevice2
-	# p3.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/3')[0]
-	# p3.save()
-	# p4 = Port()
-	# p4.type = 'Fast Ethernet'
-	# p4.name = 'fa0/2'
-	# p4.device = nDevice2
-	# p4.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/4')[0]
-	# p4.save()
-	# p5 = Port()
-	# p5.type = 'Fast Ethernet'
-	# p5.name = 'fa0/3'
-	# p5.device = nDevice2
-	# p5.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/5')[0]
-	# p5.save()
-	# p6 = Port()
-	# p6.type = 'Fast Ethernet'
-	# p6.name = 'fa0/4'
-	# p6.device = nDevice2
-	# p6.mainswitchport = MainSwitchPort.objects.filter(name = 'fa0/6')[0]
-	# p6.save()
+	
+@login_required(login_url="/login")
+def deniedPage(request):
+	return render(request, 'denied.html')	
 	
 @login_required(login_url="/login")
 def userPage(request):
 	currentUser = request.user
 	if currentUser.profile.usertype == 'admin':
 		return HttpResponseRedirect("/admin/")
-	elif currentUser.profile.status == 'disable':
+	if currentUser.profile.status == 'Disable':
 		return HttpResponseRedirect("/denied/")
-
+		
+	
+	removeConnections()
 	groupTopologies = SaveTopology.objects.filter(group = currentUser.profile.group)
 	users = User.objects.all()
 	groups = Group.objects.all()
@@ -142,7 +102,7 @@ serialList = []
 receiverList = []
 			
 try:
-	mainSwitchSerial = serial.Serial('COM7', 9600)
+	mainSwitchSerial = serial.Serial('COM10', 9600)
 except serial.SerialException:
 	print("Main switch not detected")
 
@@ -351,7 +311,6 @@ def loadTopology(request):
 	load = (urlparse.parse_qs(parsedData.query)['newload'][0])
 	
 	loadThisTopology = SaveTopology.objects.filter(id=topologyID)[0]
-	print("loaded")
 	
 	groupTopologies = SaveTopology.objects.filter(group = currentUser.profile.group)
 	users = User.objects.all()
@@ -487,6 +446,9 @@ def adminPage(request):
 	
 	if currentUser.profile.usertype == 'employee':
 		return HttpResponseRedirect("/user/")
+		
+	if currentUser.profile.status == 'disable':
+		return HttpResponseRedirect("/denied/")
 	
 	signupForm = SignUpForm()
 	users = User.objects.all()	
@@ -506,7 +468,7 @@ def adminPage(request):
 	
 	routerCount = Device.objects.filter(type = 'Router').count()
 	switchCount = Device.objects.filter(type = 'Switch').count()
-	terminalCount = Device.objects.filter(type = 'Siwtch').count()
+	terminalCount = Device.objects.filter(type = 'Terminal').count()
 	
 	context = {
 	'log':log,
@@ -1321,7 +1283,7 @@ def addDevice(request):
 				
 				nPort.save()
 				
-			# AddSerialConnection(comport, nDevice)
+			AddSerialConnection(comport, nDevice)
 			
 			print('saved switch')
 			
@@ -1377,7 +1339,7 @@ def addDevice(request):
 			
 			print('saved')
 			
-			# AddSerialConnection(comport, nDevice)
+			AddSerialConnection(comport, nDevice)
 	
 	return HttpResponse(json.dumps(JSONer))
 
@@ -1388,9 +1350,23 @@ def editDevice(request):
 	devID = (urlparse.parse_qs(parsedData.query)['deviceID'][0])
 	portCount = (urlparse.parse_qs(parsedData.query)['portCount'][0])
 	comport = (urlparse.parse_qs(parsedData.query)['comport'][0])
+	description = (urlparse.parse_qs(parsedData.query)['description'][0])
 	device = Device.objects.filter(id = devID)[0]
 	
 	#reminder: write code that frees up old comports and switch ports
+	
+	msps = []
+	
+	dPorts = Port.objects.filter(device = device)
+	for port in dPorts:
+		msps.append(port.mainswitchport)
+	
+	for port in msps:
+		port.istaken = '0'
+		port.save()
+		
+	dComp = device.comport
+	dComp.istaken = '0'
 	
 	activity = []
 	portchoices = []
@@ -1424,18 +1400,20 @@ def editDevice(request):
 	return HttpResponse(json.dumps(JSONer))	
 	
 def AddSerialConnection(comport, device):
-	
 	try:
 		cereal = serial.Serial(str(comport), 9600)
 		idx = len(serialList)
 		serialList.append(cereal)
 		strBuilders.append("")
-		d = Device.objects.filter(name='device')[0]
+		d = device
 		d.serialIndex = idx
-		# d.save()
+		d.save()
 		r = Receiver(cereal, idx)
 		receiverList.append(r)
 		r.start()
+		print("added serial")
+		print(d)
+		print(r)
 	except serial.SerialException:
 		print("Serial is not detected")
 
@@ -1455,9 +1433,9 @@ def loadConnections(connections):
 		ps1 = str(p1.mainswitchport)
 		ps2 = str(p2.mainswitchport)
 		
-		vlan1 = "10" + p1.split("/",1)[1]
+		vlan1 = "10" + ps1.split("/",1)[1]
 	
-		text = "\renable\nconfigure terminal\ninterface range " + p1 +", " + p2 +"\nswitchport mode access\nswitchport access vlan " + vlan1 + "\nexit"	
+		text = "\renable\nconfigure terminal\ninterface range " + ps1 +", " + ps2 +"\nswitchport mode access\nswitchport access vlan " + vlan1 + "\nexit"	
 		print(text)
 		print("connected devices")
 		mainSwitchSerial.flushInput()

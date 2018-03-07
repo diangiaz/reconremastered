@@ -1,5 +1,7 @@
+{% load static %}
+
 <!DOCTYPE html>
-<link rel="shortcut icon" type="image/png" href="images/recon.ico">
+<link rel="shortcut icon" type="image/png" href="{% static '/production/images/recon.ico' %}">
 <html lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -10,57 +12,58 @@
 
     <title>Password Reset | RECON Remastered</title>
 
-    <!-- Bootstrap -->
-    <link href="../vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+     <!-- Bootstrap -->
+    <link href="{% static '/vendors/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet">
     <!-- Font Awesome -->
-    <link href="../vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="{% static '/vendors/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
     <!-- NProgress -->
-    <link href="../vendors/nprogress/nprogress.css" rel="stylesheet">
+    <link href="{% static '/vendors/nprogress/nprogress.css' %}" rel="stylesheet">
     <!-- Animate.css -->
-    <link href="../vendors/animate.css/animate.min.css" rel="stylesheet">
+    <link href="{% static '/vendors/animate.css/animate.min.css' %}" rel="stylesheet">
     <!-- iCheck -->
-    <link href="../vendors/iCheck/skins/flat/green.css" rel="stylesheet">
+    <link href="{% static '/vendors/iCheck/skins/flat/green.css' %}" rel="stylesheet">
 
     <!-- Custom Theme Style -->
-    <link href="../build/css/custom.min.css" rel="stylesheet">
+    <link href="{% static '/build/css/custom.min.css' %}" rel="stylesheet">
   </head>
 
   <body style="background: #2a3f54">
     <div style="margin: 5% auto 0; max-width: 545px;padding: 8px 48px 24px;">
 		<div class="login_wrapper">
-			<img src="images/logo4.png" class="img-responsive" alt="..." style="padding:25px 0 20px 25px;border-bottom: 1px solid #34495e;margin-bottom: 20px;">
+			<img src="{% static '/production/images/logo4.png' %}" class="img-responsive" alt="..." style="padding:25px 0 20px 25px;border-bottom: 1px solid #34495e;margin-bottom: 20px;">
 		</div>
         <section class="login_content" style="text-shadow: none;padding-top: 0">
 		    <p style="font-size: 20px;color: #ccc;font-family:verdana;">ACCESS DENIED</p>
 			<p style="display:block;color: rgb(209, 209, 209)">
-		       <p>Your account is no longer active. Contact your Network Administrator.
+		       <p>Your account is no longer active. Contact your Network Administrator.<br>
+			   <a href="/logout/">Go back</a>
 			</p>
 		</section>
     </div>  
 
     <!-- jQuery -->
-    <script src="../vendors/jquery/dist/jquery.min.js"></script>
+    <script src='{% static "/vendors/jquery/dist/jquery.min.js" %}'></script>
     <!-- Bootstrap -->
-    <script src="../vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src='{% static "/vendors/bootstrap/dist/js/bootstrap.min.js" %}'></script>
     <!-- FastClick -->
-    <script src="../vendors/fastclick/lib/fastclick.js"></script>
+    <script src='{% static "/vendors/fastclick/lib/fastclick.js" %}'></script>
     <!-- NProgress -->
-    <script src="../vendors/nprogress/nprogress.js"></script>
+    <script src='{% static "/vendors/nprogress/nprogress.js" %}'></script>
     <!-- bootstrap-progressbar -->
-    <script src="../vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
+    <script src='{% static "/vendors/bootstrap-progressbar/bootstrap-progressbar.min.js" %}'></script>
     <!-- iCheck -->
-    <script src="../vendors/iCheck/icheck.min.js"></script>
+    <script src='{% static "/vendors/iCheck/icheck.min.js" %}'></script>
     <!-- bootstrap-wysiwyg -->
-    <script src="../vendors/bootstrap-wysiwyg/js/bootstrap-wysiwyg.min.js"></script>
-    <script src="../vendors/jquery.hotkeys/jquery.hotkeys.js"></script>
-    <script src="../vendors/google-code-prettify/src/prettify.js"></script>
+    <script src='{% static "/vendors/bootstrap-wysiwyg/js/bootstrap-wysiwyg.min.js" %}'></script>
+    <script src='{% static "/vendors/jquery.hotkeys/jquery.hotkeys.js" %}'></script>
+    <script src='{% static "/vendors/google-code-prettify/src/prettify.js" %}'></script>
     
     <!-- Parsley -->
-    <!-- <script src="../vendors/parsleyjs/dist/parsley.min.js"></script>     -->
+    <!-- <script src="{% static "/vendors/parsleyjs/dist/parsley.min.js" %}"></script>     -->
 
     <!-- jQuery autocomplete -->
-    <script src="../vendors/devbridge-autocomplete/dist/jquery.autocomplete.min.js"></script>
+    <script src="{% static '/vendors/devbridge-autocomplete/dist/jquery.autocomplete.min.js' %}"></script>
     <!-- Custom Theme Scripts -->
-    <script src="../build/js/custom.min.js"></script>
+    <script src="{% static '/build/js/custom.min.js' %}"></script>
   </body>
 </html>

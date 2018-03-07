@@ -70,7 +70,7 @@
 
               	<ul class="nav-logout" >
 					<li><a data-toggle="tooltip" data-placement="bottom" title="Notifications">               
-                      <span id="signout" class="fa fa-bell {% if notifs > 0 %}badge1{%endif%}" data-badge="{{notifs}}" onclick="toggleVisibility('divNotifs')"></span>
+                      <span id="signout" class="fa fa-bell {% if notifs > 0 %}badge1{%endif%}" data-badge="{{notifs}}" onclick="toggleVisibility('divNotifs');"></span>
                     </a> {{ current_user.username }}
 	              	<a data-toggle="tooltip" data-placement="top" title="Logout" href="/logout/">               
 		                <span id="signout" class="fa fa-sign-out"></span>
@@ -119,7 +119,7 @@
                               
                               
                                <tr>
-                                  <td style="font-weight: 700;">{{gtd.type}}{% ifequal gtd.type 'DC' %}Your group's reservation for {{gtd.device.name}} on {%ifequal gtd.startDateTime gtd.endDateTime %}
+                                  <td style="font-weight: 700;">{% ifequal gtd.type 'DC' %}Your group's reservation for {{gtd.device.name}} on {%ifequal gtd.startDateTime gtd.endDateTime %}
                                             {{gtd.startDateTime}}
                                   
                                         {% else %}
@@ -246,17 +246,17 @@
 												                       {% ifequal gtd.type 'AP' %}
 																	    {% if gtd.startDateTime <= today and gtd.endDateTime >= today %}
 												                         {% ifequal gtd.device.type 'Router' %}
-							                        				<td class="deviceCell">
+							                        				<td class="deviceCell" style="background: #f7f7f7;">
 							                        					<img class="deviceIcons" name="{{gtd.device.name}}" id="{{gtd.device.name}}" src="{% static '/production/images/routerIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Router">
 							                        				</td>
 							                        					 {% endifequal %}
 				           								  				 {% ifequal gtd.device.type 'Switch' %}
-							                        				<td class="deviceCell">
+							                        				<td class="deviceCell" style="background: #f7f7f7;">
 																		<img class="deviceIcons" name="{{gtd.device.name}}" id="{{gtd.device.name}}" src="{% static '/production/images/switchIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Switch">
 																	</td>
 																		 {% endifequal %}
 				           								  				 {% ifequal gtd.device.type 'Terminal' %}
-																	<td class="deviceCell">
+																	<td class="deviceCell" style="background: #f7f7f7;">
 																		<img class="deviceIcons" name="{{gtd.device.name}}" id="{{gtd.device.name}}" src="{% static '/production/images/terminalIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Terminal">
 																	</td>
 																	{% endifequal %}
