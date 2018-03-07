@@ -1327,14 +1327,16 @@ def addDevice(request):
 			
 			for idx, port in enumerate(mainswitchports):
 				nPort = Port()
-				nPort.name='fa0/' + str(idx+1)
+				nPort.name='fa0/' + str(idx)
 				nPort.type = 'Fast Ethernet'
 				nPort.device = nDevice
-				mps = MainSwitchPort.objects.filter(pk=port)[0]
-				mps.istaken = '1'
-				mps.save()
-				nPort.mainswitchport = mps
-				nPort.isactive = '1'
+				if portactivity[idx] == 'true':
+					mps = MainSwitchPort.objects.filter(pk=port)[0]
+					mps.istaken = '1'
+					mps.save()
+					nPort.mainswitchport = mps
+					nPort.isactive = '1'
+					
 				nPort.save()
 			
 			print('saved')
