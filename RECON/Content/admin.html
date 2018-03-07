@@ -75,7 +75,7 @@
                 <ul class="nav-logout" >
                   <li> 
                     <a data-toggle="tooltip" data-placement="bottom" title="Notifications">               
-                      <span id="signout" class="fa fa-bell {%if notifs > 0%}badge1{%endif%}" data-badge="{{notifs}}" onclick="toggleVisibility('divNotifs')"></span>
+                      <span id="signout" class="fa fa-bell" onClick="hideAllAdminNotif()"><span class="{% if viewnotifs > 0 %}badge1{%endif%}" id="badgetest" data-badge="{{viewnotifs}}"  ></span>
                     </a>
                   {{ current_user.username }}
                     <a data-toggle="tooltip" data-placement="top" title="Logout" href="/logout/">               
@@ -585,7 +585,7 @@
                             <!-- ROUTER ADDITIONAL PORT -->
                             <div class="form-group">
                               <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12">Device Type</label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12">Device Type *</label>
                                 <div class="col-md-8 col-sm-6 col-xs-12">
                                   <select id="devType" name="devList" class="form-control" onchange="java_script_:show(this.options[this.selectedIndex].value); cleardevtypeerror()" required>
                                     <option value="error">*Choose a device*</option>         
@@ -611,7 +611,7 @@
 
                             <div class="form-group">
                               <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="comport">Comport
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="comport">Comport *
                               </label>
                                 <div class="col-md-8 col-sm-6 col-xs-12">
                                   <select id="devComport" class="form-control" required>
@@ -683,7 +683,7 @@
 
                             <div class="form-group" id="portDiv" style="display: none;">
                               <div class="col-md-12 col-sm-12 col-xs-12 item form-group has-feedback">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="switch-port">No. of Ports
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="switch-port">No. of Ports *
                                 </label>
                                 <div class="col-md-8 col-sm-6 col-xs-12">
                                   <select id="switchportnum" class="form-control" onchange="java_script_:showPorts(this.options[this.selectedIndex].value)" required>
@@ -2433,7 +2433,7 @@
 
                  <div class="form-group">
                   <div class="col-md-6 col-sm-6 col-xs-12" style="padding-right: 0">
-                    <label class="control-label col-md-3" style="width: 17%" for="datetimepicker6">Date</label>
+                    <label class="control-label col-md-3" style="width: 17%" for="datetimepicker6">Date *</label>
                     <div class='input-group date' id='datetimepicker6'>
                       <span class="input-group-addon">
                         <span class="fa fa-calendar-o"></span>
@@ -2488,7 +2488,7 @@
                         
             </div>
           </div>              
-          <div class="modal-footer">
+          <div class="modal-footer" style="border-top:0">
 
             <button type="submit" onClick="allocateDeviceAjax({{current_user.id}},'groupName-{{group.id}}')"  class="btn btn-primary">Reserve</button>
             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
@@ -2675,9 +2675,23 @@
                 }
             });
        }
+	   
+	   
+	   function hideAllAdminNotif(){
+        toggleVisibility('divNotifs');
+        console.log("test");
+        $.ajax({url: '../hideAllAdminNotif',
+                success: function(result){
+                $("#badgetest").hide();
+                
+                  // insert success message here
+                }
+            });
+       }
     </script>
 
-
+	
+	
     <script>
        function seenAllAjax(){
         
@@ -2954,7 +2968,7 @@
               {% endfor %}
            
               {% for gtd in grouptodevice %}
-                
+              {% ifequal gtd.type 'AP' %}  
                 date1=dateListStart.push("{{gtd.startDateTime}}");
                       date2=dateListEnd.push("{{gtd.endDateTime}}");
                         date1 = convertDate(dateListStart[(dateListStart.length)-1]);
@@ -2965,6 +2979,7 @@
                             availDevice.splice(index,1);  
                         }
               console.log("check3");
+			  {% endifequal %}
               {% endfor %}
               for(var i = 0; i < availDevice.length; i++){
                 console.log("test " + availDevice[i]);

@@ -65,7 +65,8 @@ def userPage(request):
 	ports = Port.objects.all()
 	log = Log.objects.all()
 	totalNotifs= GroupToDevice.objects.filter(userNotifStatus="US").filter(group = currentUser.profile.group).count()
-
+	totalNotifsIcon = GroupToDevice.objects.filter(userNotifSeenStatus='US').filter(group = currentUser.profile.group).count()
+	
 	context = {
 		'current_user': currentUser,
 		'topologies': groupTopologies,
@@ -77,6 +78,7 @@ def userPage(request):
 		'ports':ports,
 		'log':log,
 		'notifs':totalNotifs,
+		'viewNotifs':totalNotifsIcon,
 	}
 	return render(request, 'user.html', context)
 
@@ -465,7 +467,7 @@ def adminPage(request):
 	valid = True
 	error_msg1 = ""
 	totalNotifs= GroupToDevice.objects.filter(adminNotifStatus="US").count()
-	
+	totalNotifsIcon = GroupToDevice.objects.filter(adminNotifSeenStatus='US').count()
 	routerCount = Device.objects.filter(type = 'Router').count()
 	switchCount = Device.objects.filter(type = 'Switch').count()
 	terminalCount = Device.objects.filter(type = 'Terminal').count()
@@ -490,6 +492,7 @@ def adminPage(request):
 	'mainswitchports':mainswitchports,
 	'ports': ports,
 	'notifs': totalNotifs,
+	'viewnotifs':totalNotifsIcon,
 	}
 	return render(request, 'admin.html', context)
 	
@@ -690,6 +693,7 @@ def approvedRes(request):
 		if success == True:
 			grouptodeviceID.type = "AP"
 			grouptodeviceID.userNotifStatus="US"
+			grouptodeviceID.userNotifSeenStatus="US"
 			grouptodeviceID.usertimestamp = datetime.datetime.now()
 			print(grouptodeviceID.type)
 			grouptodeviceID.save(force_update=True)
@@ -714,6 +718,7 @@ def declinedRes(request):
 	
 		grouptodeviceID = GroupToDevice.objects.filter(id=pkid)[0]
 		grouptodeviceID.userNotifStatus="US"
+		grouptodeviceID.userNotifSeenStatus="US"
 		grouptodeviceID.type = "DC"
 		grouptodeviceID.usertimestamp = datetime.datetime.now()
 		
@@ -778,6 +783,36 @@ def adminSeenAllNotif(request):
 		
 	return HttpResponse(json.dumps(JSONer))	
 
+def hideAllUserNotif(request):
+	JSONer = {}
+	parsedData = urlparse.urlparse(request.get_full_path())
+	print("check")
+	
+	while GroupToDevice.objects.filter(userNotifSeenStatus='US').count() > 0:
+		
+		toFilter = GroupToDevice.objects.filter(userNotifSeenStatus='US')[0]
+		toFilter.userNotifSeenStatus='SE'
+		toFilter.save(force_update=True)
+		
+	
+		
+	return HttpResponse(json.dumps(JSONer))	
+
+def hideAllAdminNotif(request):
+	JSONer = {}
+	parsedData = urlparse.urlparse(request.get_full_path())
+	
+	
+	while GroupToDevice.objects.filter(adminNotifSeenStatus='US').count() > 0:
+
+		toFilter = GroupToDevice.objects.filter(adminNotifSeenStatus='US')[0]
+		toFilter.adminNotifSeenStatus='SE'
+		toFilter.save(force_update=True)
+		
+	
+		
+	return HttpResponse(json.dumps(JSONer))	
+	
 def userSeenNotif(request):		
 	JSONer = {}
 	parsedData = urlparse.urlparse(request.get_full_path())
@@ -873,7 +908,7 @@ def reserveDevice(request):
 		if success == True:
 			newgroupID = Group.objects.get(id=groupid)
 			newdeviceID = Device.objects.get(id=deviceid)
-			a = GroupToDevice(group=newgroupID,device=newdeviceID,startDateTime=startdate,endDateTime=enddate,type='RS')
+			a = GroupToDevice(group=newgroupID,device=newdeviceID,startDateTime=startdate,endDateTime=enddate,type='RS',adminNotifSeenStatus='US')
 			a.save()
 			messages.success(request,"Device reserved, please wait for it to be confirmed!")
 		else:
@@ -924,7 +959,7 @@ def allocateDevice(request):
 		if success == True:
 			newgroupID = Group.objects.get(id=groupid)
 			newdeviceID = Device.objects.get(id=deviceid)
-			a = GroupToDevice(group=newgroupID,device=newdeviceID,startDateTime=startdate,endDateTime=enddate,type='AP',adminNotifStatus='SE',userNotifStatus='US')
+			a = GroupToDevice(group=newgroupID,device=newdeviceID,startDateTime=startdate,endDateTime=enddate,type='AP',adminNotifStatus='SE',userNotifStatus='US',userNotifSeenStatus="US",adminNotifSeenStatus="SE")
 			a.save()
 			messages.success(request,"Successfully allocated!")
 		else:

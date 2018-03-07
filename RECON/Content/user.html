@@ -70,7 +70,7 @@
 
               	<ul class="nav-logout" >
 					<li><a data-toggle="tooltip" data-placement="bottom" title="Notifications">               
-                      <span id="signout" class="fa fa-bell {% if notifs > 0 %}badge1{%endif%}" data-badge="{{notifs}}" onclick="toggleVisibility('divNotifs');"></span>
+                      <span id="signout" class="fa fa-bell" onClick="hideAllUserNotif()"><span class="{% if viewNotifs > 0 %}badge1{%endif%}" id="badgetest" data-badge="{{viewNotifs}}"  ></span>
                     </a> {{ current_user.username }}
 	              	<a data-toggle="tooltip" data-placement="top" title="Logout" href="/logout/">               
 		                <span id="signout" class="fa fa-sign-out"></span>
@@ -479,7 +479,7 @@
                 
                 <div class="form-group">
                   <div class="col-md-6 col-sm-6 col-xs-12" style="padding-right: 0">
-                    <label class="control-label col-md-3" style="width: 17%" for="datetimepicker6">Date</label>
+                    <label class="control-label col-md-3" style="width: 17%" for="datetimepicker6">Date *</label>
                     <div class='input-group date' id='datetimepicker6'>
                       <span class="input-group-addon">
                         <span class="fa fa-calendar-o"></span>
@@ -525,7 +525,7 @@
             </div>
 
           </div>
-          <div class="modal-footer">
+          <div class="modal-footer" style="border-top:0">
             <button type="submit" onClick="reserveDeviceAjax({{current_user.id}},{{current_user.profile.group.id}})"  class="btn btn-primary">Reserve</button>
             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
           </div>
@@ -733,7 +733,7 @@
               {% endfor %}
            
               {% for gtd in grouptodevice %}
-                
+              {% ifequal gtd.type 'AP' %}
                 date1=dateListStart.push("{{gtd.startDateTime}}");
                       date2=dateListEnd.push("{{gtd.endDateTime}}");
                         date1 = convertDate(dateListStart[(dateListStart.length)-1]);
@@ -743,7 +743,7 @@
                             var index = availDevice.indexOf("{{gtd.device.name}}");
                             availDevice.splice(index,1);  
                         }
-                   
+              {% endifequal %}     
               {% endfor %}
               for(var i = 0; i < availDevice.length; i++){
                 console.log("test " + availDevice[i]);
@@ -790,6 +790,18 @@
                 success: function(result){
                 
                 window.location.reload();
+                  // insert success message here
+                }
+            });
+       }
+	   
+	   function hideAllUserNotif(){
+        toggleVisibility('divNotifs');
+        console.log("test");
+        $.ajax({url: '../hideAllUserNotif',
+                success: function(result){
+                $("#badgetest").hide();
+                
                   // insert success message here
                 }
             });

@@ -194,11 +194,23 @@ class GroupToDevice(models.Model):
 		default = "US",
 		null = True,
 	)
+	adminNotifSeenStatus = models.CharField(
+		max_length = 2,
+		choices = STATUS_CHOICES,
+		default = "US",
+		null = True,
+	)
 	admintimestamp = models.DateTimeField(
 		auto_now_add=True, 
 		blank=True,
 	)
 	userNotifStatus = models.CharField(
+		max_length = 2,
+		choices = STATUS_CHOICES,
+		default = "SE",
+		null = True,
+	)
+	userNotifSeenStatus = models.CharField(
 		max_length = 2,
 		choices = STATUS_CHOICES,
 		default = "SE",
