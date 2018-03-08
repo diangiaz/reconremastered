@@ -1315,12 +1315,14 @@ def addDevice(request):
 					mps.save()
 					nPort.isactive = '1'
 					nPort.mainswitchport = mps
+				else:
+					nPort.mainswitchport = None
 				
 				nPort.save()
 				
 			AddSerialConnection(comport, nDevice)
 			
-			print('saved switch')
+			messages.success(request,str(nDevice.name) + "was successfully added.")
 			
 	elif type == '1':
 		mainswitchports = []
@@ -1374,9 +1376,10 @@ def addDevice(request):
 					
 				nPort.save()
 			
-			print('saved')
-			
 			AddSerialConnection(comport, nDevice)
+		
+		messages.success(request,str(nDevice.name) + " was successfully added.")
+	
 	
 	return HttpResponse(json.dumps(JSONer))
 
@@ -1396,12 +1399,15 @@ def editDevice(request):
 	
 	dPorts = Port.objects.filter(device = device)
 	for port in dPorts:
-		msps.append(port.mainswitchport)
+		if port.mainswitchport != None:
+			msps.append(port.mainswitchport)
+	
+	print(msps)
 	
 	for port in msps:
 		port.istaken = '0'
 		port.save()
-		
+	
 	dComp = device.comport
 	dComp.istaken = '0'
 	
@@ -1411,7 +1417,10 @@ def editDevice(request):
 	x = 0
 	while x < int(portCount):
 		activity.append(str((urlparse.parse_qs(parsedData.query)['f' + str(x)][0])))
-		portchoices.append(str(urlparse.parse_qs(parsedData.query)['p' + str(x)][0]))
+		try:
+			portchoices.append(str(urlparse.parse_qs(parsedData.query)['p' + str(x)][0]))
+		except KeyError:
+			portchoices.append(None)
 		x+=1
 
 	for idx, port in enumerate(portchoices):
@@ -1426,6 +1435,7 @@ def editDevice(request):
 			msp.save()
 		else:
 			p1.isactive = '0'
+			p1.mainswitchport = None
 			p1.save()
 			
 	print("edited " + str(device.name))
@@ -1433,6 +1443,8 @@ def editDevice(request):
 		print(port)
 		print(port.mainswitchport)
 		print(port.isactive)
+		
+	messages.success(request,str(device.name) + " was successfully updated.")
 			
 	return HttpResponse(json.dumps(JSONer))	
 	

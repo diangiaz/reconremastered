@@ -1580,16 +1580,14 @@
 								{% ifequal port.device.id device.id %}
                               <tr>
                                 <td class="a-center ">
-                                  <div><input type="checkbox" name="switchPort{{ port.id }}" class="flat" id="edit-f{{ port_counter }}-{{ device.id }}" 
-								  {% ifequal port.isactive '1' %}
-								  checked="checked"
-								  {% endifequal %}
-								  ></div>
+                                  <div><input type="checkbox" name="switchPort{{ port.id }}" class="flat" id="edit-f{{ port_counter }}-{{ device.id }}" checked></div>
                                 </td>
                                 <td>{{ port.name }}</td>
                                 <td>
                                  <select style="width:100px" id="edit-p{{ port_counter }}-{{ device.id }}" required>
-								  <option value="{{ port.mainswitchport.id }}">{{ port.mainswitchport.name }}</option>
+								 {% ifequal port.isactive '1' %}
+								 <option value="{{ port.mainswitchport.id }}">{{ port.mainswitchport.name }}</option>
+								 {% endifequal %}
 									{% for msport in mainswitchports %}
 										{% ifequal msport.istaken '0' %}
 										<option value="{{msport.id}}">{{msport.name}}</option>
@@ -3387,7 +3385,6 @@
 							if (res['groupnameisvalid'] == false){
 								document.getElementById("error-group-name").innerHTML = res['groupnameerrormessage'];							
 							} else {
-							
 							document.getElementById("group-name").value = "";	
 							window.location.reload();
 							}					
