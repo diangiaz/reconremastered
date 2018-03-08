@@ -1554,10 +1554,10 @@
                         <div class="col-md-8 col-sm-6 col-xs-12">
                           <!-- <input type="text" id="dev-main" name="dev-main" class="form-control" value="port to main switch" required> -->
                           <select id="edit-device-comport-{{ device.id }}" class="form-control" required>
-						    <option value="{{ device.comport.name }}">{{ device.comport.name }}</option>
+						    <option value="{{ device.comport.id }}">{{ device.comport.name }}</option>
                             {% for comport in comport %}
 										{% ifequal comport.istaken '0' %}
-											<option value="{{comport.name}}">{{comport.name}}</option>
+											<option value="{{comport.id}}">{{comport.name}}</option>
 										{% endifequal %}
 									{% endfor %}
                           </select>
@@ -3074,8 +3074,6 @@
 		  var deviceType = document.getElementById("devType").value;
 		  var deviceComport = document.getElementById("devComport").value;
 		  var deviceDescription = document.getElementById("devDescription").value;
-		  if(deviceDescription == null || deviceDescription.value == null)
-			deviceDescription = " ";
 		  if(deviceType=='error'){
 			document.getElementById("error-add-devType").innerHTML="Please choose a device type";
 		  } else if(deviceComport=='error'){
@@ -3318,8 +3316,6 @@
 					var rf0 = document.getElementById("rf0").checked;
 					var rf1 = document.getElementById("rf1").checked;
 					var deviceDescription = document.getElementById("devDescription").value;
-					if(deviceDescription == null || deviceDescription.value == null)
-						deviceDescription = " ";
 					$.ajax({url: 'addDevice?type=' + deviceType + '&comport=' +  deviceComport + '&description=' + deviceDescription + 
 						  '&rp0=' + rp0 + '&rp1=' + rp1 + '&rf0=' + rf0 + '&rf1=' + rf1,
 					  success: function(result){

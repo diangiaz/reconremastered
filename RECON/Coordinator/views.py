@@ -1093,10 +1093,9 @@ def addDevice(request):
 	parsedData = urlparse.urlparse(request.get_full_path())
 	type = (urlparse.parse_qs(parsedData.query)['type'][0])
 	comportname = (urlparse.parse_qs(parsedData.query)['comport'][0])
-	description = (urlparse.parse_qs(parsedData.query)['description'][0])
 	comport = Comport.objects.filter(name=comportname)[0]
 	deviceisvalid = True
-	error = ""
+	error = ""	
 	
 	if type == '2':
 		portNumber = (urlparse.parse_qs(parsedData.query)['portnumber'][0])
@@ -1298,7 +1297,12 @@ def addDevice(request):
 			nDevice.type = 'Switch'
 			nDevice.name = 'Switch ' + str(Device.objects.filter(type='Switch').count() + 1)
 			nDevice.comport = comport
-			nDevice.description = description
+			
+			try:
+				description = (urlparse.parse_qs(parsedData.query)['description'][0])
+				nDevice.description = description
+			except KeyError:
+				nDevice.description = None
 			nDevice.save()
 		
 			comport.istaken = '1'
@@ -1356,7 +1360,11 @@ def addDevice(request):
 			nDevice.type = 'Router'
 			nDevice.name = 'Router ' + str(Device.objects.filter(type='Router').count() + 1)
 			nDevice.comport = comport
-			nDevice.description = description
+			try:
+				description = (urlparse.parse_qs(parsedData.query)['description'][0])
+				nDevice.description = description
+			except KeyError:
+				nDevice.description = None
 			nDevice.save()
 			
 			comport.istaken = '1'
@@ -1402,17 +1410,29 @@ def editDevice(request):
 		if port.mainswitchport != None:
 			msps.append(port.mainswitchport)
 	
-	print(msps)
-	
 	for port in msps:
 		port.istaken = '0'
 		port.save()
 	
 	dComp = device.comport
 	dComp.istaken = '0'
+	dComp.save()
 	
 	activity = []
 	portchoices = []
+	
+	try:
+		description = (urlparse.parse_qs(parsedData.query)['description'][0])
+		device.description = description
+	except KeyError:
+		device.description = None
+	
+	c = Comport.objects.filter(id=comport)[0]
+	device.comport = c
+	device.save()
+	
+	c.istaken = '1'
+	c.save()
 	
 	x = 0
 	while x < int(portCount):
