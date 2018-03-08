@@ -205,9 +205,13 @@ def connectDevices(request):
 	text = "\renable\nconfigure terminal\ninterface range " + p1 +", " + p2 +"\nswitchport mode access\nswitchport access vlan " + vlan1 + "\nexit"	
 	print(text)
 	print("connected devices")
-	mainSwitchSerial.flushInput()
-	mainSwitchSerial.write(text.encode('utf-8'))
-	bytes_to_read = mainSwitchSerial.inWaiting()
+	
+	try:
+		mainSwitchSerial.flushInput()
+		mainSwitchSerial.write(text.encode('utf-8'))
+		bytes_to_read = mainSwitchSerial.inWaiting()
+	except NameError:
+			print("Main switch not detected")
 	
 	return JsonResponse(JSONer)
 	
@@ -244,9 +248,12 @@ def disconnectDevices(request):
 	text += "\renable\nconfigure terminal\ninterface " + p2 +"\nswitchport mode access\nswitchport access vlan " + vlan2 + "\nexit"	
 	print(text)
 	print("Disconnected devices")
-	mainSwitchSerial.flushInput()
-	mainSwitchSerial.write(text.encode('utf-8'))
-	bytes_to_read = mainSwitchSerial.inWaiting()	
+	try:
+		mainSwitchSerial.flushInput()
+		mainSwitchSerial.write(text.encode('utf-8'))
+		bytes_to_read = mainSwitchSerial.inWaiting()
+	except NameError:
+			print("Main switch not detected")	
 	
 	return JsonResponse(JSONer)
 @login_required(login_url="/login")	
@@ -1326,7 +1333,7 @@ def addDevice(request):
 				
 			AddSerialConnection(comport, nDevice)
 			
-			messages.success(request,str(nDevice.name) + "was successfully added.")
+			messages.success(request,str(nDevice.name) + " was successfully added.")
 			
 	elif type == '1':
 		mainswitchports = []
@@ -1507,11 +1514,13 @@ def loadConnections(connections):
 		text = "\renable\nconfigure terminal\ninterface range " + ps1 +", " + ps2 +"\nswitchport mode access\nswitchport access vlan " + vlan1 + "\nexit"	
 		print(text)
 		print("connected devices")
-		mainSwitchSerial.flushInput()
-		mainSwitchSerial.write(text.encode('utf-8'))
-		bytes_to_read = mainSwitchSerial.inWaiting()
-	
-
+		try:
+			mainSwitchSerial.flushInput()
+			mainSwitchSerial.write(text.encode('utf-8'))
+			bytes_to_read = mainSwitchSerial.inWaiting()
+		except NameError:
+			print("Main switch not detected")
+			
 	print("load that shit")
 
 def removeConnections():
