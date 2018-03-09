@@ -183,7 +183,7 @@
                       </button>
                       <i class="fa fa-times-circle pull-left" style="font-size: 35px"></i>
                       <div class="media-body" >
-                        <strong>ERROR!</strong>
+                        <strong>Sorry!</strong>
                         <br>
                         {{message}}
                       </div>
@@ -346,13 +346,13 @@
                         <div class="form-group">
                           <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
                             <input id="createEmployeeID" type="number" class="form-control has-feedback-left" placeholder="Employee ID *" required="required" onchange="clearerroremployeeid()">
-                            <font id="error-employee-id"></font>
+                            <strong><font style="color: #F00000;" id="error-employee-id"></font></strong>
                             <span class="fa fa-hashtag form-control-feedback left" aria-hidden="true"></span>
                           </div>
 
                           <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
                             <input id="createEmail" type="mail" class="form-control has-feedback"  placeholder="Email *" required="required" data-validate-linked="email" onchange="clearerroremployeeemail()">
-                            <font id="error-employee-email"></font>
+                            <strong><font style="color: #F00000;" id="error-employee-email"></font></strong>
                             <span class="fa fa-envelope form-control-feedback right" aria-hidden="true"></span>
                           </div>                                                  
                         </div>
@@ -360,13 +360,13 @@
                         <div class="form-group">                        
                           <div class="col-md-6 col-sm-6 col-xs-12 item form-group has-feedback">
                             <input id="createFirstName" type="text" class="form-control has-feedback-left" placeholder="First Name *" required="required" onchange="clearerroremployeefirstname()">
-                            <font id="error-employee-first-name"></font>
+                            <strong><font style="color: #F00000;" id="error-employee-first-name"></font></strong>
                             <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
                           </div>
 
                           <div class="col-md-6 col-sm-6 col-xs-12 item form-group has-feedback">
                             <input id="createLastName" type="text" class="form-control has-feedback" placeholder="Last Name *" required="required" onchange="clearerroremployeelastname()">
-                            <font id="error-employee-last-name"></font>
+                            <strong><font style="color: #F00000;" id="error-employee-last-name"></font></strong>
                             <span class="fa fa-user form-control-feedback right" aria-hidden="true"></span>
                           </div>  
                         </div>
@@ -374,7 +374,7 @@
                         <div class="form-group">
                           <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
                             <input id="createUserName" type="text" class="form-control has-feedback-left" placeholder="Username *" required="required" onchange="clearerroremployeeusername()">
-                            <font id="error-employee-username"></font>
+                            <strong><font style="color: #F00000;" id="error-employee-username"></font></strong>
                             <span class="fa fa-at form-control-feedback left" aria-hidden="true"></span>
                           </div>
 
@@ -390,13 +390,13 @@
                         <div class="form-group">
                           <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
                             <input type="password" class="form-control has-feedback-left" id="createPassword" name="password" data-validate-length="6,8" placeholder="Password *" required="required" onchange="clearerroremployeepassword()">
-                            <font id="error-employee-password"></font>
+                            <strong><font style="color: #F00000;" id="error-employee-password"></font></strong>
 							<span class="fa fa-lock form-control-feedback left" aria-hidden="true"></span>
                           </div>
 
                           <div class="col-md-6 col-sm-6 col-xs-12 item form-group has-feedback">
                             <input type="password" class="form-control" id="createPassword2" name="password2" data-validate-linked="password" placeholder="Repeat Password *" required="required" onchange="clearerroremployeepassword2()">
-							<font id="error-employee-password2"></font>
+							<strong><font style="color: #F00000;" id="error-employee-password2"></font></strong>
                             <span class="fa fa-lock form-control-feedback right" aria-hidden="true"></span>
                           </div>
                         </div>     	
@@ -428,21 +428,21 @@
                     <div class="row top_tiles">
                       <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12">
                         <div class="tile-stats">
-                          <div class="icon"><img src="{% static '/production/images/router-png.png' %}" alt="Router"></div>
+                          <div class="icon" style="width: 10%;height: 10%"><img src="{% static '/production/images/router.png' %}" alt="Router"></div>
                           <div class="count">{{routerCount}}</div>
                           <h3>Router</h3>
                         </div>
                       </div>
                       <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12">
                         <div class="tile-stats">
-                          <div class="icon"><img src="{% static '/production/images/switch-png.png' %}" alt="Switch"></div>
+                          <div class="icon" style="width: 10%;height: 10%"><img src="{% static '/production/images/switch.png' %}" alt="Switch"></div>
                           <div class="count">{{switchCount}}</div>
                           <h3>Switch</h3>
                         </div>
                       </div>
                       <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12">
                         <div class="tile-stats">
-                          <div class="icon"><img src="{% static '/production/images/terminal-png.png' %}" alt="Terminal"></div>
+                          <div class="icon" style="width: 10%;height: 10%"><img src="{% static '/production/images/terminal.png' %}" alt="Terminal"></div>
                           <div class="count">{{terminalCount}}</div>
                           <h3>Terminal</h3>
                         </div>
@@ -515,13 +515,14 @@
                                 </label>
                                 <div class="col-md-8 col-sm-6 col-xs-12">
                                   <input type="text" id="devDescription" name="devLoc" class="form-control" required>
+							<strong><font style="color: #F00000;" id="error-add-description"></font></strong>
                                 </div>
                               </div>
                             </div> 
 
                             <div class="form-group">
                               <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="comport">Comport *
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="comport">Com port *
                               </label>
                                 <div class="col-md-8 col-sm-6 col-xs-12">
                                   <select id="devComport" class="form-control" required>
@@ -2144,8 +2145,6 @@
     {% for user in users %} 
     <!--start EDIT MODAL -->
     <div id="editAcct-{{user.id}}" class="modal fade" role="dialog" aria-hidden="true">
-     
-     
       {% csrf_token %}
       <div class="modal-dialog">
         <div class="modal-content">
@@ -2400,7 +2399,6 @@
           </div>
         </div>
       </div>
-     
     </div>
 
     <!-- end RESERVE -->
@@ -2791,7 +2789,6 @@
     </script>
 
      <script>
-
         function editAcctAjax(id){
           var employeeid = document.getElementById('id-num-' + id).value;
           var firstname = document.getElementById('first-name-' + id).value;
@@ -2908,13 +2905,11 @@
                     console.log(tempDevice + " ==" + availDevice[i]);
                     if(tempDevice == availDevice[i]){
                       
-                      cell1.innerHTML = '<input type="radio" id="deviceList-{{dev.id}}" class="flat" name="deviceList" value="{{dev.id}}"> {{dev.name}}</label>';
+                      cell1.innerHTML = '<input type="radio" id="deviceList-{{dev.id}}" class="flat" name="deviceList" value="{{dev.id}}"> {{dev.name}} ({{dev.description}})</label>';
                     }
                     
                   {% endfor %}
                 }
-                
-                
                 divTable.style.display="block";
                 document.getElementById("error-search").innerHTML = "";
               }
@@ -2984,7 +2979,9 @@
 		  if(deviceType=='error'){
 			document.getElementById("error-add-devType").innerHTML="Please choose a device type";
 		  } else if(deviceComport=='error'){
-			document.getElementById("error-add-devComport").innerHTML="Please choose a COMPORT";
+			document.getElementById("error-add-devComport").innerHTML="Please enter a description";
+		  } else if(!deviceDescription){
+			document.getElementById("error-add-description").innerHTML="Please choose a com port";
 		  } else {
 			  if(deviceType=='2'){
 				var portNumber = document.getElementById("switchportnum").value;

@@ -310,7 +310,6 @@ def reserveDevice(request):
 	
 @login_required(login_url="/login")
 def loadTopology(request):
-	removeConnections()
 	currentUser = request.user
 	if currentUser.profile.usertype == 'admin':
 		return HttpResponseRedirect("/admin/")
@@ -331,7 +330,9 @@ def loadTopology(request):
 	loadDevices = SaveDev.objects.filter(saveTopology = loadThisTopology)
 	connections = SaveConn.objects.filter(saveTopology = loadThisTopology)
 	
-	loadConnections(connections)
+	if load == "1":
+		removeConnections()
+		loadConnections(connections)
 	
 	context = {
 		'current_user': currentUser,
@@ -1521,14 +1522,13 @@ def loadConnections(connections):
 			bytes_to_read = mainSwitchSerial.inWaiting()
 		except NameError:
 			print("Main switch not detected")
-			
-	print("load that shit")
 
 def removeConnections():
 	connections = Port.objects.all()
 	for connection in connections:
 		connection.istaken = '0'
 		connection.save()
+		
 	text = "enable"
 	text += "\nconf t"
 	text += "\nint fa0/1"
@@ -1580,4 +1580,10 @@ def removeConnections():
 	text += "\nint fa0/24"
 	text += "\nswitchport access vlan 24"
 	print(text)
+	try:
+		mainSwitchSerial.flushInput()
+		mainSwitchSerial.write(text.encode('utf-8'))
+		bytes_to_read = mainSwitchSerial.inWaiting()
+	except NameError:
+		print("Main switch not detected")
 		

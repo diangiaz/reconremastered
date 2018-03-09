@@ -46,7 +46,7 @@
               <div class="nav toggle">
               	<div class="site_logo">
               		<img src="{% static '/production/images/logo4-sm.png' %}" class="nav-img-logo2" id="reconLogo2">
-              		<img src="{% static '/production/images/logo4.png' %}" class="nav-img-logo" id="reconLogo">
+              		<img src="{% static '/production/images/logo4.png' %}" class="nav-img-logo" id="reconLogo" onclick="refreshCanvas()">
 	                <div class="buttonPadding">
 	                 <span data-toggle="tooltip" data-placement="bottom" title="Home">  
                     <!-- <span data-toggle="modal" data-target="#">   -->
@@ -179,7 +179,7 @@
                       </button>
                       <i class="fa fa-times-circle pull-left" style="font-size: 35px"></i>
                       <div class="media-body" >
-                        <strong>ERROR!</strong>
+                        <strong>Sorry!</strong>
                         <br>
                         {{message}}
                       </div>
@@ -288,7 +288,7 @@
 						                        	<textarea class="config" id="configTextArea {{gtd.device.id}}" readonly></textarea>
 					                        	  <div class="form-group command-group">
 					                        	  	<div class="col-sm-12 input-group">
-								                        	<input type="text" class="form-control" placeholder="Input command here" required="required" style="padding:5px;" id="deviceInput {{gtd.device.id}}">
+								                        	<input type="text" class="form-control" placeholder="Input command here" required="required" style="padding:5px;" id="deviceInput-{{gtd.device.id}}">
 									                        <span class="input-group-btn">
 									                        	<button type="button" class="btn btn-info" onclick=inputSend{{gtd.device.id}}()>Add</button>
 									                        </span>
@@ -907,7 +907,7 @@
 				{% ifequal current_user.profile.group.id gtd.group.id %}
 				{% ifequal gtd.type 'AP' %}
 				{% if gtd.startDateTime <= today and gtd.endDateTime >= today %}
-						var inputField = document.getElementById("deviceInput {{gtd.device.id}}");
+						var inputField = document.getElementById("deviceInput-{{gtd.device.id}}");
 						inputField.addEventListener("keydown", function (e) {
 							if (e.keyCode == 13){
 								inputSend{{gtd.device.id}}();
@@ -917,7 +917,7 @@
 							var textarea = document.getElementById('configTextArea {{gtd.device.id}}');
 							textarea.scrollTop = textarea.scrollHeight;
 							
-							var command = document.getElementById("deviceInput {{gtd.device.id}}");
+							var command = document.getElementById("deviceInput-{{gtd.device.id}}");
 							var cmd = command.value;
 							if (!cmd){
 								cmd = "return"	
@@ -927,7 +927,7 @@
 							$.ajax({url: "../inputSend?input=" + cmd + "&deviceId={{gtd.device.id}}",
 							});
 							
-							document.getElementById("deviceInput {{gtd.device.id}}").value = "";
+							document.getElementById("deviceInput-{{gtd.device.id}}").value = "";
 							
 							console.log("Input: " + cmd)
 			
@@ -940,7 +940,7 @@
 			{% endfor %}
 			<!-- Serial Sender Scripts End -->
 			
-			<!-- Canvass Loader -->		
+			<!-- Canvas Loader -->		
 				if ("{{currTopology}}" != "")
 					console.log("Loaded {{ currTopology }}");
 				document.getElementById("saveTopologyInput").value="{{ currTopology }}";
@@ -1005,10 +1005,16 @@
 					loadInt = 1;
 				else if (load == "0")
 					loadInt = 0;
-					
 				if (loadInt == 1)
 					window.location = "../loadTopology?topologyID={{currTopologyID}}&newload=0";
-			<!-- Canvass Loader End -->
+			<!-- Canvas Loader End -->
+			
+			function refreshCanvas(){
+				console.log("Refresh!")
+				window.location = "../user";
+			}
+			
+			
 		</script>
 		
 		<!-- GIAN's SCRIPTS END -->
