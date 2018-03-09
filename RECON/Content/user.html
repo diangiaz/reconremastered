@@ -70,7 +70,7 @@
 
               	<ul class="nav-logout" >
 					<li><a data-toggle="tooltip" data-placement="bottom" title="Notifications">               
-                      <span id="signout" class="fa fa-bell" onClick="hideAllUserNotif()"><span class="{% if viewNotifs > 0 %}badge1{%endif%}" id="badgetest" data-badge="{{viewNotifs}}"  ></span>
+                      <span id="signout" class="fa fa-bell" onClick="hideAllUserNotif({{current_user.profile.group.id}})"><span class="{% if viewNotifs > 0 %}badge1{%endif%}" id="badgetest" data-badge="{{viewNotifs}}"  ></span>
                     </a> {{ current_user.username }}
 	              	<a data-toggle="tooltip" data-placement="top" title="Logout" href="/logout/">               
 		                <span id="signout" class="fa fa-sign-out"></span>
@@ -335,7 +335,6 @@
                                 <th style="font-weight: 700;width: 20%">Device</th>
                                 <th style="font-weight: 700;width: 20%">User</th>
                                 <th style="font-weight: 700;width: 20%">Timestamp</th>
-                                <th style="font-weight: 700;width: 20%">Location</th>
                                 <th style="font-weight: 700;width: 40%">Command</th>                  
                               </tr>
                             
@@ -344,7 +343,6 @@
                               <tr>
                                 <th style="font-weight: 700;width: 20%">Device</th>
                                 <th style="font-weight: 700;width: 20%">User</th>
-                                <th style="font-weight: 700;width: 20%"></th>
                                 <th style="font-weight: 700;width: 20%"></th>
                                 <th style="font-weight: 700;width: 40%"></th> 
                               </tr>
@@ -357,7 +355,6 @@
                                 <td style="font-weight: 700;width: 20%">{{logs.device.name}}</td>
                                 <td style="font-weight: 700;width: 20%">{{logs.user}}</td>
                                 <td style="font-weight: 700;width: 20%">{{logs.timestamp}}</td>
-                                <td style="font-weight: 700;width: 20%">Location</td>
                                 <td style="font-weight: 700;width: 40%">{{logs.action}}</td>                  
                               </tr>
                               
@@ -795,10 +792,11 @@
             });
        }
 	   
-	   function hideAllUserNotif(){
+	   function hideAllUserNotif(id){
         toggleVisibility('divNotifs');
         console.log("test");
-        $.ajax({url: '../hideAllUserNotif',
+		var pkid = id
+        $.ajax({url: '../hideAllUserNotif/?grouptodeviceid='+ pkid,
                 success: function(result){
                 $("#badgetest").hide();
                 
@@ -835,7 +833,7 @@
 					console.log("load failed")
 					document.getElementById("error-load-topology").innerHTML = "Please select a topology to load";
 				} else {
-				window.location = "http://127.0.0.1:8000/loadTopology?topologyID=" + topologyID + "&newload=1";
+				window.location = "../loadTopology?topologyID=" + topologyID + "&newload=1";
 				}
 			}
 			
@@ -857,7 +855,7 @@
 									tId = data['tId'];
 									window.setTimeout(saveDevices(tId), 200);
 									window.setTimeout(saveConnections(tId), 200);
-									window.location = "http://127.0.0.1:8000/loadTopology?topologyID=" + tId + "&newload=1";
+									window.location = "../loadTopology?topologyID=" + tId + "&newload=1";
 								}
 							}
 						});
@@ -926,7 +924,7 @@
 								console.log("Command is empty")
 							}
 							
-							$.ajax({url: "http://127.0.0.1:8000/inputSend?input=" + cmd + "&deviceId={{gtd.device.id}}",
+							$.ajax({url: "../inputSend?input=" + cmd + "&deviceId={{gtd.device.id}}",
 							});
 							
 							document.getElementById("deviceInput {{gtd.device.id}}").value = "";
@@ -1009,7 +1007,7 @@
 					loadInt = 0;
 					
 				if (loadInt == 1)
-					window.location = "http://127.0.0.1:8000/loadTopology?topologyID={{currTopologyID}}&newload=0";
+					window.location = "../loadTopology?topologyID={{currTopologyID}}&newload=0";
 			<!-- Canvass Loader End -->
 		</script>
 		

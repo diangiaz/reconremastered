@@ -114,7 +114,7 @@ for idx, device in enumerate(devices):
 		strBuilders.append("")
 		serialList.append(cereal)
 	except serial.SerialException:
-		print("comport not detected")
+		print(str(device.comport.name) + " not detected")
 		
 	device.serialIndex = idx
 	device.save()
@@ -136,13 +136,14 @@ def inputSend(request):
 	
 	device = Device.objects.filter(id = deviceID)[0]
 	
-	# if (text != "return"):	
-		# audit = Log()
-		# audit.device = device
-		# audit.user = request.user
-		# audit.action = text
-		# audit.save()
-		# print("Audited " + audit.action + " @ time " + str(audit.timestamp))
+	if (text != "return"):	
+		audit = Log()
+		audit.device = device
+		audit.user = request.user
+		audit.action = text
+		audit.group = request.user.profile.group
+		audit.save()
+		print("Audited " + audit.action + " @ time " + str(audit.timestamp))
 	
 	text += "\n\n"
 	
@@ -794,10 +795,10 @@ def hideAllUserNotif(request):
 	JSONer = {}
 	parsedData = urlparse.urlparse(request.get_full_path())
 	print("check")
-	
-	while GroupToDevice.objects.filter(userNotifSeenStatus='US').count() > 0:
+	pkid = (urlparse.parse_qs(parsedData.query)['grouptodeviceid'][0])
+	while GroupToDevice.objects.filter(userNotifSeenStatus='US').filter(group=pkid).count() > 0:
 		
-		toFilter = GroupToDevice.objects.filter(userNotifSeenStatus='US')[0]
+		toFilter = GroupToDevice.objects.filter(userNotifSeenStatus='US').filter(group=pkid)[0]
 		toFilter.userNotifSeenStatus='SE'
 		toFilter.save(force_update=True)
 		
@@ -1528,3 +1529,55 @@ def removeConnections():
 	for connection in connections:
 		connection.istaken = '0'
 		connection.save()
+	text = "enable"
+	text += "\nconf t"
+	text += "\nint fa0/1"
+	text += "\nswitchport access vlan 1"
+	text += "\nint fa0/2"
+	text += "\nswitchport access vlan 2"
+	text += "\nint fa0/3"
+	text += "\nswitchport access vlan 3"
+	text += "\nint fa0/4"
+	text += "\nswitchport access vlan 4"
+	text += "\nint fa0/5"
+	text += "\nswitchport access vlan 5"
+	text += "\nint fa0/6"
+	text += "\nswitchport access vlan 6"
+	text += "\nint fa0/7"
+	text += "\nswitchport access vlan 7"
+	text += "\nint fa0/8"
+	text += "\nswitchport access vlan 8"
+	text += "\nint fa0/9"
+	text += "\nswitchport access vlan 9"
+	text += "\nint fa0/10"
+	text += "\nswitchport access vlan 10"
+	text += "\nint fa0/11"
+	text += "\nswitchport access vlan 11"
+	text += "\nint fa0/12"
+	text += "\nswitchport access vlan 12"
+	text += "\nint fa0/13"
+	text += "\nswitchport access vlan 13"
+	text += "\nint fa0/14"
+	text += "\nswitchport access vlan 14"
+	text += "\nint fa0/15"
+	text += "\nswitchport access vlan 15"
+	text += "\nint fa0/16"
+	text += "\nswitchport access vlan 16"
+	text += "\nint fa0/17"
+	text += "\nswitchport access vlan 17"
+	text += "\nint fa0/18"
+	text += "\nswitchport access vlan 18"
+	text += "\nint fa0/19"
+	text += "\nswitchport access vlan 19"
+	text += "\nint fa0/20"
+	text += "\nswitchport access vlan 20"
+	text += "\nint fa0/21"
+	text += "\nswitchport access vlan 21"
+	text += "\nint fa0/22"
+	text += "\nswitchport access vlan 22"
+	text += "\nint fa0/23"
+	text += "\nswitchport access vlan 23"
+	text += "\nint fa0/24"
+	text += "\nswitchport access vlan 24"
+	print(text)
+		
