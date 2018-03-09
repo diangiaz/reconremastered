@@ -161,6 +161,7 @@ class GroupToDevice(models.Model):
 		(ALLOCATION, 'Allocation'),
 		(DECLINED, 'Declined'),
 	)
+
 	SEEN = 'SE'
 	UNSEEN = 'US'
 	STATUS_CHOICES = (
@@ -221,6 +222,46 @@ class GroupToDevice(models.Model):
 	)
 	def __str__(self):
 		return self.type + " " + self.device.name + " from " + str(self.startDateTime) + " to " + str(self.endDateTime)
+
+class Connection(models.Model):
+	CONSOLE = 'Console'
+	SERIAL = 'Serial'
+	STRAIGHT = 'Straight'
+	CONNECTION_TYPE_CHOICES = (
+		(CONSOLE, 'Console'),
+		(SERIAL, 'Serial'),
+		(STRAIGHT, 'Straight'),
+	)
+	group = models.ForeignKey(
+		Group,
+		on_delete = models.CASCADE,
+	)
+	srcDevID = models.IntegerField(
+	)
+	srcDevPort = models.IntegerField(
+	)
+	destDevID = models.IntegerField(
+	)
+	destDevPort	= models.IntegerField(
+	)
+	cableType = models.CharField(
+		max_length=10,
+		choices=CONNECTION_TYPE_CHOICES,
+	)
+
+class Config(models.Model):
+	group = models.ForeignKey(
+		Group,
+		on_delete=models.CASCADE,
+	)
+	device = models.ForeignKey(
+		Device,
+		on_delete=models.CASCADE,
+	)
+	config = models.FileField(
+		upload_to=None,
+		max_length=100,
+	)
 
 class SaveTopology(models.Model):
 	group = models.ForeignKey(
