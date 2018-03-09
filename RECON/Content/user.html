@@ -46,7 +46,7 @@
               <div class="nav toggle">
               	<div class="site_logo">
               		<img src="{% static '/production/images/logo4-sm.png' %}" class="nav-img-logo2" id="reconLogo2">
-              		<img src="{% static '/production/images/logo4.png' %}" class="nav-img-logo" id="reconLogo">
+              		<img src="{% static '/production/images/logo4.png' %}" class="nav-img-logo" id="reconLogo" onclick="reloadCanvas()">
 	                <div class="buttonPadding">
 	                 <span data-toggle="tooltip" data-placement="bottom" title="Home">  
                     <!-- <span data-toggle="modal" data-target="#">   -->
@@ -247,17 +247,17 @@
 																	    {% if gtd.startDateTime <= today and gtd.endDateTime >= today %}
 												                         {% ifequal gtd.device.type 'Router' %}
 							                        				<td class="deviceCell" style="background: #f7f7f7;">
-							                        					<img class="deviceIcons" name="{{gtd.device.name}}" id="{{gtd.device.name}}" src="{% static '/production/images/routerIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Router">
+							                        					<img class="deviceIcons" name="{{gtd.device.name}}" id="{{gtd.device.name}}" src="{% static '/production/images/routerIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="{{ gtd.device.name }}">
 							                        				</td>
 							                        					 {% endifequal %}
 				           								  				 {% ifequal gtd.device.type 'Switch' %}
 							                        				<td class="deviceCell" style="background: #f7f7f7;">
-																		<img class="deviceIcons" name="{{gtd.device.name}}" id="{{gtd.device.name}}" src="{% static '/production/images/switchIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Switch">
+																		<img class="deviceIcons" name="{{gtd.device.name}}" id="{{gtd.device.name}}" src="{% static '/production/images/switchIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="{{ gtd.device.name }}">
 																	</td>
 																		 {% endifequal %}
 				           								  				 {% ifequal gtd.device.type 'Terminal' %}
 																	<td class="deviceCell" style="background: #f7f7f7;">
-																		<img class="deviceIcons" name="{{gtd.device.name}}" id="{{gtd.device.name}}" src="{% static '/production/images/terminalIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="Terminal">
+																		<img class="deviceIcons" name="{{gtd.device.name}}" id="{{gtd.device.name}}" src="{% static '/production/images/terminalIcon.png' %}" onclick="AddToWorkspace(this)" draggable="true" ondragstart="EvtOnDragStart(this)" data-toggle="tooltip" data-placement="bottom" title="{{ gtd.device.name }}">
 																	</td>
 																	{% endifequal %}
 																	{% endif %}
@@ -265,16 +265,13 @@
 										                         {% endifequal %}
 										                        {% endfor %}
 							                        			</tr>
-							                        			
 							                        		</tbody>
 							                        	</table>
 						                        	</div>
 						                        	<div class="x_content">
 						                        		<ul class="cable-list" style="padding-left:0">
 															<li><img class="deviceIcons" id="CableLan" src="{% static '/production/images/lan.png' %}" draggable="false" onclick="EvtOnClick(this)" data-toggle="tooltip" data-placement="bottom" title="LAN"></li>
-															<li><img class="deviceIcons" id="CableWan" src="{% static '/production/images/wan.png' %}" draggable="false" onclick="EvtOnClick(this)" data-toggle="tooltip" data-placement="bottom" title="WAN"></li>
-															<li><img class="deviceIcons" id="CableConsole" src="{% static '/production/images/console.png' %}" draggable="false" onclick="EvtOnClick(this)" data-toggle="tooltip" data-placement="bottom" title="Console"></li>
-															<li><img class="deviceIcons" id="CableConsole" src="{% static '/production/images/delete.png' %}" draggable="false" onclick="remove();" data-toggle="tooltip" data-placement="bottom" title="Delete device"></li>
+															<li><img class="deviceIcons" id="Delete" src="{% static '/production/images/delete.png' %}" draggable="false" onclick="remove();" data-toggle="tooltip" data-placement="bottom" title="Delete device"></li>
 														</ul>
 						                        	</div>
 						                        	
@@ -1009,6 +1006,11 @@
 				if (loadInt == 1)
 					window.location = "../loadTopology?topologyID={{currTopologyID}}&newload=0";
 			<!-- Canvass Loader End -->
+			
+			function reloadCanvas(){
+				window.location = "../user";
+			}
+			
 		</script>
 		
 		<!-- GIAN's SCRIPTS END -->

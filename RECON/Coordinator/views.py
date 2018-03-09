@@ -331,8 +331,8 @@ def loadTopology(request):
 	connections = SaveConn.objects.filter(saveTopology = loadThisTopology)
 	
 	if load=='1':
-		loadConnections(connections)
 		removeConnections()
+		loadConnections(connections)
 	
 	context = {
 		'current_user': currentUser,
