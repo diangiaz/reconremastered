@@ -310,7 +310,6 @@ def reserveDevice(request):
 	
 @login_required(login_url="/login")
 def loadTopology(request):
-	removeConnections()
 	currentUser = request.user
 	if currentUser.profile.usertype == 'admin':
 		return HttpResponseRedirect("/admin/")
@@ -331,7 +330,9 @@ def loadTopology(request):
 	loadDevices = SaveDev.objects.filter(saveTopology = loadThisTopology)
 	connections = SaveConn.objects.filter(saveTopology = loadThisTopology)
 	
-	loadConnections(connections)
+	if load=='1':
+		loadConnections(connections)
+		removeConnections()
 	
 	context = {
 		'current_user': currentUser,
@@ -1521,8 +1522,6 @@ def loadConnections(connections):
 			bytes_to_read = mainSwitchSerial.inWaiting()
 		except NameError:
 			print("Main switch not detected")
-			
-	print("load that shit")
 
 def removeConnections():
 	connections = Port.objects.all()

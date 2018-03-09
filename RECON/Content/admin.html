@@ -346,13 +346,13 @@
                         <div class="form-group">
                           <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
                             <input id="createEmployeeID" type="number" class="form-control has-feedback-left" placeholder="Employee ID *" required="required" onchange="clearerroremployeeid()">
-                            <font id="error-employee-id"></font>
+                            <strong><font style="color: #F00000;" <font id="error-employee-id"></font></strong>
                             <span class="fa fa-hashtag form-control-feedback left" aria-hidden="true"></span>
                           </div>
 
                           <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
                             <input id="createEmail" type="mail" class="form-control has-feedback"  placeholder="Email *" required="required" data-validate-linked="email" onchange="clearerroremployeeemail()">
-                            <font id="error-employee-email"></font>
+                            <strong><font style="color: #F00000;" <font id="error-employee-email"></font></strong>
                             <span class="fa fa-envelope form-control-feedback right" aria-hidden="true"></span>
                           </div>                                                  
                         </div>
@@ -360,13 +360,13 @@
                         <div class="form-group">                        
                           <div class="col-md-6 col-sm-6 col-xs-12 item form-group has-feedback">
                             <input id="createFirstName" type="text" class="form-control has-feedback-left" placeholder="First Name *" required="required" onchange="clearerroremployeefirstname()">
-                            <font id="error-employee-first-name"></font>
+                            <strong><font style="color: #F00000;" <font id="error-employee-first-name"></font></strong>
                             <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
                           </div>
 
                           <div class="col-md-6 col-sm-6 col-xs-12 item form-group has-feedback">
                             <input id="createLastName" type="text" class="form-control has-feedback" placeholder="Last Name *" required="required" onchange="clearerroremployeelastname()">
-                            <font id="error-employee-last-name"></font>
+                            <strong><font style="color: #F00000;" <font id="error-employee-last-name"></font></strong>
                             <span class="fa fa-user form-control-feedback right" aria-hidden="true"></span>
                           </div>  
                         </div>
@@ -374,7 +374,7 @@
                         <div class="form-group">
                           <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
                             <input id="createUserName" type="text" class="form-control has-feedback-left" placeholder="Username *" required="required" onchange="clearerroremployeeusername()">
-                            <font id="error-employee-username"></font>
+                            <strong><font style="color: #F00000;" <font id="error-employee-username"></font></strong>
                             <span class="fa fa-at form-control-feedback left" aria-hidden="true"></span>
                           </div>
 
@@ -390,13 +390,13 @@
                         <div class="form-group">
                           <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
                             <input type="password" class="form-control has-feedback-left" id="createPassword" name="password" data-validate-length="6,8" placeholder="Password *" required="required" onchange="clearerroremployeepassword()">
-                            <font id="error-employee-password"></font>
+                            <strong><font style="color: #F00000;" <font id="error-employee-password"></font></strong>
 							<span class="fa fa-lock form-control-feedback left" aria-hidden="true"></span>
                           </div>
 
                           <div class="col-md-6 col-sm-6 col-xs-12 item form-group has-feedback">
                             <input type="password" class="form-control" id="createPassword2" name="password2" data-validate-linked="password" placeholder="Repeat Password *" required="required" onchange="clearerroremployeepassword2()">
-							<font id="error-employee-password2"></font>
+							<strong><font style="color: #F00000;" <font id="error-employee-password2"></font></strong>
                             <span class="fa fa-lock form-control-feedback right" aria-hidden="true"></span>
                           </div>
                         </div>     	
@@ -515,6 +515,7 @@
                                 </label>
                                 <div class="col-md-8 col-sm-6 col-xs-12">
                                   <input type="text" id="devDescription" name="devLoc" class="form-control" required>
+								<strong><font style="color: #F00000;" id="error-add-description"></font></strong>
                                 </div>
                               </div>
                             </div> 
@@ -2908,7 +2909,7 @@
                     console.log(tempDevice + " ==" + availDevice[i]);
                     if(tempDevice == availDevice[i]){
                       
-                      cell1.innerHTML = '<input type="radio" id="deviceList-{{dev.id}}" class="flat" name="deviceList" value="{{dev.id}}"> {{dev.name}}</label>';
+                      cell1.innerHTML = '<input type="radio" id="deviceList-{{dev.id}}" class="flat" name="deviceList" value="{{dev.id}}"> {{dev.name}}({{dev.description}})</label>';
                     }
                     
                   {% endfor %}
@@ -2985,6 +2986,9 @@
 			document.getElementById("error-add-devType").innerHTML="Please choose a device type";
 		  } else if(deviceComport=='error'){
 			document.getElementById("error-add-devComport").innerHTML="Please choose a COMPORT";
+		  } else if(!deviceDescription){
+			document.getElementById("error-add-description").innerHTML="Please input description";
+			
 		  } else {
 			  if(deviceType=='2'){
 				var portNumber = document.getElementById("switchportnum").value;
