@@ -22,15 +22,15 @@ import urllib.parse as urlparse
 # Create your views here.
 # fill comports and mainswitchports
 
-comports = Comport.objects.all().count()
-x = 14
-if comports == 0:
-	while x <= 16:
-		c = Comport()
-		c.name = "COM" + str(x)
-		c.save()
-		print("added" + str(c))
-		x+=1
+# comports = Comport.objects.all().count()
+# x = 14
+# if comports == 0:
+	# while x <= 16:
+		# c = Comport()
+		# c.name = "COM" + str(x)
+		# c.save()
+		# print("added" + str(c))
+		# x+=1
 
 mainswitchports = MainSwitchPort.objects.all().count()
 x = 1
@@ -104,7 +104,7 @@ serialList = []
 receiverList = []
 			
 try:
-	mainSwitchSerial = serial.Serial('COM10', 9600)
+	mainSwitchSerial = serial.Serial('COM9', 9600)
 except serial.SerialException:
 	print("Main switch not detected")
 
